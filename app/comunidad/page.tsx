@@ -1,17 +1,45 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/lib/supabaseClient';
+import { useToasts, ToastViewport } from '@/components/ui/Toast';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
-const supabaseUrl = 'https://elfxllhdschknqtznzsq.supabase.co';
-const supabaseAnonKey = 'sb_publishable_euWYboszDK8iVzfZdPPOHg_zNjs5pwF';
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+type Like = { user_id: string };
+type Post = {
+    id: string;
+    title: string;
+    image_url: string;
+    instagram_handle: string | null;
+    instagram_url: string | null;
+    user_id: string;
+    created_at: string;
+    post_likes: Like[];
+};
+type AppUser = {
+    id: string;
+    email?: string;
+    user_metadata?: { instagram_handle?: string };
+};
+
+function buildUploadFileName(originalName: string): string {
+    const ext = originalName.split('.').pop() || 'jpg';
+    return `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
+}
 
 export default function ComunidadPage() {
     const [lang, setLang] = useState<'es' | 'en'>('es');
-    const [posts, setPosts] = useState<any[]>([]);
-    const [user, setUser] = useState<any>(null);
+    const { toasts, push, dismiss } = useToasts();
+
+    // Mantiene el atributo lang del documento sincronizado con el selector ES/EN.
+    useEffect(() => {
+        document.documentElement.lang = lang;
+    }, [lang]);
+
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [user, setUser] = useState<AppUser | null>(null);
     const [filterMyPosts, setFilterMyPosts] = useState(false);
 
     // Estados para Registro / Login
@@ -30,27 +58,39 @@ export default function ComunidadPage() {
     const [editingPostId, setEditingPostId] = useState<string | null>(null);
     const [editText, setEditText] = useState('');
 
+    // Estado para el diálogo de confirmación de borrado
+    const [pendingDelete, setPendingDelete] = useState<{ id: string; imageUrl: string } | null>(null);
+
     const content = {
         es: {
-            volver: '← Volver al Inicio',
+            volver: '← Volver al inicio',
             foro: 'Foro Comunidad',
-            connectedAs: 'Conectado como: ',
-            logout: 'Cerrar Sesión',
-            newPostTitle: 'Nueva Publicación',
+            connectedAs: 'Conectado como',
+            logout: 'Cerrar sesión',
+            newPostTitle: 'Nueva publicación',
             placeholder: '¿Qué diorama o creación quieres compartir hoy?',
             instagramUrlPlaceholder: 'URL de tu perfil de Instagram (ej. https://instagram.com/tu_usuario)',
-            publishBtn: 'Publicar 🚀',
-            publishingBtn: 'Publicando...',
-            feedTitle: 'Feed en Directo',
-            filterAll: 'Todas las publicaciones',
+            publishBtn: 'Publicar',
+            publishingBtn: 'Publicando…',
+            feedTitle: 'Feed en directo',
+            filterAll: 'Todas',
             filterMine: 'Mis publicaciones',
             noPosts: 'Aún no hay publicaciones en el foro.',
             edit: 'Editar',
             delete: 'Borrar',
             save: 'Guardar',
             cancel: 'Cancelar',
+            confirmDeleteTitle: '¿Eliminar esta publicación?',
+            confirmDeleteDesc: 'Esta acción no se puede deshacer.',
+            mustLoginLike: 'Debes iniciar sesión para dar "Me gusta".',
+            mustLogin: 'Debes iniciar sesión.',
+            fillForm: 'Completa el mensaje y selecciona una imagen.',
+            badFormat: 'Formato no permitido. Usa JPG, PNG, WEBP o GIF.',
+            tooLarge: (mb: number) => `La imagen supera los ${mb}MB permitidos.`,
+            emailTaken: 'Este correo ya está registrado.',
+            signUpOk: '¡Registro exitoso! Revisa tu correo.',
             auth: {
-                signInTitle: 'Iniciar Sesión en el Foro',
+                signInTitle: 'Iniciar sesión en el foro',
                 signUpTitle: 'Crear una cuenta',
                 signInDesc: 'Inicia sesión con tu cuenta para poder publicar y dar like.',
                 signUpDesc: 'Regístrate para unirte a la comunidad y compartir tus fotos.',
@@ -59,31 +99,40 @@ export default function ComunidadPage() {
                 passwordPlaceholder: 'Contraseña',
                 toSignUp: '¿No tienes cuenta? Regístrate',
                 toSignIn: '¿Ya tienes cuenta? Inicia sesión',
-                loginBtn: 'Entrar 🚀',
-                registerBtn: 'Registrarse 📝',
+                loginBtn: 'Entrar',
+                registerBtn: 'Registrarse',
             }
         },
         en: {
-            volver: '← Back to Home',
+            volver: '← Back to home',
             foro: 'Community Forum',
-            connectedAs: 'Logged in as: ',
-            logout: 'Log Out',
-            newPostTitle: 'New Post',
+            connectedAs: 'Logged in as',
+            logout: 'Log out',
+            newPostTitle: 'New post',
             placeholder: 'What diorama or creation do you want to share today?',
             instagramUrlPlaceholder: 'Your Instagram profile URL (e.g. https://instagram.com/your_account)',
-            publishBtn: 'Post 🚀',
-            publishingBtn: 'Posting...',
-            feedTitle: 'Live Feed',
-            filterAll: 'All posts',
+            publishBtn: 'Post',
+            publishingBtn: 'Posting…',
+            feedTitle: 'Live feed',
+            filterAll: 'All',
             filterMine: 'My posts',
             noPosts: 'No posts in the forum yet.',
             edit: 'Edit',
             delete: 'Delete',
             save: 'Save',
             cancel: 'Cancel',
+            confirmDeleteTitle: 'Delete this post?',
+            confirmDeleteDesc: 'This action cannot be undone.',
+            mustLoginLike: 'You must log in to like posts.',
+            mustLogin: 'You must log in.',
+            fillForm: 'Complete the message and select an image.',
+            badFormat: 'Unsupported format. Use JPG, PNG, WEBP or GIF.',
+            tooLarge: (mb: number) => `The image exceeds the ${mb}MB limit.`,
+            emailTaken: 'This email is already registered.',
+            signUpOk: 'Registration successful! Check your email.',
             auth: {
-                signInTitle: 'Sign in to the Forum',
-                signUpTitle: 'Create an Account',
+                signInTitle: 'Sign in to the forum',
+                signUpTitle: 'Create an account',
                 signInDesc: 'Sign in with your account to post and like.',
                 signUpDesc: 'Register to join the community and share your photos.',
                 handlePlaceholder: 'Your Instagram handle (e.g. @your_account)',
@@ -91,28 +140,13 @@ export default function ComunidadPage() {
                 passwordPlaceholder: 'Password',
                 toSignUp: "Don't have an account? Register",
                 toSignIn: 'Already have an account? Sign in',
-                loginBtn: 'Sign In 🚀',
-                registerBtn: 'Register 📝',
+                loginBtn: 'Sign in',
+                registerBtn: 'Register',
             }
         }
     };
 
     const t = content[lang];
-
-    useEffect(() => {
-        async function checkUser() {
-            const { data: { session } } = await supabase.auth.getSession();
-            setUser(session?.user || null);
-        }
-        checkUser();
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user || null);
-        });
-
-        loadCommunityPosts();
-        return () => subscription.unsubscribe();
-    }, []);
 
     const loadCommunityPosts = async () => {
         try {
@@ -127,19 +161,38 @@ export default function ComunidadPage() {
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
-            if (data) setPosts(data);
+            if (data) setPosts(data as Post[]);
         } catch (err) {
             console.error('Error cargando comunidad:', err);
         }
     };
 
-    const handleToggleLike = async (postId: string, currentLikes: any[]) => {
+    useEffect(() => {
+        async function checkUser() {
+            const { data: { session } } = await supabase.auth.getSession();
+            setUser(session?.user ?? null);
+        }
+        checkUser();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        // Carga inicial del feed al montar. La regla experimental
+        // `react-hooks/set-state-in-effect` (nueva en Next 16, aún inestable)
+        // marca este patrón estándar de "fetch on mount"; es intencional.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        loadCommunityPosts();
+        return () => subscription.unsubscribe();
+    }, []);
+
+    const handleToggleLike = async (postId: string, currentLikes: Like[]) => {
         if (!user) {
-            alert(lang === 'es' ? 'Debes iniciar sesión para dar "Me gusta".' : 'You must log in to like posts.');
+            push(t.mustLoginLike, 'info');
             return;
         }
 
-        const hasLiked = currentLikes.some((like: any) => like.user_id === user.id);
+        const hasLiked = currentLikes.some((like) => like.user_id === user.id);
 
         try {
             if (hasLiked) {
@@ -159,7 +212,7 @@ export default function ComunidadPage() {
             }
 
             await loadCommunityPosts();
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error al actualizar like:', err);
         }
     };
@@ -173,14 +226,14 @@ export default function ComunidadPage() {
         });
 
         if (error) {
-            alert(`Error: ${error.message}`);
+            push(error.message, 'error');
             return;
         }
 
         if (data?.user && data.user.identities && data.user.identities.length === 0) {
-            alert(lang === 'es' ? 'Este correo ya está registrado.' : 'This email is already registered.');
+            push(t.emailTaken, 'error');
         } else {
-            alert(lang === 'es' ? '¡Registro exitoso! Revisa tu correo.' : 'Registration successful! Check your email.');
+            push(t.signUpOk, 'success');
             setIsSignUp(false);
         }
     };
@@ -189,7 +242,7 @@ export default function ComunidadPage() {
         e.preventDefault();
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
-            alert(`Error: ${error.message}`);
+            push(error.message, 'error');
         } else {
             setEmail('');
             setPassword('');
@@ -204,18 +257,28 @@ export default function ComunidadPage() {
     const handleUpload = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user) {
-            alert(lang === 'es' ? 'Debes iniciar sesión.' : 'You must log in.');
+            push(t.mustLogin, 'info');
             return;
         }
         if (!newPostTitle.trim() || !file) {
-            alert(lang === 'es' ? 'Completa el mensaje y selecciona una imagen.' : 'Complete the message and select an image.');
+            push(t.fillForm, 'info');
+            return;
+        }
+
+        const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        const MAX_FILE_SIZE_MB = 8;
+        if (!ALLOWED_TYPES.includes(file.type)) {
+            push(t.badFormat, 'error');
+            return;
+        }
+        if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+            push(t.tooLarge(MAX_FILE_SIZE_MB), 'error');
             return;
         }
 
         setLoading(true);
         try {
-            const fileExt = file.name.split('.').pop() || 'jpg';
-            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+            const fileName = buildUploadFileName(file.name);
 
             const { error: storageError } = await supabase.storage
                 .from('foro-fotos')
@@ -227,7 +290,7 @@ export default function ComunidadPage() {
                 .from('foro-fotos')
                 .getPublicUrl(fileName);
 
-            const authorHandle = user.user_metadata?.instagram_handle || user.email.split('@')[0];
+            const authorHandle = user.user_metadata?.instagram_handle || user.email?.split('@')[0] || 'anon';
 
             const { error: dbError } = await supabase
                 .from('community_posts')
@@ -247,16 +310,20 @@ export default function ComunidadPage() {
             setNewPostInstagramUrl('');
             setFile(null);
             await loadCommunityPosts();
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error al subir:', error);
-            alert(`Error: ${error.message || 'Desconocido'}`);
+            push(error instanceof Error ? error.message : 'Error desconocido', 'error');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleDelete = async (postId: string, imageUrl: string) => {
-        if (!confirm(lang === 'es' ? '¿Estás seguro de eliminar este post?' : 'Are you sure you want to delete this post?')) return;
+    const requestDelete = (postId: string, imageUrl: string) => setPendingDelete({ id: postId, imageUrl });
+
+    const confirmDelete = async () => {
+        if (!pendingDelete) return;
+        const { id: postId, imageUrl } = pendingDelete;
+        setPendingDelete(null);
 
         try {
             const { error: dbError } = await supabase
@@ -266,15 +333,15 @@ export default function ComunidadPage() {
 
             if (dbError) throw dbError;
 
-            const fileName = imageUrl.split('/').pop();
+            const fileName = imageUrl.split('/').pop()?.split('?')[0];
             if (fileName) {
                 await supabase.storage.from('foro-fotos').remove([fileName]);
             }
 
             await loadCommunityPosts();
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error al eliminar:', err);
-            alert(`Error: ${err.message}`);
+            push(err instanceof Error ? err.message : 'Error desconocido', 'error');
         }
     };
 
@@ -292,9 +359,9 @@ export default function ComunidadPage() {
             setEditingPostId(null);
             setEditText('');
             await loadCommunityPosts();
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error al editar:', err);
-            alert(`Error: ${err.message}`);
+            push(err instanceof Error ? err.message : 'Error desconocido', 'error');
         }
     };
 
@@ -305,37 +372,38 @@ export default function ComunidadPage() {
         return true;
     });
 
+    const inputClass = "bg-[var(--color-ink)] border border-[var(--color-border)] rounded-xl px-4 py-3 text-sm text-[var(--color-text)] font-medium focus:outline-none focus:border-[var(--color-accent)] transition-colors placeholder:text-[var(--color-text-faint)]";
+
     return (
-        <main className="min-h-screen bg-[#0B0F17] bg-[radial-gradient(rgba(255,255,255,0.03)_2px,transparent_2px)] bg-[length:24px_24px] text-white font-sans selection:bg-amber-400 selection:text-black">
-
-            <header className="sticky top-0 z-40 bg-[#0B0F17]/90 backdrop-blur-md border-b-4 border-[#1A2235] px-6 py-4">
+        <main className="min-h-screen bg-[var(--color-ink)] text-[var(--color-text)] font-sans">
+            <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)] px-6 py-4">
                 <div className="max-w-2xl mx-auto flex justify-between items-center">
-                    <a href="/" className="text-xs font-black uppercase text-amber-400 tracking-wider hover:underline">
+                    <Link href="/" className="text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
                         {t.volver}
-                    </a>
+                    </Link>
 
-                    <div className="flex items-center space-x-4">
-                        <span className="font-black text-xs uppercase tracking-widest text-gray-400 hidden sm:inline">{t.foro}</span>
-                        <div className="flex items-center space-x-2 bg-[#121824] p-1.5 rounded-lg border-2 border-[#1A2235]">
-                            <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-md text-xs font-black transition-all ${lang === 'es' ? 'bg-amber-400 text-black shadow-sm' : 'text-gray-500 hover:text-white'}`}>ES</button>
-                            <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-md text-xs font-black transition-all ${lang === 'en' ? 'bg-amber-400 text-black shadow-sm' : 'text-gray-500 hover:text-white'}`}>EN</button>
+                    <div className="flex items-center gap-4">
+                        <span className="font-semibold text-xs uppercase tracking-widest text-[var(--color-text-muted)] hidden sm:inline">{t.foro}</span>
+                        <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
+                            <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'es' ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>ES</button>
+                            <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>EN</button>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <div className="max-w-2xl mx-auto px-4 py-8">
+            <div className="max-w-2xl mx-auto px-4 py-10">
 
                 {!user ? (
                     <motion.div
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#121824] border-4 border-[#1A2235] rounded-2xl p-6 shadow-[0_8px_0_0_#0F1523] mb-8"
+                        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 mb-8"
                     >
-                        <h2 className="text-lg font-black uppercase tracking-tight text-white mb-2">
+                        <h2 className="font-display text-lg font-semibold tracking-tight text-[var(--color-text)] mb-2">
                             {isSignUp ? t.auth.signUpTitle : t.auth.signInTitle}
                         </h2>
-                        <p className="text-xs text-gray-400 mb-6 font-bold">
+                        <p className="text-sm text-[var(--color-text-muted)] mb-6">
                             {isSignUp ? t.auth.signUpDesc : t.auth.signInDesc}
                         </p>
 
@@ -347,7 +415,7 @@ export default function ComunidadPage() {
                                     placeholder={t.auth.handlePlaceholder}
                                     value={instagramHandle}
                                     onChange={(e) => setInstagramHandle(e.target.value)}
-                                    className="bg-[#0B0F17] border-2 border-[#2A344A] rounded-xl px-4 py-3 text-xs text-white font-bold focus:outline-none focus:border-amber-400"
+                                    className={inputClass}
                                 />
                             )}
                             <input
@@ -356,7 +424,7 @@ export default function ComunidadPage() {
                                 placeholder={t.auth.emailPlaceholder}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="bg-[#0B0F17] border-2 border-[#2A344A] rounded-xl px-4 py-3 text-xs text-white font-bold focus:outline-none focus:border-amber-400"
+                                className={inputClass}
                             />
                             <input
                                 type="password"
@@ -364,22 +432,22 @@ export default function ComunidadPage() {
                                 placeholder={t.auth.passwordPlaceholder}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="bg-[#0B0F17] border-2 border-[#2A344A] rounded-xl px-4 py-3 text-xs text-white font-bold focus:outline-none focus:border-amber-400"
+                                className={inputClass}
                             />
 
                             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-2">
                                 <button
                                     type="button"
                                     onClick={() => setIsSignUp(!isSignUp)}
-                                    className="text-xs text-amber-400 font-bold hover:underline"
+                                    className="text-xs text-[var(--color-accent)] font-semibold hover:underline"
                                 >
                                     {isSignUp ? t.auth.toSignIn : t.auth.toSignUp}
                                 </button>
                                 <motion.button
                                     whileHover={{ y: -2 }}
-                                    whileTap={{ y: 2 }}
+                                    whileTap={{ y: 1 }}
                                     type="submit"
-                                    className="w-full sm:w-auto bg-amber-400 text-black font-black px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-[0_4px_0_0_#b45309] border-t-2 border-amber-200"
+                                    className="w-full sm:w-auto bg-[var(--color-accent)] text-[#1a1300] font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider hover:brightness-110 transition"
                                 >
                                     {isSignUp ? t.auth.registerBtn : t.auth.loginBtn}
                                 </motion.button>
@@ -390,21 +458,21 @@ export default function ComunidadPage() {
                     <motion.div
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#121824] border-4 border-[#1A2235] rounded-2xl p-6 shadow-[0_8px_0_0_#0F1523] mb-8"
+                        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 mb-8"
                     >
-                        <div className="flex justify-between items-center mb-4">
-                            <span className="text-xs font-black text-amber-400 uppercase">
-                                {t.connectedAs} {user.user_metadata?.instagram_handle || user.email.split('@')[0]}
+                        <div className="flex justify-between items-center mb-5">
+                            <span className="text-xs font-semibold text-[var(--color-accent)] uppercase tracking-wide">
+                                {t.connectedAs} {user.user_metadata?.instagram_handle || user.email?.split('@')[0]}
                             </span>
                             <button
                                 onClick={handleLogout}
-                                className="text-[10px] font-black uppercase bg-[#1A2235] text-gray-400 hover:text-white px-3 py-1 rounded-lg border border-[#2A344A]"
+                                className="text-[10px] font-bold uppercase bg-[var(--color-surface-2)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] px-3 py-1.5 rounded-full border border-[var(--color-border)]"
                             >
                                 {t.logout}
                             </button>
                         </div>
 
-                        <h2 className="text-lg font-black uppercase tracking-tight text-white mb-4">{t.newPostTitle}</h2>
+                        <h2 className="font-display text-lg font-semibold tracking-tight text-[var(--color-text)] mb-4">{t.newPostTitle}</h2>
                         <form onSubmit={handleUpload} className="flex flex-col gap-4">
                             <textarea
                                 required
@@ -412,29 +480,29 @@ export default function ComunidadPage() {
                                 placeholder={t.placeholder}
                                 value={newPostTitle}
                                 onChange={(e) => setNewPostTitle(e.target.value)}
-                                className="bg-[#0B0F17] border-2 border-[#2A344A] rounded-xl px-4 py-3 text-xs text-white font-bold focus:outline-none focus:border-amber-400 resize-none"
+                                className={`${inputClass} resize-none`}
                             />
                             <input
                                 type="url"
                                 placeholder={t.instagramUrlPlaceholder}
                                 value={newPostInstagramUrl}
                                 onChange={(e) => setNewPostInstagramUrl(e.target.value)}
-                                className="bg-[#0B0F17] border-2 border-[#2A344A] rounded-xl px-4 py-3 text-xs text-white font-bold focus:outline-none focus:border-amber-400"
+                                className={inputClass}
                             />
                             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                                 <input
                                     type="file"
-                                    accept="image/*"
+                                    accept="image/jpeg,image/png,image/webp,image/gif"
                                     required
                                     onChange={(e) => e.target.files && setFile(e.target.files[0])}
-                                    className="w-full sm:w-auto bg-[#0B0F17] text-gray-400 border-2 border-[#2A344A] rounded-xl px-4 py-2 text-xs font-bold file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-black file:bg-amber-400 file:text-black hover:file:cursor-pointer"
+                                    className="w-full sm:w-auto text-[var(--color-text-muted)] border border-[var(--color-border)] rounded-xl px-4 py-2 text-xs font-medium file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--color-accent)] file:text-[#1a1300] hover:file:cursor-pointer hover:file:brightness-110"
                                 />
                                 <motion.button
                                     whileHover={{ y: -2 }}
-                                    whileTap={{ y: 2 }}
+                                    whileTap={{ y: 1 }}
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full sm:w-auto bg-blue-500 text-white font-black px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-[0_4px_0_0_#1e3a8a] border-t-2 border-blue-300 disabled:opacity-50"
+                                    className="w-full sm:w-auto bg-[var(--color-accent-3)] text-white font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider hover:brightness-110 transition disabled:opacity-50"
                                 >
                                     {loading ? t.publishingBtn : t.publishBtn}
                                 </motion.button>
@@ -445,18 +513,18 @@ export default function ComunidadPage() {
 
                 <div className="space-y-4">
                     <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-xs font-black uppercase tracking-widest text-gray-500">{t.feedTitle}</h3>
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-faint)]">{t.feedTitle}</h3>
                         {user && (
-                            <div className="flex gap-2 bg-[#121824] p-1 rounded-lg border border-[#1A2235]">
+                            <div className="flex gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
                                 <button
                                     onClick={() => setFilterMyPosts(false)}
-                                    className={`px-3 py-1 rounded-md text-[10px] font-black uppercase transition-all ${!filterMyPosts ? 'bg-amber-400 text-black' : 'text-gray-400 hover:text-white'}`}
+                                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${!filterMyPosts ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
                                 >
                                     {t.filterAll}
                                 </button>
                                 <button
                                     onClick={() => setFilterMyPosts(true)}
-                                    className={`px-3 py-1 rounded-md text-[10px] font-black uppercase transition-all ${filterMyPosts ? 'bg-amber-400 text-black' : 'text-gray-400 hover:text-white'}`}
+                                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${filterMyPosts ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
                                 >
                                     {t.filterMine}
                                 </button>
@@ -465,21 +533,21 @@ export default function ComunidadPage() {
                     </div>
 
                     {displayedPosts.length === 0 ? (
-                        <div className="text-center py-16 bg-[#121824] border-4 border-[#1A2235] rounded-2xl text-gray-500 font-bold text-xs uppercase">
+                        <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-muted)] font-medium text-sm">
                             {t.noPosts}
                         </div>
                     ) : (
                         displayedPosts.map((post, index) => {
                             const likes = post.post_likes || [];
-                            const hasLiked = user ? likes.some((l: any) => l.user_id === user.id) : false;
+                            const hasLiked = user ? likes.some((l) => l.user_id === user.id) : false;
 
                             return (
                                 <motion.div
                                     key={post.id}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                                    className="bg-[#121824] border-4 border-[#1A2235] rounded-2xl p-5 shadow-[0_6px_0_0_#0F1523] flex flex-col gap-3"
+                                    transition={{ duration: 0.3, delay: Math.min(index, 8) * 0.05 }}
+                                    className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-5 flex flex-col gap-3"
                                 >
                                     <div className="flex items-center justify-between">
                                         {post.instagram_url ? (
@@ -487,12 +555,12 @@ export default function ComunidadPage() {
                                                 href={post.instagram_url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="font-black text-xs text-amber-400 uppercase tracking-wide hover:underline flex items-center gap-1"
+                                                className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide hover:underline flex items-center gap-1"
                                             >
                                                 {post.instagram_handle || 'Anónimo'} ↗
                                             </a>
                                         ) : (
-                                            <span className="font-black text-xs text-amber-400 uppercase tracking-wide">
+                                            <span className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide">
                                                 {post.instagram_handle || 'Anónimo'}
                                             </span>
                                         )}
@@ -505,19 +573,19 @@ export default function ComunidadPage() {
                                                             setEditingPostId(post.id);
                                                             setEditText(post.title);
                                                         }}
-                                                        className="text-[10px] bg-[#1A2235] text-amber-400 hover:bg-[#252f48] px-2.5 py-1 rounded-lg font-black uppercase border border-[#2A344A] tracking-wider transition-colors shadow-sm"
+                                                        className="text-[10px] bg-[var(--color-surface-2)] text-[var(--color-accent)] hover:brightness-110 px-2.5 py-1 rounded-full font-bold uppercase border border-[var(--color-border)] tracking-wider transition-colors"
                                                     >
                                                         {t.edit}
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDelete(post.id, post.image_url)}
-                                                        className="text-[10px] bg-red-950/60 text-red-400 hover:bg-red-900/60 px-2.5 py-1 rounded-lg font-black uppercase border border-red-900/50 tracking-wider transition-colors shadow-sm"
+                                                        onClick={() => requestDelete(post.id, post.image_url)}
+                                                        className="text-[10px] bg-[var(--color-accent-2)]/10 text-[var(--color-accent-2)] hover:bg-[var(--color-accent-2)]/20 px-2.5 py-1 rounded-full font-bold uppercase border border-[var(--color-accent-2)]/30 tracking-wider transition-colors"
                                                     >
                                                         {t.delete}
                                                     </button>
                                                 </div>
                                             )}
-                                            <span className="text-[10px] text-gray-500 font-bold">
+                                            <span className="text-[10px] text-[var(--color-text-faint)] font-semibold">
                                                 {new Date(post.created_at).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', { month: 'short', day: 'numeric' })}
                                             </span>
                                         </div>
@@ -535,12 +603,12 @@ export default function ComunidadPage() {
                                                     rows={2}
                                                     value={editText}
                                                     onChange={(e) => setEditText(e.target.value)}
-                                                    className="bg-[#0B0F17] border-2 border-[#2A344A] rounded-xl px-3 py-2 text-xs text-white font-bold focus:outline-none focus:border-amber-400 resize-none"
+                                                    className={`${inputClass} resize-none`}
                                                 />
                                                 <div className="flex gap-2 justify-end">
                                                     <button
                                                         onClick={() => handleEdit(post.id)}
-                                                        className="bg-green-600 hover:bg-green-500 text-white font-black px-3 py-1.5 rounded-lg text-[10px] uppercase border border-green-500 shadow-sm"
+                                                        className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-full text-[10px] uppercase transition-colors"
                                                     >
                                                         {t.save}
                                                     </button>
@@ -549,36 +617,37 @@ export default function ComunidadPage() {
                                                             setEditingPostId(null);
                                                             setEditText('');
                                                         }}
-                                                        className="bg-gray-700 hover:bg-gray-600 text-white font-black px-3 py-1.5 rounded-lg text-[10px] uppercase border border-gray-600 shadow-sm"
+                                                        className="bg-[var(--color-surface-2)] hover:bg-[var(--color-border)] text-[var(--color-text)] font-bold px-3 py-1.5 rounded-full text-[10px] uppercase border border-[var(--color-border)] transition-colors"
                                                     >
                                                         {t.cancel}
                                                     </button>
                                                 </div>
                                             </motion.div>
                                         ) : (
-                                            <p className="text-sm font-bold text-white leading-relaxed">{post.title}</p>
+                                            <p className="text-sm font-medium text-[var(--color-text)] leading-relaxed">{post.title}</p>
                                         )}
                                     </AnimatePresence>
 
                                     {post.image_url && (
-                                        <div className="rounded-xl overflow-hidden border-2 border-[#2A344A] bg-black mt-2 flex justify-center items-center">
+                                        <div className="rounded-xl overflow-hidden border border-[var(--color-border)] bg-black mt-2 flex justify-center items-center">
                                             <img
                                                 src={post.image_url}
-                                                alt="Post image"
+                                                alt="Foto publicada por el usuario"
                                                 className="w-full h-auto max-h-[600px] object-contain"
                                             />
                                         </div>
                                     )}
 
-                                    <div className="flex items-center gap-2 pt-2 border-t border-[#1A2235] mt-1">
+                                    <div className="flex items-center gap-2 pt-2 border-t border-[var(--color-border)] mt-1">
                                         <motion.button
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 1.3 }}
                                             transition={{ type: 'spring', stiffness: 400, damping: 10 }}
                                             onClick={() => handleToggleLike(post.id, likes)}
-                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-black transition-all ${hasLiked
-                                                    ? 'bg-red-500/10 text-red-500 border-red-500/30'
-                                                    : 'bg-[#1A2235] text-gray-400 border-[#2A344A] hover:text-white'
+                                            aria-pressed={hasLiked}
+                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold transition-all ${hasLiked
+                                                ? 'bg-[var(--color-accent-2)]/10 text-[var(--color-accent-2)] border-[var(--color-accent-2)]/30'
+                                                : 'bg-[var(--color-surface-2)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'
                                                 }`}
                                         >
                                             <motion.span
@@ -598,6 +667,17 @@ export default function ComunidadPage() {
                     )}
                 </div>
             </div>
+
+            <ConfirmDialog
+                open={!!pendingDelete}
+                title={t.confirmDeleteTitle}
+                description={t.confirmDeleteDesc}
+                confirmLabel={t.delete}
+                cancelLabel={t.cancel}
+                onConfirm={confirmDelete}
+                onCancel={() => setPendingDelete(null)}
+            />
+            <ToastViewport toasts={toasts} onDismiss={dismiss} />
         </main>
     );
 }

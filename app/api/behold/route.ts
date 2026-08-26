@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-    const BEHOLD_URL = 'https://feeds.behold.so/8rLncG8gRsaqP9kFJR2M';
+    const BEHOLD_URL = 'https://feeds.behold.so/8rLncG8gRsaqP9kFJR2M?limit=250';
 
     try {
         const response = await fetch(BEHOLD_URL, {
