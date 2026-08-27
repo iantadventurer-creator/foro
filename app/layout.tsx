@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { BackgroundBrickField } from "@/components/ui/BackgroundBrickField";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,7 +53,10 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[var(--color-ink)] text-[var(--color-text)]">{children}</body>
+      <body className="min-h-full flex flex-col bg-[var(--color-ink)] text-[var(--color-text)]">
+        <BackgroundBrickField />
+        {children}
+      </body>
     </html>
   );
 }

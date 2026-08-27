@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { GallerySkeleton } from '@/components/ui/GallerySkeleton';
 import { StudDivider } from '@/components/ui/StudDivider';
-import { BackgroundBrick } from '@/components/ui/BackgroundBrick';
 
 type FeedItem = {
   id: string;
@@ -269,7 +268,7 @@ export default function Home() {
   const t = content[lang];
 
   return (
-    <main className="min-h-screen bg-[var(--color-ink)] text-[var(--color-text)] font-sans relative overflow-x-hidden">
+    <main className="min-h-screen text-[var(--color-text)] font-sans relative z-0 overflow-x-hidden">
       {/* HEADER */}
       <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)]">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
@@ -363,10 +362,6 @@ export default function Home() {
       <section id="top" className="relative z-0 max-w-7xl mx-auto px-6 pt-20 pb-24 grid md:grid-cols-2 gap-16 items-center">
         <div className="absolute top-10 left-0 w-[28rem] h-[28rem] bg-[var(--color-accent-3)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
         <div className="absolute bottom-0 right-0 w-[24rem] h-[24rem] bg-[var(--color-accent)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
-
-        <BackgroundBrick color="accent-2" scale={2} rows={2} cols={4} top="-3%" left="-3%" rotate={-8} delay={0} />
-        <BackgroundBrick color="accent-3" scale={2} rows={1} cols={2} bottom="-2%" left="-2%" rotate={8} delay={1.5} />
-        <BackgroundBrick color="accent" scale={2} rows={2} cols={3} top="-2%" right="-3%" rotate={6} delay={0.8} />
 
         <div>
           <motion.div variants={fadeUp} initial="hidden" animate="visible" className="inline-flex items-center gap-2 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-accent)] text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
