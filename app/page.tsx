@@ -4,6 +4,8 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { GallerySkeleton } from '@/components/ui/GallerySkeleton';
+import { StudDivider } from '@/components/ui/StudDivider';
+import { BackgroundBrick } from '@/components/ui/BackgroundBrick';
 
 type FeedItem = {
   id: string;
@@ -52,16 +54,17 @@ function FilterPill({
   active: boolean;
 }) {
   return (
-    <button
+    <motion.button
       onClick={onClick}
       aria-pressed={active}
+      whileTap={active ? { y: 1 } : undefined}
       className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-200 whitespace-nowrap border ${active
-          ? 'bg-[var(--color-accent)] text-[#1a1300] border-[var(--color-accent)]'
+          ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-[var(--color-accent)] shadow-[0_3px_0_0_var(--shadow-accent)]'
           : 'bg-transparent text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)] hover:border-[var(--color-text-muted)]'
         }`}
     >
       {children}
-    </button>
+    </motion.button>
   );
 }
 
@@ -271,11 +274,17 @@ export default function Home() {
       <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)]">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
           <a href="#top" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-lg bg-[var(--color-accent)] flex items-center justify-center gap-1 p-1.5 group-hover:-translate-y-0.5 transition-transform">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1a1300]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1a1300]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1a1300]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1a1300]" />
+            <div className="w-9 h-9 shadow-[0_3px_0_0_var(--shadow-accent)] group-hover:-translate-y-0.5 group-hover:shadow-[0_4px_0_0_var(--shadow-accent)] transition-all rounded-md overflow-hidden">
+              <svg viewBox="0 0 36 36" className="w-full h-full" aria-hidden="true">
+                <rect x="0" y="0" width="36" height="36" fill="var(--color-accent)" />
+                {[[11, 11], [25, 11], [11, 25], [25, 25]].map(([cx, cy]) => (
+                  <g key={`${cx}-${cy}`}>
+                    <circle cx={cx + 1} cy={cy + 1.5} r="5.5" fill="rgba(0,0,0,0.3)" />
+                    <circle cx={cx} cy={cy} r="5.5" fill="var(--color-accent)" />
+                    <circle cx={cx - 2} cy={cy - 2} r="1.7" fill="white" opacity="0.5" />
+                  </g>
+                ))}
+              </svg>
             </div>
             <div className="leading-none">
               <span className="font-display font-semibold text-base tracking-tight text-[var(--color-text)] block">IanTBuild</span>
@@ -283,20 +292,36 @@ export default function Home() {
             </div>
           </a>
 
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[var(--color-text-muted)]">
-            <a href="#gallery" className="hover:text-[var(--color-text)] transition-colors">{t.nav.gallery}</a>
-            <Link href="/comunidad" className="hover:text-[var(--color-text)] transition-colors">{t.nav.community}</Link>
-            <a href="#about" className="hover:text-[var(--color-text)] transition-colors">{t.nav.about}</a>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-[var(--color-text-muted)]">
+            <a href="#gallery" className="group relative py-1 hover:text-[var(--color-text)] transition-colors">
+              {t.nav.gallery}
+              <span className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--color-accent)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+            </a>
+            <Link href="/comunidad" className="group relative py-1 hover:text-[var(--color-text)] transition-colors">
+              {t.nav.community}
+              <span className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--color-accent-2)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+            </Link>
+            <a href="#about" className="group relative py-1 hover:text-[var(--color-text)] transition-colors">
+              {t.nav.about}
+              <span className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--color-accent-3)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+            </a>
           </nav>
 
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
-              <button onClick={() => setLang('es')} aria-pressed={lang === 'es'} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'es' ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>ES</button>
-              <button onClick={() => setLang('en')} aria-pressed={lang === 'en'} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>EN</button>
+              <button onClick={() => setLang('es')} aria-pressed={lang === 'es'} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'es' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>ES</button>
+              <button onClick={() => setLang('en')} aria-pressed={lang === 'en'} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>EN</button>
             </div>
-            <a href="https://instagram.com/iantadventurer" target="_blank" rel="noopener noreferrer" className="hidden sm:inline-flex items-center text-xs font-bold uppercase tracking-wide text-[#1a1300] bg-[var(--color-accent)] px-5 py-2.5 rounded-full hover:brightness-110 transition">
+            <motion.a
+              whileHover={{ y: -2 }}
+              whileTap={{ y: 1 }}
+              href="https://instagram.com/iantadventurer"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center text-xs font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-5 py-2.5 rounded-full shadow-[0_3px_0_0_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
+            >
               {t.nav.cta}
-            </a>
+            </motion.a>
             <button
               onClick={() => setMobileMenuOpen((v) => !v)}
               aria-expanded={mobileMenuOpen}
@@ -325,8 +350,8 @@ export default function Home() {
                 <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.community}</Link>
                 <a href="#about" onClick={() => setMobileMenuOpen(false)} className="text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.about}</a>
                 <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)] w-fit">
-                  <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'es' ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)]'}`}>ES</button>
-                  <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'en' ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)]'}`}>EN</button>
+                  <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'es' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)]'}`}>ES</button>
+                  <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'en' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)]'}`}>EN</button>
                 </div>
               </div>
             </motion.div>
@@ -335,9 +360,13 @@ export default function Home() {
       </header>
 
       {/* HERO */}
-      <section id="top" className="relative max-w-7xl mx-auto px-6 pt-20 pb-24 grid md:grid-cols-2 gap-16 items-center">
+      <section id="top" className="relative z-0 max-w-7xl mx-auto px-6 pt-20 pb-24 grid md:grid-cols-2 gap-16 items-center">
         <div className="absolute top-10 left-0 w-[28rem] h-[28rem] bg-[var(--color-accent-3)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
         <div className="absolute bottom-0 right-0 w-[24rem] h-[24rem] bg-[var(--color-accent)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
+
+        <BackgroundBrick color="accent-2" scale={2} rows={2} cols={4} top="-3%" left="-3%" rotate={-8} delay={0} />
+        <BackgroundBrick color="accent-3" scale={2} rows={1} cols={2} bottom="-2%" left="-2%" rotate={8} delay={1.5} />
+        <BackgroundBrick color="accent" scale={2} rows={2} cols={3} top="-2%" right="-3%" rotate={6} delay={0.8} />
 
         <div>
           <motion.div variants={fadeUp} initial="hidden" animate="visible" className="inline-flex items-center gap-2 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-accent)] text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
@@ -351,12 +380,19 @@ export default function Home() {
             {t.hero.description}
           </motion.p>
           <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.15 }} className="flex flex-wrap gap-4">
-            <a href="#gallery" className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[#1a1300] bg-[var(--color-accent)] px-7 py-3.5 rounded-full hover:brightness-110 transition">
+            <motion.a
+              whileHover={{ y: -3 }}
+              whileTap={{ y: 2 }}
+              href="#gallery"
+              className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-7 py-3.5 rounded-full shadow-[0_5px_0_0_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
+            >
               {t.hero.btnExplore} ↓
-            </a>
-            <Link href="/comunidad" className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-text)] border border-[var(--color-border)] px-7 py-3.5 rounded-full hover:border-[var(--color-text-muted)] transition">
-              {t.nav.community} ✨
-            </Link>
+            </motion.a>
+            <motion.div whileHover={{ y: -3 }} whileTap={{ y: 2 }}>
+              <Link href="/comunidad" className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-text)] border border-[var(--color-border)] px-7 py-3.5 rounded-full shadow-[0_5px_0_0_var(--color-border)] hover:border-[var(--color-text-muted)] transition">
+                {t.nav.community} ✨
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
 
@@ -390,6 +426,8 @@ export default function Home() {
         </div>
       </section>
 
+      <StudDivider />
+
       {/* GALLERY */}
       <section id="gallery" className="max-w-7xl mx-auto px-6 py-16 relative z-10">
         <div className="flex flex-col gap-6 mb-10">
@@ -414,7 +452,7 @@ export default function Home() {
           <div className="flex flex-col items-center text-center py-24 gap-4 border border-dashed border-[var(--color-border)] rounded-2xl">
             <p className="text-[var(--color-text)] font-semibold">{t.gallery.errorTitle}</p>
             <p className="text-sm text-[var(--color-text-muted)] max-w-xs">{t.gallery.errorDesc}</p>
-            <button onClick={() => setRetryCount((c) => c + 1)} className="mt-2 text-xs font-bold uppercase tracking-wide bg-[var(--color-accent)] text-[#1a1300] px-5 py-2.5 rounded-full hover:brightness-110 transition">
+            <button onClick={() => setRetryCount((c) => c + 1)} className="mt-2 text-xs font-bold uppercase tracking-wide bg-[var(--color-accent)] text-[var(--color-accent-ink)] px-5 py-2.5 rounded-full hover:brightness-110 transition">
               {t.gallery.retry}
             </button>
           </div>
@@ -481,7 +519,7 @@ export default function Home() {
                       }}
                       aria-current={safePage === pageNum ? 'page' : undefined}
                       className={`w-9 h-9 rounded-full font-bold text-xs transition-all border flex items-center justify-center ${safePage === pageNum
-                          ? 'bg-[var(--color-accent)] text-[#1a1300] border-[var(--color-accent)]'
+                          ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-[var(--color-accent)]'
                           : 'bg-transparent text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'
                         }`}
                     >
@@ -549,7 +587,7 @@ export default function Home() {
                     href={selectedItem.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-center text-xs font-bold uppercase tracking-wider text-[#1a1300] bg-[var(--color-accent)] py-3 rounded-full hover:brightness-110 transition"
+                    className="block text-center text-xs font-bold uppercase tracking-wider text-[var(--color-accent-ink)] bg-[var(--color-accent)] py-3 rounded-full hover:brightness-110 transition"
                   >
                     {t.modal.viewOnIg} ↗
                   </a>
@@ -581,6 +619,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <StudDivider />
 
       {/* FOOTER */}
       <footer className="border-t border-[var(--color-border)] py-14 px-6 relative z-10 mt-6">

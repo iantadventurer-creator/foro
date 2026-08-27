@@ -29,6 +29,19 @@ function buildUploadFileName(originalName: string): string {
     return `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
 }
 
+const AVATAR_COLORS = ['var(--color-accent)', 'var(--color-accent-2)', 'var(--color-accent-3)', 'var(--color-accent-4)'];
+
+/** Color determinista para el avatar, derivado del handle (mismo usuario = mismo color siempre). */
+function avatarColorFor(handle: string): string {
+    let hash = 0;
+    for (let i = 0; i < handle.length; i++) hash = (hash * 31 + handle.charCodeAt(i)) >>> 0;
+    return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
+
+const TITLE_MAX_LENGTH = 280;
+const HANDLE_MAX_LENGTH = 30;
+const URL_MAX_LENGTH = 200;
+
 export default function ComunidadPage() {
     const [lang, setLang] = useState<'es' | 'en'>('es');
     const { toasts, push, dismiss } = useToasts();
@@ -39,14 +52,17 @@ export default function ComunidadPage() {
     }, [lang]);
 
     const [posts, setPosts] = useState<Post[]>([]);
+    const [feedLoading, setFeedLoading] = useState(true);
     const [user, setUser] = useState<AppUser | null>(null);
     const [filterMyPosts, setFilterMyPosts] = useState(false);
+    const [sortBy, setSortBy] = useState<'recent' | 'popular'>('recent');
 
     // Estados para Registro / Login
     const [isSignUp, setIsSignUp] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [instagramHandle, setInstagramHandle] = useState('');
+    const [authSubmitting, setAuthSubmitting] = useState(false);
 
     // Estados del Formulario del Foro
     const [newPostTitle, setNewPostTitle] = useState('');
@@ -75,6 +91,8 @@ export default function ComunidadPage() {
             feedTitle: 'Feed en directo',
             filterAll: 'Todas',
             filterMine: 'Mis publicaciones',
+            sortRecent: 'Recientes',
+            sortPopular: 'Más gustados',
             noPosts: 'Aún no hay publicaciones en el foro.',
             edit: 'Editar',
             delete: 'Borrar',
@@ -116,6 +134,8 @@ export default function ComunidadPage() {
             feedTitle: 'Live feed',
             filterAll: 'All',
             filterMine: 'My posts',
+            sortRecent: 'Recent',
+            sortPopular: 'Most liked',
             noPosts: 'No posts in the forum yet.',
             edit: 'Edit',
             delete: 'Delete',
@@ -164,6 +184,8 @@ export default function ComunidadPage() {
             if (data) setPosts(data as Post[]);
         } catch (err) {
             console.error('Error cargando comunidad:', err);
+        } finally {
+            setFeedLoading(false);
         }
     };
 
@@ -184,6 +206,26 @@ export default function ComunidadPage() {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         loadCommunityPosts();
         return () => subscription.unsubscribe();
+    }, []);
+
+    // Feed en vivo: cuando alguien publica, edita, borra o da like, el feed se
+    // refresca solo para todos los que tengan la página abierta. Requiere que
+    // "community_posts" y "post_likes" tengan Realtime activado en Supabase
+    // (Database → Replication) — ver supabase/rls-policies.sql.
+    useEffect(() => {
+        const channel = supabase
+            .channel('community-feed')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'community_posts' }, () => {
+                loadCommunityPosts();
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'post_likes' }, () => {
+                loadCommunityPosts();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
 
     const handleToggleLike = async (postId: string, currentLikes: Like[]) => {
@@ -219,33 +261,43 @@ export default function ComunidadPage() {
 
     const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: { data: { instagram_handle: instagramHandle } }
-        });
+        setAuthSubmitting(true);
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: email.trim(),
+                password,
+                options: { data: { instagram_handle: instagramHandle.trim() } }
+            });
 
-        if (error) {
-            push(error.message, 'error');
-            return;
-        }
+            if (error) {
+                push(error.message, 'error');
+                return;
+            }
 
-        if (data?.user && data.user.identities && data.user.identities.length === 0) {
-            push(t.emailTaken, 'error');
-        } else {
-            push(t.signUpOk, 'success');
-            setIsSignUp(false);
+            if (data?.user && data.user.identities && data.user.identities.length === 0) {
+                push(t.emailTaken, 'error');
+            } else {
+                push(t.signUpOk, 'success');
+                setIsSignUp(false);
+            }
+        } finally {
+            setAuthSubmitting(false);
         }
     };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) {
-            push(error.message, 'error');
-        } else {
-            setEmail('');
-            setPassword('');
+        setAuthSubmitting(true);
+        try {
+            const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+            if (error) {
+                push(error.message, 'error');
+            } else {
+                setEmail('');
+                setPassword('');
+            }
+        } finally {
+            setAuthSubmitting(false);
         }
     };
 
@@ -296,7 +348,7 @@ export default function ComunidadPage() {
                 .from('community_posts')
                 .insert([
                     {
-                        title: newPostTitle,
+                        title: newPostTitle.trim(),
                         image_url: publicUrl,
                         instagram_handle: authorHandle.startsWith('@') ? authorHandle : '@' + authorHandle,
                         instagram_url: newPostInstagramUrl.trim() || null,
@@ -351,7 +403,7 @@ export default function ComunidadPage() {
         try {
             const { error } = await supabase
                 .from('community_posts')
-                .update({ title: editText })
+                .update({ title: editText.trim() })
                 .eq('id', postId);
 
             if (error) throw error;
@@ -365,12 +417,20 @@ export default function ComunidadPage() {
         }
     };
 
-    const displayedPosts = posts.filter(post => {
-        if (filterMyPosts && user) {
-            return post.user_id === user.id;
-        }
-        return true;
-    });
+    const displayedPosts = posts
+        .filter(post => {
+            if (filterMyPosts && user) {
+                return post.user_id === user.id;
+            }
+            return true;
+        })
+        .slice()
+        .sort((a, b) => {
+            if (sortBy === 'popular') {
+                return (b.post_likes?.length || 0) - (a.post_likes?.length || 0);
+            }
+            return 0; // ya vienen ordenados por fecha desde la consulta
+        });
 
     const inputClass = "bg-[var(--color-ink)] border border-[var(--color-border)] rounded-xl px-4 py-3 text-sm text-[var(--color-text)] font-medium focus:outline-none focus:border-[var(--color-accent)] transition-colors placeholder:text-[var(--color-text-faint)]";
 
@@ -385,8 +445,8 @@ export default function ComunidadPage() {
                     <div className="flex items-center gap-4">
                         <span className="font-semibold text-xs uppercase tracking-widest text-[var(--color-text-muted)] hidden sm:inline">{t.foro}</span>
                         <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
-                            <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'es' ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>ES</button>
-                            <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>EN</button>
+                            <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'es' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>ES</button>
+                            <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>EN</button>
                         </div>
                     </div>
                 </div>
@@ -412,6 +472,7 @@ export default function ComunidadPage() {
                                 <input
                                     type="text"
                                     required
+                                    maxLength={HANDLE_MAX_LENGTH}
                                     placeholder={t.auth.handlePlaceholder}
                                     value={instagramHandle}
                                     onChange={(e) => setInstagramHandle(e.target.value)}
@@ -421,6 +482,7 @@ export default function ComunidadPage() {
                             <input
                                 type="email"
                                 required
+                                autoComplete="email"
                                 placeholder={t.auth.emailPlaceholder}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -429,6 +491,8 @@ export default function ComunidadPage() {
                             <input
                                 type="password"
                                 required
+                                minLength={6}
+                                autoComplete={isSignUp ? 'new-password' : 'current-password'}
                                 placeholder={t.auth.passwordPlaceholder}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -447,7 +511,8 @@ export default function ComunidadPage() {
                                     whileHover={{ y: -2 }}
                                     whileTap={{ y: 1 }}
                                     type="submit"
-                                    className="w-full sm:w-auto bg-[var(--color-accent)] text-[#1a1300] font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider hover:brightness-110 transition"
+                                    disabled={authSubmitting}
+                                    className="w-full sm:w-auto bg-[var(--color-accent)] text-[var(--color-accent-ink)] font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider hover:brightness-110 transition disabled:opacity-50"
                                 >
                                     {isSignUp ? t.auth.registerBtn : t.auth.loginBtn}
                                 </motion.button>
@@ -477,13 +542,18 @@ export default function ComunidadPage() {
                             <textarea
                                 required
                                 rows={3}
+                                maxLength={TITLE_MAX_LENGTH}
                                 placeholder={t.placeholder}
                                 value={newPostTitle}
                                 onChange={(e) => setNewPostTitle(e.target.value)}
                                 className={`${inputClass} resize-none`}
                             />
+                            <div className="text-right text-[10px] text-[var(--color-text-faint)] -mt-2">
+                                {newPostTitle.length}/{TITLE_MAX_LENGTH}
+                            </div>
                             <input
                                 type="url"
+                                maxLength={URL_MAX_LENGTH}
                                 placeholder={t.instagramUrlPlaceholder}
                                 value={newPostInstagramUrl}
                                 onChange={(e) => setNewPostInstagramUrl(e.target.value)}
@@ -495,7 +565,7 @@ export default function ComunidadPage() {
                                     accept="image/jpeg,image/png,image/webp,image/gif"
                                     required
                                     onChange={(e) => e.target.files && setFile(e.target.files[0])}
-                                    className="w-full sm:w-auto text-[var(--color-text-muted)] border border-[var(--color-border)] rounded-xl px-4 py-2 text-xs font-medium file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--color-accent)] file:text-[#1a1300] hover:file:cursor-pointer hover:file:brightness-110"
+                                    className="w-full sm:w-auto text-[var(--color-text-muted)] border border-[var(--color-border)] rounded-xl px-4 py-2 text-xs font-medium file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--color-accent)] file:text-[var(--color-accent-ink)] hover:file:cursor-pointer hover:file:brightness-110"
                                 />
                                 <motion.button
                                     whileHover={{ y: -2 }}
@@ -512,27 +582,59 @@ export default function ComunidadPage() {
                 )}
 
                 <div className="space-y-4">
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-faint)]">{t.feedTitle}</h3>
-                        {user && (
+                    <div className="flex flex-wrap justify-between items-center gap-3 mb-2">
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-faint)] flex items-center gap-2">
+                            {t.feedTitle}
+                            <span className="relative flex h-2 w-2" title="En vivo">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-accent-4)] opacity-75" />
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-accent-4)]" />
+                            </span>
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
                             <div className="flex gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
                                 <button
-                                    onClick={() => setFilterMyPosts(false)}
-                                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${!filterMyPosts ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
+                                    onClick={() => setSortBy('recent')}
+                                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${sortBy === 'recent' ? 'bg-[var(--color-accent-3)] text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
                                 >
-                                    {t.filterAll}
+                                    {t.sortRecent}
                                 </button>
                                 <button
-                                    onClick={() => setFilterMyPosts(true)}
-                                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${filterMyPosts ? 'bg-[var(--color-accent)] text-[#1a1300]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
+                                    onClick={() => setSortBy('popular')}
+                                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${sortBy === 'popular' ? 'bg-[var(--color-accent-3)] text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
                                 >
-                                    {t.filterMine}
+                                    {t.sortPopular}
                                 </button>
                             </div>
-                        )}
+                            {user && (
+                                <div className="flex gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
+                                    <button
+                                        onClick={() => setFilterMyPosts(false)}
+                                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${!filterMyPosts ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
+                                    >
+                                        {t.filterAll}
+                                    </button>
+                                    <button
+                                        onClick={() => setFilterMyPosts(true)}
+                                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${filterMyPosts ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
+                                    >
+                                        {t.filterMine}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    {displayedPosts.length === 0 ? (
+                    {feedLoading ? (
+                        <div className="space-y-4" aria-hidden="true">
+                            {[0, 1, 2].map((i) => (
+                                <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-5 flex flex-col gap-3">
+                                    <div className="h-4 w-32 rounded-full animate-shimmer" />
+                                    <div className="h-4 w-full rounded-full animate-shimmer" />
+                                    <div className="h-48 w-full rounded-xl animate-shimmer" />
+                                </div>
+                            ))}
+                        </div>
+                    ) : displayedPosts.length === 0 ? (
                         <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-muted)] font-medium text-sm">
                             {t.noPosts}
                         </div>
@@ -550,20 +652,29 @@ export default function ComunidadPage() {
                                     className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-5 flex flex-col gap-3"
                                 >
                                     <div className="flex items-center justify-between">
-                                        {post.instagram_url ? (
-                                            <a
-                                                href={post.instagram_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide hover:underline flex items-center gap-1"
+                                        <div className="flex items-center gap-2.5">
+                                            <div
+                                                className="w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-[11px] font-black text-[#14100a]"
+                                                style={{ background: avatarColorFor(post.instagram_handle || 'anon') }}
+                                                aria-hidden="true"
                                             >
-                                                {post.instagram_handle || 'Anónimo'} ↗
-                                            </a>
-                                        ) : (
-                                            <span className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide">
-                                                {post.instagram_handle || 'Anónimo'}
-                                            </span>
-                                        )}
+                                                {(post.instagram_handle || 'A').replace('@', '').charAt(0).toUpperCase()}
+                                            </div>
+                                            {post.instagram_url ? (
+                                                <a
+                                                    href={post.instagram_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide hover:underline flex items-center gap-1"
+                                                >
+                                                    {post.instagram_handle || 'Anónimo'} ↗
+                                                </a>
+                                            ) : (
+                                                <span className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide">
+                                                    {post.instagram_handle || 'Anónimo'}
+                                                </span>
+                                            )}
+                                        </div>
 
                                         <div className="flex items-center gap-3">
                                             {user?.id === post.user_id && (
@@ -601,6 +712,7 @@ export default function ComunidadPage() {
                                             >
                                                 <textarea
                                                     rows={2}
+                                                    maxLength={TITLE_MAX_LENGTH}
                                                     value={editText}
                                                     onChange={(e) => setEditText(e.target.value)}
                                                     className={`${inputClass} resize-none`}
@@ -608,7 +720,7 @@ export default function ComunidadPage() {
                                                 <div className="flex gap-2 justify-end">
                                                     <button
                                                         onClick={() => handleEdit(post.id)}
-                                                        className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-full text-[10px] uppercase transition-colors"
+                                                        className="bg-[var(--color-accent-4)] hover:brightness-110 text-white font-bold px-3 py-1.5 rounded-full text-[10px] uppercase transition-all"
                                                     >
                                                         {t.save}
                                                     </button>

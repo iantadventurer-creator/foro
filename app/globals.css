@@ -6,17 +6,27 @@
   --font-sans: var(--font-geist-sans);
   --font-display: var(--font-space-grotesk);
 
-  /* Paleta editorial — estudio de fotografía en miniaturas */
+  /* Fondo — estudio de fotografía en miniaturas (sin tocar) */
   --color-ink: #05070c;
   --color-surface: #10182b;
   --color-surface-2: #161f38;
   --color-border: #212c46;
-  --color-accent: #f2b705;
-  --color-accent-2: #ff4d6d;
-  --color-accent-3: #3b82f6;
   --color-text: #f5f7fb;
   --color-text-muted: #8c99b8;
   --color-text-faint: #5c6789;
+
+  /* Acentos — inspirados en los colores LEGO, ajustados para armonizar con el fondo oscuro */
+  --color-accent: #b3382c;    /* Rojo ladrillo (LEGO Red desaturado) — color principal */
+  --color-accent-2: #e0791f; /* Naranja tostado — Reels, borrar/errores */
+  --color-accent-3: #006cb7;  /* LEGO Blue */
+  --color-accent-4: #00852b;  /* LEGO Green */
+  --color-accent-ink: #ffffff; /* texto sobre el acento principal */
+
+  /* Sombra "de canto" de cada acento, para el efecto de pieza de plástico */
+  --shadow-accent: #6e2019;
+  --shadow-accent-2: #8a4d0f;
+  --shadow-accent-3: #003f5c;
+  --shadow-accent-4: #004d1a;
 }
 
 :root {
@@ -39,7 +49,7 @@ body {
 
 ::selection {
   background: var(--color-accent);
-  color: #14100a;
+  color: var(--color-accent-ink);
 }
 
 /* Enfoque visible consistente para navegación por teclado */

@@ -28,7 +28,7 @@ export function useToasts() {
 
 const variantStyles: Record<ToastVariant, string> = {
     error: 'bg-[#2a1220] border-[var(--color-accent-2)]/50 text-[var(--color-accent-2)]',
-    success: 'bg-[#0f2a20] border-emerald-500/50 text-emerald-400',
+    success: 'bg-[#0f2a1c] border-[var(--color-accent-4)]/50 text-[var(--color-accent-4)]',
     info: 'bg-[var(--color-surface-2)] border-[var(--color-border)] text-[var(--color-text)]',
 };
 
