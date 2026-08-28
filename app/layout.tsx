@@ -26,6 +26,7 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://iantbuild.vercel.app'),
   title: {
     default: "IanTBuild — Fotografía de miniaturas LEGO",
     template: "%s · IanTBuild",
