@@ -28,22 +28,56 @@ type FeedItem = {
 const GALLERY_BUCKET = 'galeria';
 const VIDEO_EXTENSIONS = ['mp4', 'mov', 'webm'];
 
+/** "STAR WARS" → "Star Wars", pero conserva las siglas cortas (p. ej. "DC") en mayúsculas. */
+function formatCategoryLabel(raw: string): string {
+  return raw
+    .toLowerCase()
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((word) => (word.length <= 2 ? word.toUpperCase() : word.charAt(0).toUpperCase() + word.slice(1)))
+    .join(' ');
+}
+
+/** Color de acento propio por categoría/franquicia, con su sombra "de canto" y el color de texto legible sobre ese fondo. */
+const CATEGORY_THEMES: Record<string, { accent: string; shadow: string; ink: string }> = {
+  'star wars': { accent: '#E8B923', shadow: '#8a6e14', ink: '#1a1300' },
+  ninjago: { accent: '#FF6B00', shadow: '#a34500', ink: '#2b1200' },
+  marvel: { accent: '#C0110C', shadow: '#6e0a07', ink: '#ffffff' },
+  dc: { accent: '#0476F2', shadow: '#024a99', ink: '#ffffff' },
+  minecraft: { accent: '#5C9E31', shadow: '#375f1d', ink: '#ffffff' },
+  chill: { accent: '#8B7CF6', shadow: '#4f4499', ink: '#ffffff' },
+};
+
+function getCategoryTheme(category: string | null): { accent: string; shadow: string; ink: string } | null {
+  if (!category) return null;
+  return CATEGORY_THEMES[category.trim().toLowerCase()] || null;
+}
+
 function FilterPill({
   children,
   onClick,
   active,
+  theme,
 }: {
   children: React.ReactNode;
   onClick: () => void;
   active: boolean;
+  theme?: { accent: string; shadow: string; ink: string } | null;
 }) {
   return (
     <motion.button
       onClick={onClick}
       aria-pressed={active}
       whileTap={active ? { y: 1 } : undefined}
-      className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-200 whitespace-nowrap border ${active
-          ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-[var(--color-accent)] shadow-[0_3px_0_0_var(--shadow-accent)]'
+      style={
+        active && theme
+          ? { background: theme.accent, color: theme.ink, borderColor: theme.accent, boxShadow: `0 3px 0 0 ${theme.shadow}` }
+          : undefined
+      }
+      className={`px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wider transition-colors duration-200 whitespace-nowrap border ${active
+          ? theme
+            ? ''
+            : 'bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-[var(--color-accent)] shadow-[0_3px_0_0_var(--shadow-accent)]'
           : 'bg-transparent text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)] hover:border-[var(--color-text-muted)]'
         }`}
     >
@@ -122,7 +156,7 @@ export default function Home() {
 
       return {
         id: storagePath,
-        title: 'Toy Photography',
+        title: category ? formatCategoryLabel(category) : 'Toy Photography',
         captionFull: '',
         tags: [],
         src: publicUrl,
@@ -224,6 +258,7 @@ export default function Home() {
   }, [filteredItems, safePage]);
 
   const previewShots = feedItems.slice(0, 3);
+  const modalTheme = getCategoryTheme(selectedItem?.category ?? null);
 
   const content = {
     es: {
@@ -464,21 +499,26 @@ export default function Home() {
 
       {/* GALLERY */}
       <section id="gallery" className="max-w-7xl mx-auto px-6 py-16 relative z-10">
-        <div className="mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
+        <div className="mb-12 flex flex-col items-center text-center gap-6">
           <div>
-            <motion.h2 initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-text)]">
+            <motion.h2 initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-text)]">
               {t.gallery.title}
             </motion.h2>
             <p className="text-sm text-[var(--color-text-muted)] mt-1">{t.gallery.subtitle}</p>
           </div>
           {categories.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center justify-center gap-3 flex-wrap">
               <FilterPill onClick={() => { setFilterCategory(null); setCurrentPage(1); }} active={filterCategory === null}>
                 {t.gallery.filterAll}
               </FilterPill>
               {categories.map((cat) => (
-                <FilterPill key={cat} onClick={() => { setFilterCategory(cat); setCurrentPage(1); }} active={filterCategory === cat}>
-                  {cat}
+                <FilterPill
+                  key={cat}
+                  onClick={() => { setFilterCategory(cat); setCurrentPage(1); }}
+                  active={filterCategory === cat}
+                  theme={getCategoryTheme(cat)}
+                >
+                  {formatCategoryLabel(cat)}
                 </FilterPill>
               ))}
             </div>
@@ -504,6 +544,7 @@ export default function Home() {
             <div className="columns-1 sm:columns-2 lg:columns-3 gap-6">
               {paginatedItems.map((item) => {
                 const isVideo = item.mediaType === 'VIDEO';
+                const cardTheme = getCategoryTheme(item.category);
                 return (
                   <motion.figure
                     key={item.id}
@@ -521,7 +562,8 @@ export default function Home() {
                         openItem(item);
                       }
                     }}
-                    className="mb-6 break-inside-avoid group cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)]/60 transition-colors relative focus-visible:border-[var(--color-accent)]"
+                    style={{ '--card-accent': cardTheme?.accent ?? 'var(--color-accent)' } as React.CSSProperties}
+                    className="mb-6 break-inside-avoid group cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--card-accent)]/60 transition-colors relative focus-visible:border-[var(--card-accent)]"
                   >
                     <div className="relative overflow-hidden bg-black">
                       <img
@@ -536,8 +578,12 @@ export default function Home() {
                         </div>
                       )}
                       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 pt-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <figcaption className="text-sm font-semibold text-white line-clamp-1">{item.title}</figcaption>
-                        <p className="text-xs text-white/70 mt-0.5">{item.date}</p>
+                        <figcaption
+                          className="text-sm font-bold line-clamp-1"
+                          style={{ color: cardTheme?.accent ?? '#ffffff' }}
+                        >
+                          {item.title}
+                        </figcaption>
                       </div>
                     </div>
                   </motion.figure>
@@ -600,42 +646,57 @@ export default function Home() {
                   />
                 )}
                 {selectedItem.videoUrl ? (
-                  <video src={selectedItem.videoUrl} controls autoPlay loop className="relative z-10 max-h-[75vh] w-full object-contain" />
+                  <video src={selectedItem.videoUrl} controls autoPlay loop className="relative z-10 max-h-[60vh] w-full object-contain" />
                 ) : (
-                  <img src={selectedItem.src} alt={selectedItem.title} className="relative z-10 max-h-[75vh] w-full object-contain" />
+                  <img src={selectedItem.src} alt={selectedItem.title} className="relative z-10 max-h-[60vh] w-full object-contain" />
                 )}
               </div>
-              <div className="w-full md:w-2/5 p-6 flex flex-col justify-between">
-                <div>
-                  <div className="flex justify-between items-center mb-5">
-                    <span className="text-xs font-bold text-[var(--color-accent)] uppercase tracking-widest">{selectedItem.author}</span>
-                    <button
-                      ref={closeButtonRef}
-                      onClick={closeModal}
-                      aria-label={t.modal.close}
-                      className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
+              <div className="w-full md:w-2/5 p-6 flex flex-col">
+                <div className="flex justify-between items-center">
+                  <span
+                    className="text-xs font-bold uppercase tracking-widest"
+                    style={{ color: modalTheme?.accent ?? 'var(--color-accent)' }}
+                  >
+                    {selectedItem.author}
+                  </span>
+                  <button
+                    ref={closeButtonRef}
+                    onClick={closeModal}
+                    aria-label={t.modal.close}
+                    className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="flex-1 flex flex-col items-center justify-center text-center py-6">
+                  <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-[var(--color-text)] mb-3">{selectedItem.title}</h3>
+                  {selectedItem.captionFull.trim() && (
+                    <p className="text-sm text-[var(--color-text-muted)] whitespace-pre-line leading-relaxed mb-6">{selectedItem.captionFull}</p>
+                  )}
+                  <div
+                    className="w-full pt-4 mt-3 flex flex-col gap-2.5"
+                    style={{ borderTop: `1px solid ${modalTheme ? `${modalTheme.accent}40` : 'var(--color-border)'}` }}
+                  >
+                    <a
+                      href={selectedItem.permalink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-button block text-center text-xs font-bold uppercase tracking-wider py-3 rounded-full hover:brightness-110 transition"
+                      style={{
+                        color: modalTheme?.ink ?? 'var(--color-accent-ink)',
+                        background: modalTheme?.accent ?? 'var(--color-accent)',
+                        boxShadow: `0 4px 0 0 ${modalTheme?.shadow ?? 'var(--shadow-accent)'}`,
+                      }}
                     >
-                      ✕
+                      {t.modal.viewOnIg} ↗
+                    </a>
+                    <button
+                      onClick={() => handleCopyLink(selectedItem.permalink)}
+                      className="block w-full text-center text-xs font-bold uppercase tracking-wider text-[var(--color-text)] bg-[var(--color-surface-2)] hover:bg-[var(--color-border)] py-3 rounded-full border border-[var(--color-border)] transition-all"
+                    >
+                      {copied ? t.modal.copied + ' ✨' : t.modal.copyLink}
                     </button>
                   </div>
-                  <h3 className="font-display text-lg font-semibold text-[var(--color-text)] mb-3">{selectedItem.title}</h3>
-                  <p className="text-sm text-[var(--color-text-muted)] whitespace-pre-line leading-relaxed mb-6">{selectedItem.captionFull}</p>
-                </div>
-                <div className="pt-4 border-t border-[var(--color-border)] flex flex-col gap-2.5">
-                  <a
-                    href={selectedItem.permalink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-button block text-center text-xs font-bold uppercase tracking-wider text-[var(--color-accent-ink)] bg-[var(--color-accent)] py-3 rounded-full hover:brightness-110 transition"
-                  >
-                    {t.modal.viewOnIg} ↗
-                  </a>
-                  <button
-                    onClick={() => handleCopyLink(selectedItem.permalink)}
-                    className="block w-full text-center text-xs font-bold uppercase tracking-wider text-[var(--color-text)] bg-[var(--color-surface-2)] hover:bg-[var(--color-border)] py-3 rounded-full border border-[var(--color-border)] transition-all"
-                  >
-                    {copied ? t.modal.copied + ' ✨' : t.modal.copyLink}
-                  </button>
                 </div>
               </div>
             </motion.div>
