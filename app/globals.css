@@ -4,7 +4,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-display: var(--font-fredoka);
+  --font-display: var(--font-space-grotesk);
+  --font-button: var(--font-fredoka);
 
   /* Fondo — estudio de fotografía en miniaturas (sin tocar) */
   --color-ink: #05070c;
@@ -50,6 +51,15 @@ body {
 ::selection {
   background: var(--color-accent);
   color: var(--color-accent-ink);
+}
+
+/* Tipografía "de bloque" reservada para los botones (ver nota en layout.tsx). */
+button {
+  font-family: var(--font-button);
+}
+
+.font-button {
+  font-family: var(--font-button);
 }
 
 /* Enfoque visible consistente para navegación por teclado */

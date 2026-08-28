@@ -317,7 +317,7 @@ export default function Home() {
               href="https://instagram.com/iantadventurer"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center text-xs font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-5 py-2.5 rounded-full shadow-[0_3px_0_0_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
+              className="font-button hidden sm:inline-flex items-center text-xs font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-5 py-2.5 rounded-full shadow-[0_3px_0_0_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
             >
               {t.nav.cta}
             </motion.a>
@@ -379,12 +379,12 @@ export default function Home() {
               whileHover={{ y: -3 }}
               whileTap={{ y: 2 }}
               href="#gallery"
-              className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-7 py-3.5 rounded-full shadow-[0_5px_0_0_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
+              className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-7 py-3.5 rounded-full shadow-[0_5px_0_0_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
             >
               {t.hero.btnExplore} ↓
             </motion.a>
             <motion.div whileHover={{ y: -3 }} whileTap={{ y: 2 }}>
-              <Link href="/comunidad" className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white bg-[var(--color-accent-3)] px-7 py-3.5 rounded-full shadow-[0_5px_0_0_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]">
+              <Link href="/comunidad" className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white bg-[var(--color-accent-3)] px-7 py-3.5 rounded-full shadow-[0_5px_0_0_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]">
                 {t.nav.community}
               </Link>
             </motion.div>
@@ -582,7 +582,7 @@ export default function Home() {
                     href={selectedItem.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-center text-xs font-bold uppercase tracking-wider text-[var(--color-accent-ink)] bg-[var(--color-accent)] py-3 rounded-full hover:brightness-110 transition"
+                    className="font-button block text-center text-xs font-bold uppercase tracking-wider text-[var(--color-accent-ink)] bg-[var(--color-accent)] py-3 rounded-full hover:brightness-110 transition"
                   >
                     {t.modal.viewOnIg} ↗
                   </a>
@@ -608,7 +608,7 @@ export default function Home() {
             <p className="text-[var(--color-text-muted)] text-base leading-relaxed">{t.aboutSection.desc}</p>
           </div>
           <div className="flex md:flex-col gap-4 md:gap-6 md:border-l md:border-[var(--color-border)] md:pl-10">
-            <a href="https://instagram.com/iantadventurer" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text)] border border-[var(--color-border)] px-6 py-3.5 rounded-full hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition whitespace-nowrap">
+            <a href="https://instagram.com/iantadventurer" target="_blank" rel="noopener noreferrer" className="font-button inline-flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text)] border border-[var(--color-border)] px-6 py-3.5 rounded-full hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition whitespace-nowrap">
               {t.aboutSection.cta}
             </a>
           </div>
