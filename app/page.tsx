@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { GallerySkeleton } from '@/components/ui/GallerySkeleton';
 import { StudDivider } from '@/components/ui/StudDivider';
+import { supabase } from '@/lib/supabaseClient';
 
 type FeedItem = {
   id: string;
@@ -17,31 +18,15 @@ type FeedItem = {
   mediaType: 'VIDEO' | 'IMAGE';
   author: string;
   date: string;
+  /** Nombre de la subcarpeta del bucket (p. ej. "STAR WARS"), o null si la foto está suelta en la raíz. */
+  category: string | null;
+  /** Fecha real (no formateada) para poder ordenar por más reciente entre categorías. */
+  createdAtMs: number;
 };
 
-type FilterType = 'ALL' | 'REELS' | 'PHOTOS';
-
-/** Forma (parcial) de un post tal como lo devuelve el feed de Behold/Instagram. */
-type BeholdRawPost = {
-  id?: string;
-  caption?: string;
-  mediaType?: string;
-  videoUrl?: string;
-  mediaUrl?: string;
-  thumbnailUrl?: string;
-  permalink?: string;
-  timestamp?: string | number;
-  sizes?: { medium?: { mediaUrl?: string } };
-};
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: 'spring', stiffness: 260, damping: 24 },
-  },
-};
+/** Nombre del bucket público de Supabase Storage donde se suben las fotos de la galería. */
+const GALLERY_BUCKET = 'galeria';
+const VIDEO_EXTENSIONS = ['mp4', 'mov', 'webm'];
 
 function FilterPill({
   children,
@@ -67,11 +52,20 @@ function FilterPill({
   );
 }
 
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: 'spring', stiffness: 260, damping: 24 },
+  },
+};
+
 export default function Home() {
   const [lang, setLang] = useState<'es' | 'en'>('es');
   const [selectedItem, setSelectedItem] = useState<FeedItem | null>(null);
-  const [filterType, setFilterType] = useState<FilterType>('ALL');
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [feedError, setFeedError] = useState(false);
@@ -115,48 +109,83 @@ export default function Home() {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadInstagramFeed() {
+    function buildItem(
+      file: { id: string | null; name: string; created_at?: string | null; updated_at?: string | null },
+      category: string | null,
+      storagePath: string
+    ): FeedItem {
+      const ext = file.name.split('.').pop()?.toLowerCase() || '';
+      const isVideoType = VIDEO_EXTENSIONS.includes(ext);
+      const { data: { publicUrl } } = supabase.storage.from(GALLERY_BUCKET).getPublicUrl(storagePath);
+      const createdAt = file.created_at || file.updated_at;
+      const createdAtMs = createdAt ? new Date(createdAt).getTime() : 0;
+
+      return {
+        id: storagePath,
+        title: 'Toy Photography',
+        captionFull: '',
+        tags: [],
+        src: publicUrl,
+        videoUrl: isVideoType ? publicUrl : null,
+        permalink: 'https://instagram.com/iantadventurer',
+        mediaType: isVideoType ? 'VIDEO' : 'IMAGE',
+        author: '@iantadventurer',
+        category,
+        createdAtMs,
+        date: createdAt
+          ? new Date(createdAt).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })
+          : '',
+      };
+    }
+
+    // Una "carpeta" en Supabase Storage se distingue de un archivo porque no
+    // trae metadata (id es null). Cada subcarpeta del bucket se trata como
+    // una categoría de la galería (su nombre es el que se muestra en el filtro).
+    async function loadGallery() {
       setLoading(true);
       setFeedError(false);
       try {
-        const response = await fetch('/api/behold');
-        if (!response.ok) throw new Error('Error al conectar');
-        const data = await response.json();
-        const rawPosts: BeholdRawPost[] = Array.isArray(data) ? data : (data.posts || data.data || []);
+        const { data: rootEntries, error } = await supabase.storage
+          .from(GALLERY_BUCKET)
+          .list('', { sortBy: { column: 'name', order: 'asc' } });
 
-        const formattedPosts: FeedItem[] = rawPosts.map((item, index) => {
-          const caption = item.caption || '';
-          const isVideoType = item.mediaType === 'VIDEO' || item.mediaType === 'REEL' || !!item.videoUrl;
+        if (error) throw error;
 
-          return {
-            id: item.id || `feed-${index}`,
-            title: caption ? caption.split('\n')[0] : 'Toy Photography',
-            captionFull: caption,
-            tags: (caption.match(/#[a-zA-Z0-9_]+/g) || []).map((t: string) => t.toLowerCase()),
-            src: item.thumbnailUrl || item.mediaUrl || item.sizes?.medium?.mediaUrl || item.permalink || '',
-            videoUrl: isVideoType ? (item.mediaUrl || item.videoUrl || null) : null,
-            permalink: item.permalink || 'https://instagram.com/iantadventurer',
-            mediaType: isVideoType ? 'VIDEO' : 'IMAGE',
-            author: '@iantadventurer',
-            date: item.timestamp
-              ? new Date(item.timestamp).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })
-              : '',
-          };
-        });
-        if (!cancelled) setFeedItems(formattedPosts);
+        const items: FeedItem[] = [];
+
+        for (const entry of rootEntries || []) {
+          if (!entry.name || entry.name.startsWith('.')) continue;
+          const isFolder = entry.id === null;
+
+          if (isFolder) {
+            const { data: subEntries } = await supabase.storage
+              .from(GALLERY_BUCKET)
+              .list(entry.name, { sortBy: { column: 'created_at', order: 'desc' } });
+
+            for (const file of subEntries || []) {
+              if (!file.name || file.name.startsWith('.') || file.id === null) continue;
+              items.push(buildItem(file, entry.name, `${entry.name}/${file.name}`));
+            }
+          } else {
+            items.push(buildItem(entry, null, entry.name));
+          }
+        }
+
+        items.sort((a, b) => b.createdAtMs - a.createdAtMs);
+        if (!cancelled) setFeedItems(items);
       } catch (error) {
-        console.error('Error cargando el feed:', error);
+        console.error('Error cargando la galería:', error);
         if (!cancelled) setFeedError(true);
       } finally {
         if (!cancelled) setLoading(false);
       }
     }
 
-    loadInstagramFeed();
+    loadGallery();
     return () => {
       cancelled = true;
     };
@@ -168,13 +197,23 @@ export default function Home() {
     setTimeout(() => setCopied(false), 2500);
   };
 
+  // Categorías disponibles = nombres de subcarpeta encontrados, en el orden en que aparecen.
+  const categories = useMemo(() => {
+    const seen = new Set<string>();
+    const list: string[] = [];
+    for (const item of feedItems) {
+      if (item.category && !seen.has(item.category)) {
+        seen.add(item.category);
+        list.push(item.category);
+      }
+    }
+    return list;
+  }, [feedItems]);
+
   const filteredItems = useMemo(() => {
-    return feedItems.filter((item) => {
-      if (filterType === 'REELS' && item.mediaType !== 'VIDEO') return false;
-      if (filterType === 'PHOTOS' && item.mediaType === 'VIDEO') return false;
-      return true;
-    });
-  }, [feedItems, filterType]);
+    if (!filterCategory) return feedItems;
+    return feedItems.filter((item) => item.category === filterCategory);
+  }, [feedItems, filterCategory]);
 
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
   const safePage = Math.min(currentPage, totalPages);
@@ -200,8 +239,8 @@ export default function Home() {
       gallery: {
         title: 'Universo creado',
         subtitle: 'Cada escena es un set construido desde cero: piezas, luz y paciencia.',
-        filters: { all: 'Todo', reels: 'Reels', photos: 'Fotografías' },
-        empty: 'No hay publicaciones con este filtro.',
+        filterAll: 'Todo',
+        empty: 'Aún no hay fotos en la galería.',
         errorTitle: 'No se pudo cargar el feed',
         errorDesc: 'Hubo un problema de conexión con Instagram. Puedes intentarlo de nuevo.',
         retry: 'Reintentar',
@@ -238,8 +277,8 @@ export default function Home() {
       gallery: {
         title: 'Crafted universe',
         subtitle: 'Every scene is a set built from scratch: bricks, light, and patience.',
-        filters: { all: 'All', reels: 'Reels', photos: 'Photographs' },
-        empty: 'No posts match this filter.',
+        filterAll: 'All',
+        empty: 'No photos in the gallery yet.',
         errorTitle: "Couldn't load the feed",
         errorDesc: 'There was a connection issue with Instagram. You can try again.',
         retry: 'Retry',
@@ -425,20 +464,25 @@ export default function Home() {
 
       {/* GALLERY */}
       <section id="gallery" className="max-w-7xl mx-auto px-6 py-16 relative z-10">
-        <div className="flex flex-col gap-6 mb-10">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
-            <div>
-              <motion.h2 initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-text)]">
-                {t.gallery.title}
-              </motion.h2>
-              <p className="text-sm text-[var(--color-text-muted)] mt-1">{t.gallery.subtitle}</p>
-            </div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <FilterPill onClick={() => { setFilterType('ALL'); setCurrentPage(1); }} active={filterType === 'ALL'}>{t.gallery.filters.all}</FilterPill>
-              <FilterPill onClick={() => { setFilterType('REELS'); setCurrentPage(1); }} active={filterType === 'REELS'}>{t.gallery.filters.reels}</FilterPill>
-              <FilterPill onClick={() => { setFilterType('PHOTOS'); setCurrentPage(1); }} active={filterType === 'PHOTOS'}>{t.gallery.filters.photos}</FilterPill>
-            </div>
+        <div className="mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
+          <div>
+            <motion.h2 initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-text)]">
+              {t.gallery.title}
+            </motion.h2>
+            <p className="text-sm text-[var(--color-text-muted)] mt-1">{t.gallery.subtitle}</p>
           </div>
+          {categories.length > 0 && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <FilterPill onClick={() => { setFilterCategory(null); setCurrentPage(1); }} active={filterCategory === null}>
+                {t.gallery.filterAll}
+              </FilterPill>
+              {categories.map((cat) => (
+                <FilterPill key={cat} onClick={() => { setFilterCategory(cat); setCurrentPage(1); }} active={filterCategory === cat}>
+                  {cat}
+                </FilterPill>
+              ))}
+            </div>
+          )}
         </div>
 
         {loading ? (

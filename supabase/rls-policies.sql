@@ -80,8 +80,21 @@ create policy "foro_fotos_delete_own"
   using (bucket_id = 'foro-fotos' and auth.uid() = owner);
 
 -- ============================================================================
--- 5) (Opcional, recomendado) Activa Realtime para que el feed se actualice
---    en vivo para todos los visitantes sin recargar la página:
+-- 5) Storage (bucket "galeria"): la galería principal de la portada. Solo
+--    lectura pública — nadie puede subir ni borrar con la clave pública de
+--    la web; tú subes las fotos directamente desde el panel de Supabase
+--    (Storage → galeria), que usa tu sesión de administrador, no esta clave.
+--    Sin esta política, la web puede ver cada foto por su URL directa, pero
+--    no puede "listar" qué archivos hay — por eso la galería aparecía vacía.
+-- ============================================================================
+drop policy if exists "galeria_select_all" on storage.objects;
+create policy "galeria_select_all"
+  on storage.objects for select
+  using (bucket_id = 'galeria');
+
+-- ============================================================================
+-- 6) (Opcional, recomendado) Activa Realtime para que el feed del foro se
+--    actualice en vivo para todos los visitantes sin recargar la página:
 --    Database → Replication → activa "community_posts" y "post_likes".
 --    La web ya está preparada para aprovechar esto en cuanto lo actives.
 -- ============================================================================
