@@ -651,8 +651,8 @@ export default function ComunidadPage() {
                                     transition={{ duration: 0.3, delay: Math.min(index, 8) * 0.05 }}
                                     className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-5 flex flex-col gap-3"
                                 >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2.5">
+                                    <div className="flex items-center justify-between flex-wrap gap-y-2">
+                                        <div className="flex items-center gap-2.5 min-w-0">
                                             <div
                                                 className="w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-[11px] font-black text-[#14100a]"
                                                 style={{ background: avatarColorFor(post.instagram_handle || 'anon') }}
@@ -665,18 +665,18 @@ export default function ComunidadPage() {
                                                     href={post.instagram_url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide hover:underline flex items-center gap-1"
+                                                    className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide hover:underline flex items-center gap-1 truncate"
                                                 >
-                                                    {post.instagram_handle || 'Anónimo'} ↗
+                                                    <span className="truncate">{post.instagram_handle || 'Anónimo'}</span> ↗
                                                 </a>
                                             ) : (
-                                                <span className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide">
+                                                <span className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide truncate">
                                                     {post.instagram_handle || 'Anónimo'}
                                                 </span>
                                             )}
                                         </div>
 
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-3 shrink-0">
                                             {user?.id === post.user_id && (
                                                 <div className="flex gap-2">
                                                     <button

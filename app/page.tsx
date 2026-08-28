@@ -344,11 +344,11 @@ export default function Home() {
               exit={{ height: 0, opacity: 0 }}
               className="md:hidden overflow-hidden border-t border-[var(--color-border)]"
             >
-              <div className="px-6 py-5 flex flex-col gap-4 text-sm font-semibold">
-                <a href="#gallery" onClick={() => setMobileMenuOpen(false)} className="text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.gallery}</a>
-                <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.community}</Link>
-                <a href="#about" onClick={() => setMobileMenuOpen(false)} className="text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.about}</a>
-                <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)] w-fit">
+              <div className="px-6 py-3 flex flex-col text-sm font-semibold">
+                <a href="#gallery" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.gallery}</a>
+                <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.community}</Link>
+                <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.about}</a>
+                <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)] w-fit mt-2">
                   <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'es' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)]'}`}>ES</button>
                   <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'en' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)]'}`}>EN</button>
                 </div>

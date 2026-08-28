@@ -66,7 +66,7 @@ export function BackgroundBrick({
             initial={{ y: 0, rotate }}
             animate={{ y: [0, -20, 0], rotate: [rotate, rotate + 5, rotate] }}
             transition={{ duration: 8, repeat: Infinity, delay, ease: 'easeInOut' }}
-            className="absolute pointer-events-none hidden md:block -z-10 opacity-25"
+            className="absolute pointer-events-none block -z-10 opacity-25"
             style={{ top, left, right, bottom, width, height }}
         >
             <svg viewBox={`0 0 ${naturalWidth} ${naturalHeight}`} className="w-full h-full block">
