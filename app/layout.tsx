@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import { Space_Grotesk } from "next/font/google";
 import { Fredoka } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { BackgroundBrickField } from "@/components/ui/BackgroundBrickField";
 
 const geistSans = Geist({
@@ -67,6 +68,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[var(--color-ink)] text-[var(--color-text)]">
         <BackgroundBrickField />
         {children}
+        <Analytics />
       </body>
     </html>
   );
