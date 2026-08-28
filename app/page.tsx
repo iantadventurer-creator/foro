@@ -384,7 +384,7 @@ export default function Home() {
               {t.hero.btnExplore} ↓
             </motion.a>
             <motion.div whileHover={{ y: -3 }} whileTap={{ y: 2 }}>
-              <Link href="/comunidad" className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-text)] border border-[var(--color-border)] px-7 py-3.5 rounded-full shadow-[0_5px_0_0_var(--color-border)] hover:border-[var(--color-text-muted)] transition">
+              <Link href="/comunidad" className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white bg-[var(--color-accent-3)] px-7 py-3.5 rounded-full shadow-[0_5px_0_0_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]">
                 {t.nav.community} ✨
               </Link>
             </motion.div>
