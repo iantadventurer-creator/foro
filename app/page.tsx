@@ -433,9 +433,9 @@ export default function Home() {
       </header>
 
       {/* HERO */}
-      <section id="top" className="relative z-0 max-w-7xl mx-auto px-6 pt-20 pb-24 grid md:grid-cols-2 gap-16 items-center">
-        <div className="absolute top-10 left-0 w-[28rem] h-[28rem] bg-[var(--color-accent-3)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
-        <div className="absolute bottom-0 right-0 w-[24rem] h-[24rem] bg-[var(--color-accent)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
+      <section id="top" className="relative z-0 overflow-hidden max-w-7xl mx-auto px-6 pt-20 pb-24 grid md:grid-cols-2 gap-16 items-center">
+        <div className="absolute top-10 left-0 w-64 h-64 md:w-[28rem] md:h-[28rem] bg-[var(--color-accent-3)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
+        <div className="absolute bottom-0 right-0 w-56 h-56 md:w-[24rem] md:h-[24rem] bg-[var(--color-accent)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
 
         <div>
           <motion.div variants={fadeUp} initial="hidden" animate="visible" className="inline-flex items-center gap-2 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-accent)] text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
