@@ -385,7 +385,7 @@ export default function Home() {
             </motion.a>
             <motion.div whileHover={{ y: -3 }} whileTap={{ y: 2 }}>
               <Link href="/comunidad" className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white bg-[var(--color-accent-3)] px-7 py-3.5 rounded-full shadow-[0_5px_0_0_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]">
-                {t.nav.community} ✨
+                {t.nav.community}
               </Link>
             </motion.div>
           </motion.div>

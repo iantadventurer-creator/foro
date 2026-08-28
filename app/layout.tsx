@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
-import { Space_Grotesk } from "next/font/google";
+import { Fredoka } from "next/font/google";
 import "./globals.css";
 import { BackgroundBrickField } from "@/components/ui/BackgroundBrickField";
 
@@ -9,8 +9,11 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+// La fuente exacta del logotipo de LEGO es propiedad de la marca y no está
+// disponible para uso libre. Fredoka es una alternativa gratuita con el mismo
+// espíritu: redondeada, gruesa y juguetona, para los títulos.
+const fredoka = Fredoka({
+  variable: "--font-fredoka",
   subsets: ["latin"],
   weight: ["500", "600", "700"],
 });
@@ -51,7 +54,7 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${fredoka.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[var(--color-ink)] text-[var(--color-text)]">
         <BackgroundBrickField />
