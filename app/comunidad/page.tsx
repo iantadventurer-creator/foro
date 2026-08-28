@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 import { useToasts, ToastViewport } from '@/components/ui/Toast';
@@ -742,9 +743,12 @@ export default function ComunidadPage() {
 
                                     {post.image_url && (
                                         <div className="rounded-xl overflow-hidden border border-[var(--color-border)] bg-black mt-2 flex justify-center items-center">
-                                            <img
+                                            <Image
                                                 src={post.image_url}
                                                 alt="Foto publicada por el usuario"
+                                                width={0}
+                                                height={0}
+                                                sizes="(max-width: 640px) 100vw, 600px"
                                                 className="w-full h-auto max-h-[600px] object-contain"
                                             />
                                         </div>

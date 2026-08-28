@@ -4,7 +4,8 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '*.cdninstagram.com',
+        hostname: 'elfxllhdschknqtznzsq.supabase.co',
+        pathname: '/storage/v1/object/public/**',
       },
     ],
   },

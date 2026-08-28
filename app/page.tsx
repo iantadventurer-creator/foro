@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { GallerySkeleton } from '@/components/ui/GallerySkeleton';
 import { StudDivider } from '@/components/ui/StudDivider';
@@ -495,7 +496,7 @@ export default function Home() {
                   zIndex: [1, 2, 3][i],
                 }}
               >
-                <img src={item.src} alt="" className="w-full h-full object-cover" />
+                <Image src={item.src} alt="" fill sizes="(max-width: 1024px) 50vw, 400px" className="object-cover" />
               </motion.div>
             ))
           ) : (
@@ -578,10 +579,12 @@ export default function Home() {
                     className="mb-6 break-inside-avoid group cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--card-accent)]/60 transition-colors relative focus-visible:border-[var(--card-accent)]"
                   >
                     <div className="relative overflow-hidden bg-black">
-                      <img
+                      <Image
                         src={item.src}
                         alt={item.title}
-                        loading="lazy"
+                        width={0}
+                        height={0}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="w-full h-auto object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
                       />
                       {isVideo && (
@@ -660,7 +663,14 @@ export default function Home() {
                 {selectedItem.videoUrl ? (
                   <video src={selectedItem.videoUrl} controls autoPlay loop className="relative z-10 max-h-[60vh] w-full object-contain" />
                 ) : (
-                  <img src={selectedItem.src} alt={selectedItem.title} className="relative z-10 max-h-[60vh] w-full object-contain" />
+                  <Image
+                    src={selectedItem.src}
+                    alt={selectedItem.title}
+                    width={0}
+                    height={0}
+                    sizes="(max-width: 768px) 100vw, 60vw"
+                    className="relative z-10 max-h-[60vh] w-full h-auto object-contain"
+                  />
                 )}
               </div>
               <div className="w-full md:w-2/5 p-6 flex flex-col">
