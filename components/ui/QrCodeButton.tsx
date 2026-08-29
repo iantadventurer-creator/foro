@@ -51,6 +51,7 @@ export function QrCodeButton({
   const [mounted, setMounted] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
+  const openedAtRef = useRef(0);
 
   // El modal se monta con un portal a document.body (ver más abajo) para
   // que su `position: fixed` siempre se centre en la ventana real, sin
@@ -68,9 +69,20 @@ export function QrCodeButton({
     lastFocusedRef.current = document.activeElement as HTMLElement;
     setColorIndex((prev) => pickRandomColor(prev));
     setIsOpen(true);
+    openedAtRef.current = Date.now();
   };
 
   const close = () => setIsOpen(false);
+
+  // En móvil, el mismo toque que abre el modal a veces también dispara un
+  // "click" fantasma sobre el fondo (que aparece al instante justo debajo
+  // del dedo) — el navegador resuelve el destino del click después de que
+  // el DOM cambió, y termina cerrando el modal apenas se abrió. Se ignoran
+  // los clics en el fondo durante un instante después de abrir.
+  const handleBackdropClick = () => {
+    if (Date.now() - openedAtRef.current < 350) return;
+    close();
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -117,7 +129,7 @@ export function QrCodeButton({
             aria-modal="true"
             aria-label="Código QR de IanTBuild"
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-6"
-            onClick={close}
+            onClick={handleBackdropClick}
           >
             <motion.div
               initial={{ opacity: 0, y: 16, scale: 0.97 }}

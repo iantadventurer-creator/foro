@@ -123,6 +123,7 @@ export default function Home() {
   const ITEMS_PER_PAGE = 12;
   const lastFocusedRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const modalOpenedAtRef = useRef(0);
 
   // Mantiene el atributo lang del documento sincronizado con el selector ES/EN
   // (accesibilidad para lectores de pantalla y SEO).
@@ -130,9 +131,24 @@ export default function Home() {
     document.documentElement.lang = lang;
   }, [lang]);
 
+  // Date.now() en openItem/handleModalBackdropClick corre dentro de manejadores
+  // de evento (abrir/cerrar), nunca durante el render — pero la regla
+  // react-hooks/purity no distingue eso (ver nota sobre reglas inestables en AGENTS.md).
   const openItem = (item: FeedItem) => {
     lastFocusedRef.current = document.activeElement as HTMLElement;
     setSelectedItem(item);
+    // eslint-disable-next-line react-hooks/purity
+    modalOpenedAtRef.current = Date.now();
+  };
+
+  // En móvil, el mismo toque que abre el modal a veces también dispara un
+  // "click" fantasma sobre el fondo (que aparece al instante justo debajo
+  // del dedo) y lo cierra apenas se abrió. Se ignoran los clics en el
+  // fondo durante un instante después de abrir.
+  const handleModalBackdropClick = () => {
+    // eslint-disable-next-line react-hooks/purity
+    if (Date.now() - modalOpenedAtRef.current < 350) return;
+    closeModal();
   };
 
   const closeModal = () => setSelectedItem(null);
@@ -655,7 +671,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={closeModal}
+            onClick={handleModalBackdropClick}
             role="dialog"
             aria-modal="true"
             aria-label={selectedItem.title}
