@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { GallerySkeleton } from '@/components/ui/GallerySkeleton';
 import { StudDivider } from '@/components/ui/StudDivider';
-import { QrCodeButton } from '@/components/ui/QrCodeButton';
+import { QrCodeModal, pickRandomQrColor } from '@/components/ui/QrCodeButton';
 import { supabase } from '@/lib/supabaseClient';
 
 type FeedItem = {
@@ -107,6 +107,19 @@ export default function Home() {
   const [feedError, setFeedError] = useState(false);
   const [copied, setCopied] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [qrOpen, setQrOpen] = useState(false);
+  const [qrColorIndex, setQrColorIndex] = useState<number | null>(null);
+
+  // El estado del modal del QR vive acá arriba (no dentro del botón que lo
+  // abre) a propósito: el botón del menú móvil cierra ese menú en el mismo
+  // clic que abre el QR, y si el modal viviera dentro del bloque del menú,
+  // cerrarlo desmontaría también el componente que sostiene el estado —
+  // el QR se abriría y se destruiría casi al instante.
+  const openQr = () => {
+    setQrColorIndex((prev) => pickRandomQrColor(prev));
+    setQrOpen(true);
+  };
+  const closeQr = () => setQrOpen(false);
 
   // Cierra el menú móvil y, una vez terminada su animación de colapso (para
   // que la cabecera ya tenga su altura final), hace scroll a la sección.
@@ -410,13 +423,14 @@ export default function Home() {
               {t.nav.about}
               <span className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--color-accent-3)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
             </a>
-            <QrCodeButton
-              label={t.footer.qrLabel}
+            <button
+              onClick={openQr}
+              aria-label={t.footer.qrLabel}
               className="group relative py-1 hover:text-[var(--color-text)] transition-colors"
             >
               {t.footer.qrLabel}
               <span className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--color-accent-4)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
-            </QrCodeButton>
+            </button>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -461,11 +475,13 @@ export default function Home() {
                 <a href="#gallery" onClick={(e) => { e.preventDefault(); scrollToSection('gallery'); }} className="block py-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.gallery}</a>
                 <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.community}</Link>
                 <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="block py-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.about}</a>
-                <QrCodeButton
-                  label={t.footer.qrLabel}
+                <button
+                  onClick={() => { setMobileMenuOpen(false); openQr(); }}
+                  aria-label={t.footer.qrLabel}
                   className="block w-full text-left py-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-                  onBeforeOpen={() => setMobileMenuOpen(false)}
-                />
+                >
+                  {t.footer.qrLabel}
+                </button>
                 <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)] w-fit mt-2">
                   <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'es' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)]'}`}>ES</button>
                   <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'en' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)]'}`}>EN</button>
@@ -757,6 +773,8 @@ export default function Home() {
         )}
       </AnimatePresence>
 
+      <QrCodeModal isOpen={qrOpen} colorIndex={qrColorIndex} onClose={closeQr} />
+
       {/* ABOUT */}
       <section id="about" className="max-w-5xl mx-auto px-6 py-20 relative z-10">
         <div className="grid md:grid-cols-[1.2fr_0.8fr] gap-10 items-center bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-8 md:p-14">
@@ -794,7 +812,9 @@ export default function Home() {
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-faint)] block mb-3">{t.footer.followTitle}</span>
             <div className="flex flex-col gap-2">
               <a href="https://instagram.com/iantadventurer" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] w-fit block">Instagram ↗</a>
-              <QrCodeButton label={t.footer.qrLabel} />
+              <button onClick={openQr} aria-label={t.footer.qrLabel} className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] w-fit text-left">
+                {t.footer.qrLabel}
+              </button>
             </div>
           </div>
         </div>
