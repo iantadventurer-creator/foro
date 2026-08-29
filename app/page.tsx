@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { GallerySkeleton } from '@/components/ui/GallerySkeleton';
 import { StudDivider } from '@/components/ui/StudDivider';
+import { QrCodeButton } from '@/components/ui/QrCodeButton';
 import { supabase } from '@/lib/supabaseClient';
 
 type FeedItem = {
@@ -309,6 +310,7 @@ export default function Home() {
         tagline: 'Un portafolio inmersivo de fotografía de miniaturas.',
         linksTitle: 'Explorar',
         followTitle: 'Seguir',
+        qrLabel: 'Código QR',
       },
       disclaimer: 'LEGO® es una marca registrada de The LEGO Group, que no patrocina ni respalda este sitio web.',
     },
@@ -347,6 +349,7 @@ export default function Home() {
         tagline: 'An immersive miniature photography portfolio.',
         linksTitle: 'Explore',
         followTitle: 'Follow',
+        qrLabel: 'QR code',
       },
       disclaimer: 'LEGO® is a registered trademark of The LEGO Group, which does not sponsor or endorse this website.',
     },
@@ -761,7 +764,10 @@ export default function Home() {
           </div>
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-faint)] block mb-3">{t.footer.followTitle}</span>
-            <a href="https://instagram.com/iantadventurer" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] w-fit block">Instagram ↗</a>
+            <div className="flex flex-col gap-2">
+              <a href="https://instagram.com/iantadventurer" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] w-fit block">Instagram ↗</a>
+              <QrCodeButton label={t.footer.qrLabel} />
+            </div>
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-[var(--color-border)] text-xs text-[var(--color-text-faint)]">
