@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { QR_SIZE, isQrModuleDark, isQrFinderArea } from '@/lib/qrMatrix';
 
@@ -47,8 +48,20 @@ export function QrCodeButton({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [colorIndex, setColorIndex] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
+
+  // El modal se monta con un portal a document.body (ver más abajo) para
+  // que su `position: fixed` siempre se centre en la ventana real, sin
+  // importar si el botón vive dentro del <header> — que tiene
+  // backdrop-blur, y cualquier filtro/transform en un ancestro convierte
+  // ese <header> en el "viewport" de referencia para fixed, encajando el
+  // modal arriba en vez de centrarlo en toda la pantalla.
+  // Patrón estándar "hasMounted" para portales seguros con SSR (document.body
+  // no existe en el server).
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
 
   const open = () => {
     onBeforeOpen?.();
@@ -93,7 +106,8 @@ export function QrCodeButton({
         {children ?? label}
       </button>
 
-      <AnimatePresence>
+      {mounted && createPortal(
+        <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -164,7 +178,9 @@ export function QrCodeButton({
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }
