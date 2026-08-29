@@ -128,18 +128,19 @@ export function QrCodeButton({
               className="relative w-full max-w-xs bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[28px] p-7 shadow-2xl"
             >
               <span className="absolute top-3.5 left-3.5 w-3.5 h-3.5 rounded-full bg-[var(--color-accent)] shadow-[0_3px_0_0_rgba(0,0,0,0.35)]" aria-hidden="true" />
-              <span className="absolute top-3.5 right-3.5 w-3.5 h-3.5 rounded-full bg-[var(--color-accent-2)] shadow-[0_3px_0_0_rgba(0,0,0,0.35)]" aria-hidden="true" />
               <span className="absolute bottom-3.5 left-3.5 w-3.5 h-3.5 rounded-full bg-[var(--color-accent-3)] shadow-[0_3px_0_0_rgba(0,0,0,0.35)]" aria-hidden="true" />
               <span className="absolute bottom-3.5 right-3.5 w-3.5 h-3.5 rounded-full bg-[var(--color-accent-4)] shadow-[0_3px_0_0_rgba(0,0,0,0.35)]" aria-hidden="true" />
 
-              <button
-                ref={closeButtonRef}
-                onClick={close}
-                aria-label="Cerrar"
-                className="absolute -top-3 -right-3 w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
-              >
-                ✕
-              </button>
+              <div className="flex justify-end mb-3">
+                <button
+                  ref={closeButtonRef}
+                  onClick={close}
+                  aria-label="Cerrar"
+                  className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
+                >
+                  ✕
+                </button>
+              </div>
 
               <div className="rounded-2xl overflow-hidden">
                 <svg viewBox={`0 0 ${PX} ${PX}`} role="img" aria-label={`Código QR hacia ${SITE_URL}`} className="block w-full h-auto">
