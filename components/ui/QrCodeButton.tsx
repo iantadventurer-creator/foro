@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { QR_SIZE, isQrModuleDark, isQrFinderArea } from '@/lib/qrMatrix';
 
@@ -33,13 +33,25 @@ function pickRandomColor(excludeIndex: number | null) {
   return index;
 }
 
-export function QrCodeButton({ label }: { label: string }) {
+export function QrCodeButton({
+  label,
+  className,
+  children,
+  onBeforeOpen,
+}: {
+  label: string;
+  className?: string;
+  children?: ReactNode;
+  /** Se ejecuta antes de abrir el modal — por ejemplo, para cerrar el menú móvil. */
+  onBeforeOpen?: () => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [colorIndex, setColorIndex] = useState<number | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
 
   const open = () => {
+    onBeforeOpen?.();
     lastFocusedRef.current = document.activeElement as HTMLElement;
     setColorIndex((prev) => pickRandomColor(prev));
     setIsOpen(true);
@@ -75,9 +87,10 @@ export function QrCodeButton({ label }: { label: string }) {
     <>
       <button
         onClick={open}
-        className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] w-fit text-left"
+        aria-label={label}
+        className={className ?? 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] w-fit text-left'}
       >
-        {label}
+        {children ?? label}
       </button>
 
       <AnimatePresence>

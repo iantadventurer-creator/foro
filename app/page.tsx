@@ -394,6 +394,13 @@ export default function Home() {
               {t.nav.about}
               <span className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--color-accent-3)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
             </a>
+            <QrCodeButton
+              label={t.footer.qrLabel}
+              className="group relative py-1 hover:text-[var(--color-text)] transition-colors"
+            >
+              {t.footer.qrLabel}
+              <span className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--color-accent-4)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+            </QrCodeButton>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -438,6 +445,11 @@ export default function Home() {
                 <a href="#gallery" onClick={(e) => { e.preventDefault(); scrollToSection('gallery'); }} className="block py-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.gallery}</a>
                 <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.community}</Link>
                 <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="block py-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)]">{t.nav.about}</a>
+                <QrCodeButton
+                  label={t.footer.qrLabel}
+                  className="block w-full text-left py-3 text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+                  onBeforeOpen={() => setMobileMenuOpen(false)}
+                />
                 <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)] w-fit mt-2">
                   <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'es' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)]'}`}>ES</button>
                   <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'en' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)]'}`}>EN</button>
