@@ -122,7 +122,6 @@ export default function Home() {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [zoomed, setZoomed] = useState(false);
-  const [canShare, setCanShare] = useState(false);
 
   // Carga los favoritos guardados en este navegador (localStorage, no hay
   // cuenta de por medio). Puede fallar en modo incógnito estricto — no pasa
@@ -135,11 +134,6 @@ export default function Home() {
     } catch {
       // localStorage no disponible; los favoritos solo viven en memoria.
     }
-  }, []);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCanShare(typeof navigator !== 'undefined' && !!navigator.share);
   }, []);
 
   const toggleFavorite = (id: string, e?: React.MouseEvent) => {
@@ -203,15 +197,6 @@ export default function Home() {
     setSelectedItem(item);
     setZoomed(false);
     modalOpenedAtRef.current = Date.now();
-  };
-
-  const handleNativeShare = async () => {
-    if (!selectedItem) return;
-    try {
-      await navigator.share({ title: selectedItem.title, url: selectedItem.permalink });
-    } catch {
-      // El usuario cerró el panel de compartir del sistema operativo; no es un error.
-    }
   };
 
   // En móvil, el mismo toque que abre el modal a veces también dispara un
@@ -437,7 +422,6 @@ export default function Home() {
         close: 'Cerrar',
         prev: 'Foto anterior',
         next: 'Foto siguiente',
-        share: 'Compartir',
         addFavorite: 'Agregar a favoritos',
         removeFavorite: 'Quitar de favoritos',
       },
@@ -484,7 +468,6 @@ export default function Home() {
         close: 'Close',
         prev: 'Previous photo',
         next: 'Next photo',
-        share: 'Share',
         addFavorite: 'Add to favorites',
         removeFavorite: 'Remove from favorites',
       },
@@ -945,22 +928,12 @@ export default function Home() {
                     >
                       {t.modal.viewOnIg} ↗
                     </a>
-                    <div className="flex gap-2.5">
-                      <button
-                        onClick={() => handleCopyLink(selectedItem.permalink)}
-                        className="flex-1 text-center text-xs font-bold uppercase tracking-wider text-[var(--color-text)] bg-[var(--color-surface-2)] hover:bg-[var(--color-border)] py-3 rounded-full border border-[var(--color-border)] transition-all"
-                      >
-                        {copied ? t.modal.copied + ' ✨' : t.modal.copyLink}
-                      </button>
-                      {canShare && (
-                        <button
-                          onClick={handleNativeShare}
-                          className="flex-1 text-center text-xs font-bold uppercase tracking-wider text-[var(--color-text)] bg-[var(--color-surface-2)] hover:bg-[var(--color-border)] py-3 rounded-full border border-[var(--color-border)] transition-all"
-                        >
-                          {t.modal.share}
-                        </button>
-                      )}
-                    </div>
+                    <button
+                      onClick={() => handleCopyLink(selectedItem.permalink)}
+                      className="block w-full text-center text-xs font-bold uppercase tracking-wider text-[var(--color-text)] bg-[var(--color-surface-2)] hover:bg-[var(--color-border)] py-3 rounded-full border border-[var(--color-border)] transition-all"
+                    >
+                      {copied ? t.modal.copied + ' ✨' : t.modal.copyLink}
+                    </button>
                   </div>
                 </div>
               </div>
