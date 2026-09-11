@@ -30,6 +30,14 @@ type FeedItem = {
 /** Nombre del bucket público de Supabase Storage donde se suben las fotos de la galería. */
 const GALLERY_BUCKET = 'galeria';
 const VIDEO_EXTENSIONS = ['mp4', 'mov', 'webm'];
+const FAVORITES_STORAGE_KEY = 'iantbuild:favorites';
+
+/** "STAR WARS/Picsart_26-08-08_17-47-41-712.jpg" → "picsart 26 08 08 17 47 41 712"
+ *  (para poder buscar también por nombre de archivo, no solo por categoría). */
+function extractSearchableName(storagePath: string): string {
+  const fileName = storagePath.split('/').pop() || storagePath;
+  return fileName.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').toLowerCase();
+}
 
 /** "STAR WARS" → "Star Wars", pero conserva las siglas cortas (p. ej. "DC") en mayúsculas. */
 function formatCategoryLabel(raw: string): string {
@@ -110,6 +118,44 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
   const [qrColorIndex, setQrColorIndex] = useState<number | null>(null);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [zoomed, setZoomed] = useState(false);
+  const [canShare, setCanShare] = useState(false);
+
+  // Carga los favoritos guardados en este navegador (localStorage, no hay
+  // cuenta de por medio). Puede fallar en modo incógnito estricto — no pasa
+  // nada, simplemente no persisten.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(FAVORITES_STORAGE_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (raw) setFavorites(new Set(JSON.parse(raw)));
+    } catch {
+      // localStorage no disponible; los favoritos solo viven en memoria.
+    }
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCanShare(typeof navigator !== 'undefined' && !!navigator.share);
+  }, []);
+
+  const toggleFavorite = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      try {
+        window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...next]));
+      } catch {
+        // Igual que arriba: si no hay localStorage, el favorito no sobrevive un refresh.
+      }
+      return next;
+    });
+  };
 
   // El estado del modal del QR vive acá arriba (no dentro del botón que lo
   // abre) a propósito: el botón del menú móvil cierra ese menú en el mismo
@@ -155,7 +201,17 @@ export default function Home() {
   const openItem = (item: FeedItem) => {
     lastFocusedRef.current = document.activeElement as HTMLElement;
     setSelectedItem(item);
+    setZoomed(false);
     modalOpenedAtRef.current = Date.now();
+  };
+
+  const handleNativeShare = async () => {
+    if (!selectedItem) return;
+    try {
+      await navigator.share({ title: selectedItem.title, url: selectedItem.permalink });
+    } catch {
+      // El usuario cerró el panel de compartir del sistema operativo; no es un error.
+    }
   };
 
   // En móvil, el mismo toque que abre el modal a veces también dispara un
@@ -292,9 +348,24 @@ export default function Home() {
   }, [feedItems]);
 
   const filteredItems = useMemo(() => {
-    if (!filterCategory) return feedItems;
-    return feedItems.filter((item) => item.category === filterCategory);
-  }, [feedItems, filterCategory]);
+    const query = searchQuery.trim().toLowerCase();
+    return feedItems.filter((item) => {
+      if (filterCategory && item.category !== filterCategory) return false;
+      if (showOnlyFavorites && !favorites.has(item.id)) return false;
+      if (query) {
+        const haystack = `${item.title.toLowerCase()} ${extractSearchableName(item.id)}`;
+        if (!haystack.includes(query)) return false;
+      }
+      return true;
+    });
+  }, [feedItems, filterCategory, showOnlyFavorites, favorites, searchQuery]);
+
+  // Vuelve a la página 1 cuando cambia la búsqueda o el filtro de favoritos
+  // (si no, se podría quedar en una página que ya no existe para el nuevo filtro).
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrentPage(1);
+  }, [searchQuery, showOnlyFavorites]);
 
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
   const safePage = Math.min(currentPage, totalPages);
@@ -345,6 +416,9 @@ export default function Home() {
         title: 'Universo creado',
         subtitle: 'Cada escena es un set construido desde cero: piezas, luz y paciencia.',
         filterAll: 'Todo',
+        favorites: 'Favoritos',
+        searchPlaceholder: 'Buscar en la galería…',
+        noResults: 'No hay fotos que coincidan con la búsqueda.',
         empty: 'Aún no hay fotos en la galería.',
         errorTitle: 'No se pudo cargar el feed',
         errorDesc: 'Hubo un problema de conexión con Instagram. Puedes intentarlo de nuevo.',
@@ -363,6 +437,9 @@ export default function Home() {
         close: 'Cerrar',
         prev: 'Foto anterior',
         next: 'Foto siguiente',
+        share: 'Compartir',
+        addFavorite: 'Agregar a favoritos',
+        removeFavorite: 'Quitar de favoritos',
       },
       footer: {
         tagline: 'Un portafolio inmersivo de fotografía de miniaturas.',
@@ -386,6 +463,9 @@ export default function Home() {
         title: 'Crafted universe',
         subtitle: 'Every scene is a set built from scratch: bricks, light, and patience.',
         filterAll: 'All',
+        favorites: 'Favorites',
+        searchPlaceholder: 'Search the gallery…',
+        noResults: 'No photos match your search.',
         empty: 'No photos in the gallery yet.',
         errorTitle: "Couldn't load the feed",
         errorDesc: 'There was a connection issue with Instagram. You can try again.',
@@ -404,6 +484,9 @@ export default function Home() {
         close: 'Close',
         prev: 'Previous photo',
         next: 'Next photo',
+        share: 'Share',
+        addFavorite: 'Add to favorites',
+        removeFavorite: 'Remove from favorites',
       },
       footer: {
         tagline: 'An immersive miniature photography portfolio.',
@@ -612,8 +695,25 @@ export default function Home() {
                   {formatCategoryLabel(cat)}
                 </FilterPill>
               ))}
+              <FilterPill
+                onClick={() => setShowOnlyFavorites((v) => !v)}
+                active={showOnlyFavorites}
+                theme={{ accent: '#e0245e', shadow: '#8a1638', ink: '#ffffff' }}
+              >
+                ♥ {t.gallery.favorites}
+              </FilterPill>
             </div>
           )}
+
+          <div className="relative w-full max-w-sm">
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t.gallery.searchPlaceholder}
+              className="w-full bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full pl-5 pr-4 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] focus:outline-none focus:border-[var(--color-accent)] transition-colors"
+            />
+          </div>
         </div>
 
         {loading ? (
@@ -628,7 +728,7 @@ export default function Home() {
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="text-center py-20 text-[var(--color-text-muted)] font-medium text-sm border border-dashed border-[var(--color-border)] rounded-2xl">
-            {t.gallery.empty}
+            {searchQuery.trim() || showOnlyFavorites ? t.gallery.noResults : t.gallery.empty}
           </div>
         ) : (
           <>
@@ -670,6 +770,17 @@ export default function Home() {
                           Reel
                         </div>
                       )}
+                      <button
+                        onClick={(e) => toggleFavorite(item.id, e)}
+                        aria-label={favorites.has(item.id) ? t.modal.removeFavorite : t.modal.addFavorite}
+                        aria-pressed={favorites.has(item.id)}
+                        className={`absolute top-3 left-3 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 backdrop-blur-sm border border-white/20 text-base transition-all ${favorites.has(item.id) ? 'opacity-100' : 'opacity-70 hover:opacity-100'
+                          }`}
+                      >
+                        <span style={{ color: favorites.has(item.id) ? '#e0245e' : '#ffffff' }}>
+                          {favorites.has(item.id) ? '♥' : '♡'}
+                        </span>
+                      </button>
                       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 pt-10 opacity-0 group-hover:opacity-100 transition-opacity">
                         <figcaption
                           className="text-sm font-bold line-clamp-1"
@@ -731,15 +842,15 @@ export default function Home() {
               onClick={(e) => e.stopPropagation()}
               className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl"
             >
-              <div className="w-full md:w-3/5 bg-black relative min-h-[320px] md:min-h-[480px] flex items-center justify-center overflow-hidden">
-                {filteredItems.length > 1 && (
+              <div className={`w-full md:w-3/5 bg-black relative min-h-[320px] md:min-h-[480px] flex items-center justify-center ${zoomed ? 'overflow-auto' : 'overflow-hidden'}`}>
+                {filteredItems.length > 1 && !zoomed && (
                   <span className="absolute top-3 left-3 z-20 px-2.5 py-1 rounded-full bg-black/50 text-white text-[11px] font-bold tracking-wide border border-white/20 backdrop-blur-sm tabular-nums">
                     {selectedIndex + 1} / {filteredItems.length}
                   </span>
                 )}
                 <button
                   onClick={goToPrev}
-                  disabled={!hasPrev}
+                  disabled={!hasPrev || zoomed}
                   aria-label={t.modal.prev}
                   className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-black/50 text-white text-2xl leading-none border border-white/20 backdrop-blur-sm hover:bg-black/70 transition-colors disabled:opacity-0 disabled:pointer-events-none"
                 >
@@ -747,13 +858,13 @@ export default function Home() {
                 </button>
                 <button
                   onClick={goToNext}
-                  disabled={!hasNext}
+                  disabled={!hasNext || zoomed}
                   aria-label={t.modal.next}
                   className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-black/50 text-white text-2xl leading-none border border-white/20 backdrop-blur-sm hover:bg-black/70 transition-colors disabled:opacity-0 disabled:pointer-events-none"
                 >
                   ›
                 </button>
-                {!selectedItem.videoUrl && (
+                {!selectedItem.videoUrl && !zoomed && (
                   <div
                     className="absolute inset-0 bg-cover bg-center filter blur-2xl opacity-30 scale-110 pointer-events-none"
                     style={{ backgroundImage: `url(${selectedItem.src})` }}
@@ -761,6 +872,16 @@ export default function Home() {
                 )}
                 {selectedItem.videoUrl ? (
                   <video src={selectedItem.videoUrl} controls autoPlay loop className="relative z-10 max-h-[60vh] w-full object-contain" />
+                ) : zoomed ? (
+                  <Image
+                    src={selectedItem.src}
+                    alt={selectedItem.title}
+                    width={0}
+                    height={0}
+                    sizes="90vw"
+                    onClick={() => setZoomed(false)}
+                    className="relative z-10 max-w-none w-auto h-auto cursor-zoom-out"
+                  />
                 ) : (
                   <Image
                     src={selectedItem.src}
@@ -768,7 +889,8 @@ export default function Home() {
                     width={0}
                     height={0}
                     sizes="(max-width: 768px) 100vw, 60vw"
-                    className="relative z-10 max-h-[60vh] w-full h-auto object-contain"
+                    onClick={() => setZoomed(true)}
+                    className="relative z-10 max-h-[60vh] w-full h-auto object-contain cursor-zoom-in"
                   />
                 )}
               </div>
@@ -780,14 +902,26 @@ export default function Home() {
                   >
                     {selectedItem.author}
                   </span>
-                  <button
-                    ref={closeButtonRef}
-                    onClick={closeModal}
-                    aria-label={t.modal.close}
-                    className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
-                  >
-                    ✕
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => toggleFavorite(selectedItem.id)}
+                      aria-label={favorites.has(selectedItem.id) ? t.modal.removeFavorite : t.modal.addFavorite}
+                      aria-pressed={favorites.has(selectedItem.id)}
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--color-surface-2)] border border-[var(--color-border)] text-base"
+                    >
+                      <span style={{ color: favorites.has(selectedItem.id) ? '#e0245e' : 'var(--color-text-muted)' }}>
+                        {favorites.has(selectedItem.id) ? '♥' : '♡'}
+                      </span>
+                    </button>
+                    <button
+                      ref={closeButtonRef}
+                      onClick={closeModal}
+                      aria-label={t.modal.close}
+                      className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 </div>
                 <div className="flex-1 flex flex-col items-center justify-center text-center py-6">
                   <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-[var(--color-text)] mb-3">{selectedItem.title}</h3>
@@ -811,12 +945,22 @@ export default function Home() {
                     >
                       {t.modal.viewOnIg} ↗
                     </a>
-                    <button
-                      onClick={() => handleCopyLink(selectedItem.permalink)}
-                      className="block w-full text-center text-xs font-bold uppercase tracking-wider text-[var(--color-text)] bg-[var(--color-surface-2)] hover:bg-[var(--color-border)] py-3 rounded-full border border-[var(--color-border)] transition-all"
-                    >
-                      {copied ? t.modal.copied + ' ✨' : t.modal.copyLink}
-                    </button>
+                    <div className="flex gap-2.5">
+                      <button
+                        onClick={() => handleCopyLink(selectedItem.permalink)}
+                        className="flex-1 text-center text-xs font-bold uppercase tracking-wider text-[var(--color-text)] bg-[var(--color-surface-2)] hover:bg-[var(--color-border)] py-3 rounded-full border border-[var(--color-border)] transition-all"
+                      >
+                        {copied ? t.modal.copied + ' ✨' : t.modal.copyLink}
+                      </button>
+                      {canShare && (
+                        <button
+                          onClick={handleNativeShare}
+                          className="flex-1 text-center text-xs font-bold uppercase tracking-wider text-[var(--color-text)] bg-[var(--color-surface-2)] hover:bg-[var(--color-border)] py-3 rounded-full border border-[var(--color-border)] transition-all"
+                        >
+                          {t.modal.share}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
