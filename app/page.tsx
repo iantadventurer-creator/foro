@@ -155,7 +155,6 @@ export default function Home() {
   const openItem = (item: FeedItem) => {
     lastFocusedRef.current = document.activeElement as HTMLElement;
     setSelectedItem(item);
-    // eslint-disable-next-line react-hooks/purity
     modalOpenedAtRef.current = Date.now();
   };
 
@@ -308,6 +307,29 @@ export default function Home() {
   const previewShots = feedItems.slice(0, 3);
   const modalTheme = getCategoryTheme(selectedItem?.category ?? null);
 
+  // Navegación del lightbox: se mueve dentro de la lista ya filtrada por
+  // categoría (no solo la página actual), así "siguiente" no se corta al
+  // llegar al final de una página.
+  const selectedIndex = selectedItem ? filteredItems.findIndex((i) => i.id === selectedItem.id) : -1;
+  const hasPrev = selectedIndex > 0;
+  const hasNext = selectedIndex !== -1 && selectedIndex < filteredItems.length - 1;
+  const goToPrev = () => { if (hasPrev) openItem(filteredItems[selectedIndex - 1]); };
+  const goToNext = () => { if (hasNext) openItem(filteredItems[selectedIndex + 1]); };
+
+  // Flechas del teclado para pasar de foto sin cerrar el modal. goToPrev/
+  // goToNext no hace falta listarlas: se derivan por completo de
+  // selectedIndex/hasPrev/hasNext/filteredItems, que ya están en las deps.
+  useEffect(() => {
+    if (!selectedItem) return;
+    function handleArrowKeys(e: KeyboardEvent) {
+      if (e.key === 'ArrowLeft') goToPrev();
+      if (e.key === 'ArrowRight') goToNext();
+    }
+    document.addEventListener('keydown', handleArrowKeys);
+    return () => document.removeEventListener('keydown', handleArrowKeys);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedItem, hasPrev, hasNext, selectedIndex, filteredItems]);
+
   const content = {
     es: {
       nav: { gallery: 'Galería', community: 'Comunidad', about: 'Sobre mí', cta: 'Instagram', menu: 'Abrir menú' },
@@ -339,6 +361,8 @@ export default function Home() {
         copyLink: 'Copiar enlace',
         copied: '¡Enlace copiado!',
         close: 'Cerrar',
+        prev: 'Foto anterior',
+        next: 'Foto siguiente',
       },
       footer: {
         tagline: 'Un portafolio inmersivo de fotografía de miniaturas.',
@@ -378,6 +402,8 @@ export default function Home() {
         copyLink: 'Copy link',
         copied: 'Link copied!',
         close: 'Close',
+        prev: 'Previous photo',
+        next: 'Next photo',
       },
       footer: {
         tagline: 'An immersive miniature photography portfolio.',
@@ -706,6 +732,27 @@ export default function Home() {
               className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl"
             >
               <div className="w-full md:w-3/5 bg-black relative min-h-[320px] md:min-h-[480px] flex items-center justify-center overflow-hidden">
+                {filteredItems.length > 1 && (
+                  <span className="absolute top-3 left-3 z-20 px-2.5 py-1 rounded-full bg-black/50 text-white text-[11px] font-bold tracking-wide border border-white/20 backdrop-blur-sm tabular-nums">
+                    {selectedIndex + 1} / {filteredItems.length}
+                  </span>
+                )}
+                <button
+                  onClick={goToPrev}
+                  disabled={!hasPrev}
+                  aria-label={t.modal.prev}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-black/50 text-white text-2xl leading-none border border-white/20 backdrop-blur-sm hover:bg-black/70 transition-colors disabled:opacity-0 disabled:pointer-events-none"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={goToNext}
+                  disabled={!hasNext}
+                  aria-label={t.modal.next}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-black/50 text-white text-2xl leading-none border border-white/20 backdrop-blur-sm hover:bg-black/70 transition-colors disabled:opacity-0 disabled:pointer-events-none"
+                >
+                  ›
+                </button>
                 {!selectedItem.videoUrl && (
                   <div
                     className="absolute inset-0 bg-cover bg-center filter blur-2xl opacity-30 scale-110 pointer-events-none"
