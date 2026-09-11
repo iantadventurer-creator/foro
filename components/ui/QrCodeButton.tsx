@@ -56,6 +56,10 @@ export function QrCodeModal({
   const lastFocusedRef = useRef<HTMLElement | null>(null);
   const openedAtRef = useRef(0);
 
+  // (El bloqueo de scroll del fondo se maneja en el componente que usa
+  // este modal, junto con el del lightbox de fotos — ver useBodyScrollLock
+  // en app/page.tsx.)
+
   // Patrón estándar "hasMounted" para portales seguros con SSR (document.body
   // no existe en el server).
   // eslint-disable-next-line react-hooks/set-state-in-effect

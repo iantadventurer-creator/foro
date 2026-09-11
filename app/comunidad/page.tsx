@@ -357,7 +357,12 @@ export default function ComunidadPage() {
                     },
                 ]);
 
-            if (dbError) throw dbError;
+            if (dbError) {
+                // La foto ya se subió a Storage pero la publicación falló:
+                // se borra para no dejar archivos huérfanos en el bucket.
+                await supabase.storage.from('foro-fotos').remove([fileName]);
+                throw dbError;
+            }
 
             setNewPostTitle('');
             setNewPostInstagramUrl('');

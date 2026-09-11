@@ -8,6 +8,7 @@ import { GallerySkeleton } from '@/components/ui/GallerySkeleton';
 import { StudDivider } from '@/components/ui/StudDivider';
 import { QrCodeModal, pickRandomQrColor } from '@/components/ui/QrCodeButton';
 import { supabase } from '@/lib/supabaseClient';
+import { useBodyScrollLock } from '@/lib/useBodyScrollLock';
 
 type FeedItem = {
   id: string;
@@ -120,6 +121,10 @@ export default function Home() {
     setQrOpen(true);
   };
   const closeQr = () => setQrOpen(false);
+
+  // Bloquea el scroll de fondo mientras el lightbox de fotos o el QR
+  // están abiertos (antes se podía seguir desplazando la página detrás).
+  useBodyScrollLock(!!selectedItem || qrOpen);
 
   // Cierra el menú móvil y, una vez terminada su animación de colapso (para
   // que la cabecera ya tenga su altura final), hace scroll a la sección.
