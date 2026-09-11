@@ -32,13 +32,6 @@ const GALLERY_BUCKET = 'galeria';
 const VIDEO_EXTENSIONS = ['mp4', 'mov', 'webm'];
 const FAVORITES_STORAGE_KEY = 'iantbuild:favorites';
 
-/** "STAR WARS/Picsart_26-08-08_17-47-41-712.jpg" → "picsart 26 08 08 17 47 41 712"
- *  (para poder buscar también por nombre de archivo, no solo por categoría). */
-function extractSearchableName(storagePath: string): string {
-  const fileName = storagePath.split('/').pop() || storagePath;
-  return fileName.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').toLowerCase();
-}
-
 /** "STAR WARS" → "Star Wars", pero conserva las siglas cortas (p. ej. "DC") en mayúsculas. */
 function formatCategoryLabel(raw: string): string {
   return raw
@@ -120,7 +113,6 @@ export default function Home() {
   const [qrColorIndex, setQrColorIndex] = useState<number | null>(null);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [zoomed, setZoomed] = useState(false);
 
   // Carga los favoritos guardados en este navegador (localStorage, no hay
@@ -333,24 +325,19 @@ export default function Home() {
   }, [feedItems]);
 
   const filteredItems = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
     return feedItems.filter((item) => {
       if (filterCategory && item.category !== filterCategory) return false;
       if (showOnlyFavorites && !favorites.has(item.id)) return false;
-      if (query) {
-        const haystack = `${item.title.toLowerCase()} ${extractSearchableName(item.id)}`;
-        if (!haystack.includes(query)) return false;
-      }
       return true;
     });
-  }, [feedItems, filterCategory, showOnlyFavorites, favorites, searchQuery]);
+  }, [feedItems, filterCategory, showOnlyFavorites, favorites]);
 
-  // Vuelve a la página 1 cuando cambia la búsqueda o el filtro de favoritos
-  // (si no, se podría quedar en una página que ya no existe para el nuevo filtro).
+  // Vuelve a la página 1 cuando cambia el filtro de favoritos (si no, se
+  // podría quedar en una página que ya no existe para el nuevo filtro).
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentPage(1);
-  }, [searchQuery, showOnlyFavorites]);
+  }, [showOnlyFavorites]);
 
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
   const safePage = Math.min(currentPage, totalPages);
@@ -402,8 +389,7 @@ export default function Home() {
         subtitle: 'Cada escena es un set construido desde cero: piezas, luz y paciencia.',
         filterAll: 'Todo',
         favorites: 'Favoritos',
-        searchPlaceholder: 'Buscar en la galería…',
-        noResults: 'No hay fotos que coincidan con la búsqueda.',
+        noResults: 'Todavía no marcaste ninguna foto como favorita.',
         empty: 'Aún no hay fotos en la galería.',
         errorTitle: 'No se pudo cargar el feed',
         errorDesc: 'Hubo un problema de conexión con Instagram. Puedes intentarlo de nuevo.',
@@ -448,8 +434,7 @@ export default function Home() {
         subtitle: 'Every scene is a set built from scratch: bricks, light, and patience.',
         filterAll: 'All',
         favorites: 'Favorites',
-        searchPlaceholder: 'Search the gallery…',
-        noResults: 'No photos match your search.',
+        noResults: "You haven't favorited any photos yet.",
         empty: 'No photos in the gallery yet.',
         errorTitle: "Couldn't load the feed",
         errorDesc: 'There was a connection issue with Instagram. You can try again.',
@@ -687,16 +672,6 @@ export default function Home() {
               </FilterPill>
             </div>
           )}
-
-          <div className="relative w-full max-w-sm">
-            <input
-              type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t.gallery.searchPlaceholder}
-              className="w-full bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full pl-5 pr-4 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] focus:outline-none focus:border-[var(--color-accent)] transition-colors"
-            />
-          </div>
         </div>
 
         {loading ? (
@@ -711,7 +686,7 @@ export default function Home() {
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="text-center py-20 text-[var(--color-text-muted)] font-medium text-sm border border-dashed border-[var(--color-border)] rounded-2xl">
-            {searchQuery.trim() || showOnlyFavorites ? t.gallery.noResults : t.gallery.empty}
+            {showOnlyFavorites ? t.gallery.noResults : t.gallery.empty}
           </div>
         ) : (
           <>
