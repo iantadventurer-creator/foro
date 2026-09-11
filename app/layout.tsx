@@ -5,6 +5,7 @@ import { Fredoka } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { BackgroundBrickField } from "@/components/ui/BackgroundBrickField";
+import { FilmGrainOverlay } from "@/components/ui/FilmGrainOverlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,6 +69,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[var(--color-ink)] text-[var(--color-text)]">
         <BackgroundBrickField />
         {children}
+        <FilmGrainOverlay />
         <Analytics />
       </body>
     </html>

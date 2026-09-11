@@ -174,12 +174,36 @@ export default function Home() {
   const lastFocusedRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const modalOpenedAtRef = useRef(0);
+  const galleryRef = useRef<HTMLElement | null>(null);
+  const aboutRef = useRef<HTMLElement | null>(null);
+  const [activeSection, setActiveSection] = useState<'gallery' | 'about' | null>(null);
 
   // Mantiene el atributo lang del documento sincronizado con el selector ES/EN
   // (accesibilidad para lectores de pantalla y SEO).
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+
+  // Resalta en el nav qué sección se está viendo mientras se hace scroll
+  // (se considera "activa" la sección que cruza la franja central de la pantalla).
+  useEffect(() => {
+    const sections: { id: 'gallery' | 'about'; el: HTMLElement | null }[] = [
+      { id: 'gallery', el: galleryRef.current },
+      { id: 'about', el: aboutRef.current },
+    ];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const match = sections.find((s) => s.el === entry.target);
+          if (match) setActiveSection(match.id);
+        });
+      },
+      { rootMargin: '-40% 0px -40% 0px' }
+    );
+    sections.forEach((s) => { if (s.el) observer.observe(s.el); });
+    return () => observer.disconnect();
+  }, []);
 
   // Date.now() en openItem/handleModalBackdropClick corre dentro de manejadores
   // de evento (abrir/cerrar), nunca durante el render — pero la regla
@@ -349,6 +373,7 @@ export default function Home() {
 
   const previewShots = feedItems.slice(0, 3);
   const modalTheme = getCategoryTheme(selectedItem?.category ?? null);
+  const activeGalleryTheme = getCategoryTheme(filterCategory);
 
   // Navegación del lightbox: se mueve dentro de la lista ya filtrada por
   // categoría (no solo la página actual), así "siguiente" no se corta al
@@ -495,7 +520,7 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-[var(--color-text-muted)]">
             <a href="#gallery" className="group relative py-1 hover:text-[var(--color-text)] transition-colors">
               {t.nav.gallery}
-              <span className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--color-accent)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+              <span className={`absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--color-accent)] transition-transform duration-300 origin-center ${activeSection === 'gallery' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
             </a>
             <Link href="/comunidad" className="group relative py-1 hover:text-[var(--color-text)] transition-colors">
               {t.nav.community}
@@ -503,7 +528,7 @@ export default function Home() {
             </Link>
             <a href="#about" className="group relative py-1 hover:text-[var(--color-text)] transition-colors">
               {t.nav.about}
-              <span className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--color-accent-3)] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+              <span className={`absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--color-accent-3)] transition-transform duration-300 origin-center ${activeSection === 'about' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
             </a>
             <button
               onClick={openQr}
@@ -607,7 +632,7 @@ export default function Home() {
           </motion.div>
         </div>
 
-        <div className="relative h-72 md:h-96 hidden sm:block" aria-hidden="true">
+        <div className="relative h-64 sm:h-72 md:h-96" aria-hidden="true">
           {previewShots.length > 0 ? (
             previewShots.map((item, i) => (
               <motion.div
@@ -640,7 +665,13 @@ export default function Home() {
       <StudDivider />
 
       {/* GALLERY */}
-      <section id="gallery" className="max-w-7xl mx-auto px-6 py-16 relative z-10">
+      <section id="gallery" ref={galleryRef} className="max-w-7xl mx-auto px-6 py-16 relative z-10 overflow-hidden">
+        <motion.div
+          aria-hidden="true"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[36rem] h-[36rem] rounded-full blur-[160px] pointer-events-none -z-10"
+          animate={{ backgroundColor: activeGalleryTheme ? `${activeGalleryTheme.accent}26` : 'rgba(0,0,0,0)' }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        />
         <div className="mb-12 flex flex-col items-center text-center gap-6">
           <div>
             <motion.h2 initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-text)]">
@@ -728,17 +759,25 @@ export default function Home() {
                           Reel
                         </div>
                       )}
-                      <button
+                      <motion.button
+                        whileTap={{ scale: 1.3 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 10 }}
                         onClick={(e) => toggleFavorite(item.id, e)}
                         aria-label={favorites.has(item.id) ? t.modal.removeFavorite : t.modal.addFavorite}
                         aria-pressed={favorites.has(item.id)}
                         className={`absolute top-3 left-3 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 backdrop-blur-sm border border-white/20 text-base transition-all ${favorites.has(item.id) ? 'opacity-100' : 'opacity-70 hover:opacity-100'
                           }`}
                       >
-                        <span style={{ color: favorites.has(item.id) ? '#e0245e' : '#ffffff' }}>
+                        <motion.span
+                          key={favorites.has(item.id) ? 'fav' : 'unfav'}
+                          initial={{ scale: 0.6 }}
+                          animate={{ scale: 1 }}
+                          transition={{ duration: 0.2 }}
+                          style={{ color: favorites.has(item.id) ? '#e0245e' : '#ffffff' }}
+                        >
                           {favorites.has(item.id) ? '♥' : '♡'}
-                        </span>
-                      </button>
+                        </motion.span>
+                      </motion.button>
                       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 pt-10 opacity-0 group-hover:opacity-100 transition-opacity">
                         <figcaption
                           className="text-sm font-bold line-clamp-1"
@@ -861,16 +900,24 @@ export default function Home() {
                     {selectedItem.author}
                   </span>
                   <div className="flex items-center gap-2">
-                    <button
+                    <motion.button
+                      whileTap={{ scale: 1.3 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 10 }}
                       onClick={() => toggleFavorite(selectedItem.id)}
                       aria-label={favorites.has(selectedItem.id) ? t.modal.removeFavorite : t.modal.addFavorite}
                       aria-pressed={favorites.has(selectedItem.id)}
                       className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--color-surface-2)] border border-[var(--color-border)] text-base"
                     >
-                      <span style={{ color: favorites.has(selectedItem.id) ? '#e0245e' : 'var(--color-text-muted)' }}>
+                      <motion.span
+                        key={favorites.has(selectedItem.id) ? 'fav' : 'unfav'}
+                        initial={{ scale: 0.6 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.2 }}
+                        style={{ color: favorites.has(selectedItem.id) ? '#e0245e' : 'var(--color-text-muted)' }}
+                      >
                         {favorites.has(selectedItem.id) ? '♥' : '♡'}
-                      </span>
-                    </button>
+                      </motion.span>
+                    </motion.button>
                     <button
                       ref={closeButtonRef}
                       onClick={closeModal}
@@ -920,8 +967,14 @@ export default function Home() {
       <QrCodeModal isOpen={qrOpen} colorIndex={qrColorIndex} onClose={closeQr} />
 
       {/* ABOUT */}
-      <section id="about" className="max-w-5xl mx-auto px-6 py-20 relative z-10">
-        <div className="grid md:grid-cols-[1.2fr_0.8fr] gap-10 items-center bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-8 md:p-14">
+      <section id="about" ref={aboutRef} className="max-w-5xl mx-auto px-6 py-20 relative z-10">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          className="grid md:grid-cols-[1.2fr_0.8fr] gap-10 items-center bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-8 md:p-14"
+        >
           <div>
             <span className="text-xs font-bold text-[var(--color-accent)] uppercase tracking-widest">{t.aboutSection.eyebrow}</span>
             <h3 className="font-display text-2xl md:text-3xl font-semibold text-[var(--color-text)] mt-3 mb-5 tracking-tight">{t.aboutSection.title}</h3>
@@ -932,7 +985,7 @@ export default function Home() {
               {t.aboutSection.cta}
             </a>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       <StudDivider />
