@@ -102,7 +102,6 @@ export default function ComunidadPage() {
             categoryLabel: 'Categoría (opcional)',
             publishBtn: 'Publicar',
             publishingBtn: 'Publicando…',
-            feedTitle: 'Feed en directo',
             filterAll: 'Todo',
             filterMine: 'Mis publicaciones',
             sortRecent: 'Recientes',
@@ -153,7 +152,6 @@ export default function ComunidadPage() {
             categoryLabel: 'Category (optional)',
             publishBtn: 'Post',
             publishingBtn: 'Posting…',
-            feedTitle: 'Live feed',
             filterAll: 'All',
             filterMine: 'My posts',
             sortRecent: 'Recent',
@@ -709,14 +707,6 @@ export default function ComunidadPage() {
             {/* FEED — cuadrícula ancha, como la galería principal */}
             <div className="max-w-6xl mx-auto px-4 pb-16">
                 <div className="mb-10 flex flex-col items-center text-center gap-6">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-faint)] flex items-center gap-2">
-                        {t.feedTitle}
-                        <span className="relative flex h-2 w-2" title="En vivo">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-accent-4)] opacity-75" />
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-accent-4)]" />
-                        </span>
-                    </h3>
-
                     <div className="w-full flex items-center gap-3 overflow-x-auto px-4 sm:px-0 sm:flex-wrap sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                         <FilterPill onClick={() => setFilterCategory(null)} active={filterCategory === null}>
                             {t.filterAll}
