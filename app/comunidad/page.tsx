@@ -502,6 +502,14 @@ export default function ComunidadPage() {
                             {t.activity}
                         </Link>
                         {user && (
+                            <button
+                                onClick={() => setShowUploadModal(true)}
+                                className="bg-[var(--color-accent-3)] text-white px-4 py-1.5 rounded-full hover:brightness-110 transition"
+                            >
+                                {t.publishBtn}
+                            </button>
+                        )}
+                        {user && (
                             <Link href={`/comunidad/u/${user.id}`} className="hover:text-[var(--color-text)] transition-colors">
                                 {t.profile}
                             </Link>
@@ -598,22 +606,12 @@ export default function ComunidadPage() {
                         <span className="text-xs font-semibold text-[var(--color-accent)] uppercase tracking-wide truncate">
                             {t.connectedAs} {user.user_metadata?.instagram_handle || user.email?.split('@')[0]}
                         </span>
-                        <div className="flex items-center gap-2 shrink-0">
-                            <motion.button
-                                whileHover={{ y: -2 }}
-                                whileTap={{ y: 1 }}
-                                onClick={() => setShowUploadModal(true)}
-                                className="bg-[var(--color-accent-3)] text-white font-bold px-5 py-2.5 rounded-full text-xs uppercase tracking-wider hover:brightness-110 transition"
-                            >
-                                {t.publishBtn}
-                            </motion.button>
-                            <button
-                                onClick={handleLogout}
-                                className="text-[10px] font-bold uppercase bg-[var(--color-surface-2)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] px-3 py-2.5 rounded-full border border-[var(--color-border)]"
-                            >
-                                {t.logout}
-                            </button>
-                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="shrink-0 text-[10px] font-bold uppercase bg-[var(--color-surface-2)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] px-3 py-2.5 rounded-full border border-[var(--color-border)]"
+                        >
+                            {t.logout}
+                        </button>
                     </motion.div>
                 )}
             </div>
