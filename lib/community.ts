@@ -15,6 +15,8 @@ export type Post = {
   post_likes: Like[];
 };
 
+export type Profile = { user_id: string; avatar_url: string | null };
+
 const AVATAR_COLORS = ['var(--color-accent)', 'var(--color-accent-2)', 'var(--color-accent-3)', 'var(--color-accent-4)'];
 
 /** Color determinista para el avatar, derivado del handle (mismo usuario = mismo color siempre). */
