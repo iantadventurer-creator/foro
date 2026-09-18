@@ -502,12 +502,14 @@ export default function ComunidadPage() {
                             {t.activity}
                         </Link>
                         {user && (
-                            <button
+                            <motion.button
+                                whileHover={{ y: -2 }}
+                                whileTap={{ y: 2 }}
                                 onClick={() => setShowUploadModal(true)}
-                                className="bg-[var(--color-accent-3)] text-white px-4 py-1.5 rounded-full hover:brightness-110 transition"
+                                className="font-button bg-[var(--color-accent-3)] text-white text-xs px-5 py-2 rounded-full shadow-[0_4px_0_0_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]"
                             >
                                 {t.publishBtn}
-                            </button>
+                            </motion.button>
                         )}
                         {user && (
                             <Link href={`/comunidad/u/${user.id}`} className="hover:text-[var(--color-text)] transition-colors">
@@ -517,6 +519,14 @@ export default function ComunidadPage() {
                     </nav>
 
                     <div className="flex items-center gap-4">
+                        {user && (
+                            <button
+                                onClick={handleLogout}
+                                className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-faint)] hover:text-[var(--color-text-muted)] transition-colors"
+                            >
+                                {t.logout}
+                            </button>
+                        )}
                         <span className="font-semibold text-xs uppercase tracking-widest text-[var(--color-text-muted)] hidden sm:inline">{t.foro}</span>
                         <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
                             <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'es' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>ES</button>
@@ -597,23 +607,7 @@ export default function ComunidadPage() {
                             </div>
                         </form>
                     </motion.div>
-                ) : (
-                    <motion.div
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-between gap-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-4 mb-8"
-                    >
-                        <span className="text-xs font-semibold text-[var(--color-accent)] uppercase tracking-wide truncate">
-                            {t.connectedAs} {user.user_metadata?.instagram_handle || user.email?.split('@')[0]}
-                        </span>
-                        <button
-                            onClick={handleLogout}
-                            className="shrink-0 text-[10px] font-bold uppercase bg-[var(--color-surface-2)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] px-3 py-2.5 rounded-full border border-[var(--color-border)]"
-                        >
-                            {t.logout}
-                        </button>
-                    </motion.div>
-                )}
+                ) : null}
             </div>
 
             {/* MODAL DE PUBLICAR */}
