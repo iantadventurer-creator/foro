@@ -20,7 +20,8 @@ export function PostCard({ post, onClick }: { post: Post; onClick: () => void })
         src={post.image_url}
         alt={post.title}
         fill
-        sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 240px"
+        sizes="(max-width: 1152px) 33vw, 384px"
+        quality={85}
         className="object-cover group-hover:scale-105 transition-transform duration-300"
       />
       {cardTheme && post.category && (
