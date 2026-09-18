@@ -46,16 +46,21 @@ export default function ComunidadPage() {
     const [filterCategory, setFilterCategory] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<'recent' | 'popular'>('recent');
     const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+    const [showUploadModal, setShowUploadModal] = useState(false);
 
-    // Permite enlazar directo a una publicación (?post=<id>) — así el perfil
-    // y la actividad pueden abrir el modal de esta misma página en vez de
-    // duplicar toda su lógica. Se lee con la API del navegador en vez de
-    // useSearchParams para no forzar esta página a salir del prerenderizado
-    // estático (useSearchParams exige un límite de Suspense).
+    // Permite enlazar directo a una publicación (?post=<id>) o abrir el
+    // formulario de publicar (?publish=1) — así el perfil, la actividad y
+    // la barra de navegación inferior pueden abrir estos modales de esta
+    // misma página en vez de duplicar toda su lógica. Se lee con la API del
+    // navegador en vez de useSearchParams para no forzar esta página a
+    // salir del prerenderizado estático (useSearchParams exige un límite
+    // de Suspense).
     useEffect(() => {
-        const postId = new URLSearchParams(window.location.search).get('post');
+        const params = new URLSearchParams(window.location.search);
+        const postId = params.get('post');
         // eslint-disable-next-line react-hooks/set-state-in-effect
         if (postId) setSelectedPostId(postId);
+        if (params.get('publish') === '1') setShowUploadModal(true);
     }, []);
 
     const openPost = (postId: string) => {
@@ -393,6 +398,7 @@ export default function ComunidadPage() {
             setNewPostInstagramUrl('');
             setNewPostCategory(null);
             setFile(null);
+            closeUploadModal();
             await loadCommunityPosts();
         } catch (error) {
             console.error('Error al subir:', error);
@@ -473,6 +479,12 @@ export default function ComunidadPage() {
         router.replace('/comunidad', { scroll: false });
     };
     const { closeButtonRef, handleBackdropClick } = useModal(!!selectedPost, closeModal);
+
+    const closeUploadModal = () => {
+        setShowUploadModal(false);
+        router.replace('/comunidad', { scroll: false });
+    };
+    const { closeButtonRef: uploadCloseButtonRef, handleBackdropClick: handleUploadBackdropClick } = useModal(showUploadModal, closeUploadModal);
     const modalTheme = getCategoryTheme(selectedPost?.category ?? null);
 
     const inputClass = "bg-[var(--color-ink)] border border-[var(--color-border)] rounded-xl px-4 py-3 text-sm text-[var(--color-text)] font-medium focus:outline-none focus:border-[var(--color-accent)] transition-colors placeholder:text-[var(--color-text-faint)]";
@@ -581,89 +593,129 @@ export default function ComunidadPage() {
                     <motion.div
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 mb-8"
+                        className="flex items-center justify-between gap-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-4 mb-8"
                     >
-                        <div className="flex justify-between items-center mb-5">
-                            <span className="text-xs font-semibold text-[var(--color-accent)] uppercase tracking-wide">
-                                {t.connectedAs} {user.user_metadata?.instagram_handle || user.email?.split('@')[0]}
-                            </span>
+                        <span className="text-xs font-semibold text-[var(--color-accent)] uppercase tracking-wide truncate">
+                            {t.connectedAs} {user.user_metadata?.instagram_handle || user.email?.split('@')[0]}
+                        </span>
+                        <div className="flex items-center gap-2 shrink-0">
+                            <motion.button
+                                whileHover={{ y: -2 }}
+                                whileTap={{ y: 1 }}
+                                onClick={() => setShowUploadModal(true)}
+                                className="bg-[var(--color-accent-3)] text-white font-bold px-5 py-2.5 rounded-full text-xs uppercase tracking-wider hover:brightness-110 transition"
+                            >
+                                {t.publishBtn}
+                            </motion.button>
                             <button
                                 onClick={handleLogout}
-                                className="text-[10px] font-bold uppercase bg-[var(--color-surface-2)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] px-3 py-1.5 rounded-full border border-[var(--color-border)]"
+                                className="text-[10px] font-bold uppercase bg-[var(--color-surface-2)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] px-3 py-2.5 rounded-full border border-[var(--color-border)]"
                             >
                                 {t.logout}
                             </button>
                         </div>
+                    </motion.div>
+                )}
+            </div>
 
-                        <h2 className="font-display text-lg font-semibold tracking-tight text-[var(--color-text)] mb-4">{t.newPostTitle}</h2>
-                        <form onSubmit={handleUpload} className="flex flex-col gap-4">
-                            <textarea
-                                required
-                                rows={3}
-                                maxLength={TITLE_MAX_LENGTH}
-                                placeholder={t.placeholder}
-                                value={newPostTitle}
-                                onChange={(e) => setNewPostTitle(e.target.value)}
-                                className={`${inputClass} resize-none`}
-                            />
-                            <div className="text-right text-[10px] text-[var(--color-text-faint)] -mt-2">
-                                {newPostTitle.length}/{TITLE_MAX_LENGTH}
+            {/* MODAL DE PUBLICAR */}
+            <AnimatePresence>
+                {showUploadModal && user && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={handleUploadBackdropClick}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label={t.newPostTitle}
+                        className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, y: 16, opacity: 0 }}
+                            animate={{ scale: 1, y: 0, opacity: 1 }}
+                            exit={{ scale: 0.95, y: 16, opacity: 0 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6"
+                        >
+                            <div className="flex justify-between items-center mb-5">
+                                <h2 className="font-display text-lg font-semibold tracking-tight text-[var(--color-text)]">{t.newPostTitle}</h2>
+                                <button
+                                    ref={uploadCloseButtonRef}
+                                    onClick={closeUploadModal}
+                                    aria-label={t.close}
+                                    className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
+                                >
+                                    ✕
+                                </button>
                             </div>
-                            <input
-                                type="url"
-                                maxLength={URL_MAX_LENGTH}
-                                placeholder={t.instagramUrlPlaceholder}
-                                value={newPostInstagramUrl}
-                                onChange={(e) => setNewPostInstagramUrl(e.target.value)}
-                                className={inputClass}
-                            />
-
-                            <div>
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-faint)] block mb-2">{t.categoryLabel}</span>
-                                <div className="flex flex-wrap gap-2">
-                                    {CATEGORY_KEYS.map((key) => (
-                                        <button
-                                            key={key}
-                                            type="button"
-                                            onClick={() => setNewPostCategory((prev) => (prev === key ? null : key))}
-                                            style={
-                                                newPostCategory === key
-                                                    ? { background: getCategoryTheme(key)!.accent, color: getCategoryTheme(key)!.ink, borderColor: getCategoryTheme(key)!.accent }
-                                                    : undefined
-                                            }
-                                            className={`px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wide border transition-colors ${newPostCategory === key
-                                                ? ''
-                                                : 'bg-transparent text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'
-                                                }`}
-                                        >
-                                            {formatCategoryLabel(key)}
-                                        </button>
-                                    ))}
+                            <form onSubmit={handleUpload} className="flex flex-col gap-4">
+                                <textarea
+                                    required
+                                    rows={3}
+                                    maxLength={TITLE_MAX_LENGTH}
+                                    placeholder={t.placeholder}
+                                    value={newPostTitle}
+                                    onChange={(e) => setNewPostTitle(e.target.value)}
+                                    className={`${inputClass} resize-none`}
+                                />
+                                <div className="text-right text-[10px] text-[var(--color-text-faint)] -mt-2">
+                                    {newPostTitle.length}/{TITLE_MAX_LENGTH}
                                 </div>
-                            </div>
+                                <input
+                                    type="url"
+                                    maxLength={URL_MAX_LENGTH}
+                                    placeholder={t.instagramUrlPlaceholder}
+                                    value={newPostInstagramUrl}
+                                    onChange={(e) => setNewPostInstagramUrl(e.target.value)}
+                                    className={inputClass}
+                                />
 
-                            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                                <div>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-faint)] block mb-2">{t.categoryLabel}</span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {CATEGORY_KEYS.map((key) => (
+                                            <button
+                                                key={key}
+                                                type="button"
+                                                onClick={() => setNewPostCategory((prev) => (prev === key ? null : key))}
+                                                style={
+                                                    newPostCategory === key
+                                                        ? { background: getCategoryTheme(key)!.accent, color: getCategoryTheme(key)!.ink, borderColor: getCategoryTheme(key)!.accent }
+                                                        : undefined
+                                                }
+                                                className={`px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wide border transition-colors ${newPostCategory === key
+                                                    ? ''
+                                                    : 'bg-transparent text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'
+                                                    }`}
+                                            >
+                                                {formatCategoryLabel(key)}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 <input
                                     type="file"
                                     accept="image/jpeg,image/png,image/webp,image/gif"
                                     required
                                     onChange={(e) => e.target.files && setFile(e.target.files[0])}
-                                    className="w-full sm:w-auto text-[var(--color-text-muted)] border border-[var(--color-border)] rounded-xl px-4 py-2 text-xs font-medium file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--color-accent)] file:text-[var(--color-accent-ink)] hover:file:cursor-pointer hover:file:brightness-110"
+                                    className="w-full text-[var(--color-text-muted)] border border-[var(--color-border)] rounded-xl px-4 py-2 text-xs font-medium file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--color-accent)] file:text-[var(--color-accent-ink)] hover:file:cursor-pointer hover:file:brightness-110"
                                 />
                                 <motion.button
                                     whileHover={{ y: -2 }}
                                     whileTap={{ y: 1 }}
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full sm:w-auto bg-[var(--color-accent-3)] text-white font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider hover:brightness-110 transition disabled:opacity-50"
+                                    className="w-full bg-[var(--color-accent-3)] text-white font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider hover:brightness-110 transition disabled:opacity-50"
                                 >
                                     {loading ? t.publishingBtn : t.publishBtn}
                                 </motion.button>
-                            </div>
-                        </form>
+                            </form>
+                        </motion.div>
                     </motion.div>
                 )}
-            </div>
+            </AnimatePresence>
 
             {/* FEED — cuadrícula ancha, como la galería principal */}
             <div className="max-w-6xl mx-auto px-4 pb-16">
