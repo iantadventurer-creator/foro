@@ -121,6 +121,8 @@ export default function ComunidadPage() {
             signUpOk: '¡Registro exitoso! Revisa tu correo.',
             anonymous: 'Anónimo',
             viewProfile: 'Ver perfil',
+            activity: 'Actividad',
+            profile: 'Mi perfil',
             auth: {
                 signInTitle: 'Iniciar sesión en el foro',
                 signUpTitle: 'Crear una cuenta',
@@ -171,6 +173,8 @@ export default function ComunidadPage() {
             signUpOk: 'Registration successful! Check your email.',
             anonymous: 'Anonymous',
             viewProfile: 'View profile',
+            activity: 'Activity',
+            profile: 'My profile',
             auth: {
                 signInTitle: 'Sign in to the forum',
                 signUpTitle: 'Create an account',
@@ -480,6 +484,17 @@ export default function ComunidadPage() {
                     <Link href="/" className="text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
                         {t.volver}
                     </Link>
+
+                    <nav className="flex items-center gap-5 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+                        <Link href="/comunidad/actividad" className="hover:text-[var(--color-text)] transition-colors">
+                            {t.activity}
+                        </Link>
+                        {user && (
+                            <Link href={`/comunidad/u/${user.id}`} className="hover:text-[var(--color-text)] transition-colors">
+                                {t.profile}
+                            </Link>
+                        )}
+                    </nav>
 
                     <div className="flex items-center gap-4">
                         <span className="font-semibold text-xs uppercase tracking-widest text-[var(--color-text-muted)] hidden sm:inline">{t.foro}</span>

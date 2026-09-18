@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 import { type Post, avatarColorFor } from '@/lib/community';
 import { PostCard } from '@/components/community/PostCard';
+import { CommunityHeaderNav } from '@/components/community/CommunityHeaderNav';
 
 export default function CommunityProfilePage({ params }: { params: Promise<{ userId: string }> }) {
     const { userId } = use(params);
@@ -40,10 +41,11 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
     return (
         <main className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
             <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)] px-6 py-4">
-                <div className="max-w-4xl mx-auto flex items-center">
+                <div className="max-w-4xl mx-auto flex justify-between items-center">
                     <Link href="/comunidad" className="text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
                         ← Volver a la comunidad
                     </Link>
+                    <CommunityHeaderNav />
                 </div>
             </header>
 
