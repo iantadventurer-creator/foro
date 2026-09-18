@@ -492,12 +492,12 @@ export default function ComunidadPage() {
     return (
         <main className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
             <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)] px-6 py-4">
-                <div className="max-w-6xl mx-auto flex justify-between items-center">
-                    <Link href="/" className="text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
+                <div className="max-w-6xl mx-auto grid grid-cols-3 items-center">
+                    <Link href="/" className="justify-self-start text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
                         {t.volver}
                     </Link>
 
-                    <nav className="flex items-center gap-5 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+                    <nav className="justify-self-center flex items-center gap-5 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
                         <Link href="/comunidad/actividad" className="hover:text-[var(--color-text)] transition-colors">
                             {t.activity}
                         </Link>
@@ -518,7 +518,7 @@ export default function ComunidadPage() {
                         )}
                     </nav>
 
-                    <div className="flex items-center gap-4">
+                    <div className="justify-self-end flex items-center gap-4">
                         {user && (
                             <button
                                 onClick={handleLogout}
