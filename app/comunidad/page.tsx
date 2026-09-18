@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -470,16 +470,16 @@ export default function ComunidadPage() {
     // congelada del momento en que se abrió), para que el contador de likes
     // se actualice en vivo si alguien más le da like mientras está abierto.
     const selectedPost = selectedPostId ? posts.find((p) => p.id === selectedPostId) ?? null : null;
-    const closeModal = () => {
+    const closeModal = useCallback(() => {
         setSelectedPostId(null);
         router.replace('/comunidad', { scroll: false });
-    };
+    }, [router]);
     const { closeButtonRef, handleBackdropClick } = useModal(!!selectedPost, closeModal);
 
-    const closeUploadModal = () => {
+    const closeUploadModal = useCallback(() => {
         setShowUploadModal(false);
         router.replace('/comunidad', { scroll: false });
-    };
+    }, [router]);
     const { closeButtonRef: uploadCloseButtonRef, handleBackdropClick: handleUploadBackdropClick } = useModal(showUploadModal, closeUploadModal);
     const modalTheme = getCategoryTheme(selectedPost?.category ?? null);
 
