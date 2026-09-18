@@ -92,7 +92,6 @@ export default function ComunidadPage() {
     const content = {
         es: {
             volver: '← Volver al inicio',
-            foro: 'Comunidad',
             pageTitle: 'Comunidad',
             pageSubtitle: 'Comparte tus propias creaciones LEGO y descubre las de otros fans.',
             connectedAs: 'Conectado como',
@@ -144,7 +143,6 @@ export default function ComunidadPage() {
         },
         en: {
             volver: '← Back to home',
-            foro: 'Community',
             pageTitle: 'Community',
             pageSubtitle: 'Share your own LEGO creations and discover other fans’.',
             connectedAs: 'Logged in as',
@@ -527,7 +525,6 @@ export default function ComunidadPage() {
                                 {t.logout}
                             </button>
                         )}
-                        <span className="font-semibold text-xs uppercase tracking-widest text-[var(--color-text-muted)] hidden sm:inline">{t.foro}</span>
                         <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
                             <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'es' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>ES</button>
                             <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>EN</button>
