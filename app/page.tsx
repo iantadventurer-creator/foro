@@ -7,8 +7,10 @@ import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { GallerySkeleton } from '@/components/ui/GallerySkeleton';
 import { StudDivider } from '@/components/ui/StudDivider';
 import { QrCodeModal, pickRandomQrColor } from '@/components/ui/QrCodeButton';
+import { FilterPill } from '@/components/ui/FilterPill';
 import { supabase } from '@/lib/supabaseClient';
 import { useBodyScrollLock } from '@/lib/useBodyScrollLock';
+import { formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
 
 type FeedItem = {
   id: string;
@@ -32,63 +34,6 @@ const GALLERY_BUCKET = 'galeria';
 const VIDEO_EXTENSIONS = ['mp4', 'mov', 'webm'];
 const FAVORITES_STORAGE_KEY = 'iantbuild:favorites';
 
-/** "STAR WARS" → "Star Wars", pero conserva las siglas cortas (p. ej. "DC") en mayúsculas. */
-function formatCategoryLabel(raw: string): string {
-  return raw
-    .toLowerCase()
-    .split(/[\s_-]+/)
-    .filter(Boolean)
-    .map((word) => (word.length <= 2 ? word.toUpperCase() : word.charAt(0).toUpperCase() + word.slice(1)))
-    .join(' ');
-}
-
-/** Color de acento propio por categoría/franquicia, con su sombra "de canto" y el color de texto legible sobre ese fondo. */
-const CATEGORY_THEMES: Record<string, { accent: string; shadow: string; ink: string }> = {
-  'star wars': { accent: '#E8B923', shadow: '#8a6e14', ink: '#1a1300' },
-  ninjago: { accent: '#FF6B00', shadow: '#a34500', ink: '#2b1200' },
-  marvel: { accent: '#C0110C', shadow: '#6e0a07', ink: '#ffffff' },
-  dc: { accent: '#0476F2', shadow: '#024a99', ink: '#ffffff' },
-  minecraft: { accent: '#5C9E31', shadow: '#375f1d', ink: '#ffffff' },
-  chill: { accent: '#8B7CF6', shadow: '#4f4499', ink: '#ffffff' },
-};
-
-function getCategoryTheme(category: string | null): { accent: string; shadow: string; ink: string } | null {
-  if (!category) return null;
-  return CATEGORY_THEMES[category.trim().toLowerCase()] || null;
-}
-
-function FilterPill({
-  children,
-  onClick,
-  active,
-  theme,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  active: boolean;
-  theme?: { accent: string; shadow: string; ink: string } | null;
-}) {
-  return (
-    <motion.button
-      onClick={onClick}
-      aria-pressed={active}
-      whileTap={active ? { y: 1 } : undefined}
-      style={
-        active && theme
-          ? { background: theme.accent, color: theme.ink, borderColor: theme.accent, boxShadow: `0 3px 0 0 ${theme.shadow}` }
-          : undefined
-      }
-      className={`px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wider transition-colors duration-200 whitespace-nowrap border ${active
-          ? theme
-            ? ''
-            : 'bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-[var(--color-accent)] shadow-[0_3px_0_0_var(--shadow-accent)]'
-          : 'bg-transparent text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)] hover:border-[var(--color-text-muted)]'
-        }`}
-    >
-      {children}
-    </motion.button>
-  );
-}
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },

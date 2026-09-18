@@ -7,6 +7,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 import { useToasts, ToastViewport } from '@/components/ui/Toast';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { FilterPill } from '@/components/ui/FilterPill';
+import { CATEGORY_KEYS, formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
+import { useModal } from '@/lib/useModal';
 
 type Like = { user_id: string };
 type Post = {
@@ -17,6 +20,7 @@ type Post = {
     instagram_url: string | null;
     user_id: string;
     created_at: string;
+    category: string | null;
     post_likes: Like[];
 };
 type AppUser = {
@@ -56,7 +60,9 @@ export default function ComunidadPage() {
     const [feedLoading, setFeedLoading] = useState(true);
     const [user, setUser] = useState<AppUser | null>(null);
     const [filterMyPosts, setFilterMyPosts] = useState(false);
+    const [filterCategory, setFilterCategory] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<'recent' | 'popular'>('recent');
+    const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
     // Estados para Registro / Login
     const [isSignUp, setIsSignUp] = useState(false);
@@ -68,6 +74,7 @@ export default function ComunidadPage() {
     // Estados del Formulario del Foro
     const [newPostTitle, setNewPostTitle] = useState('');
     const [newPostInstagramUrl, setNewPostInstagramUrl] = useState('');
+    const [newPostCategory, setNewPostCategory] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -81,24 +88,29 @@ export default function ComunidadPage() {
     const content = {
         es: {
             volver: '← Volver al inicio',
-            foro: 'Foro Comunidad',
+            foro: 'Comunidad',
+            pageTitle: 'Comunidad',
+            pageSubtitle: 'Comparte tus propias creaciones LEGO y descubre las de otros fans.',
             connectedAs: 'Conectado como',
             logout: 'Cerrar sesión',
             newPostTitle: 'Nueva publicación',
             placeholder: '¿Qué diorama o creación quieres compartir hoy?',
             instagramUrlPlaceholder: 'URL de tu perfil de Instagram (ej. https://instagram.com/tu_usuario)',
+            categoryLabel: 'Categoría (opcional)',
             publishBtn: 'Publicar',
             publishingBtn: 'Publicando…',
             feedTitle: 'Feed en directo',
-            filterAll: 'Todas',
+            filterAll: 'Todo',
             filterMine: 'Mis publicaciones',
             sortRecent: 'Recientes',
             sortPopular: 'Más gustados',
             noPosts: 'Aún no hay publicaciones en el foro.',
+            noResultsFilter: 'No hay publicaciones que coincidan con este filtro.',
             edit: 'Editar',
             delete: 'Borrar',
             save: 'Guardar',
             cancel: 'Cancelar',
+            close: 'Cerrar',
             confirmDeleteTitle: '¿Eliminar esta publicación?',
             confirmDeleteDesc: 'Esta acción no se puede deshacer.',
             mustLoginLike: 'Debes iniciar sesión para dar "Me gusta".',
@@ -108,6 +120,7 @@ export default function ComunidadPage() {
             tooLarge: (mb: number) => `La imagen supera los ${mb}MB permitidos.`,
             emailTaken: 'Este correo ya está registrado.',
             signUpOk: '¡Registro exitoso! Revisa tu correo.',
+            anonymous: 'Anónimo',
             auth: {
                 signInTitle: 'Iniciar sesión en el foro',
                 signUpTitle: 'Crear una cuenta',
@@ -124,12 +137,15 @@ export default function ComunidadPage() {
         },
         en: {
             volver: '← Back to home',
-            foro: 'Community Forum',
+            foro: 'Community',
+            pageTitle: 'Community',
+            pageSubtitle: 'Share your own LEGO creations and discover other fans’.',
             connectedAs: 'Logged in as',
             logout: 'Log out',
             newPostTitle: 'New post',
             placeholder: 'What diorama or creation do you want to share today?',
             instagramUrlPlaceholder: 'Your Instagram profile URL (e.g. https://instagram.com/your_account)',
+            categoryLabel: 'Category (optional)',
             publishBtn: 'Post',
             publishingBtn: 'Posting…',
             feedTitle: 'Live feed',
@@ -138,10 +154,12 @@ export default function ComunidadPage() {
             sortRecent: 'Recent',
             sortPopular: 'Most liked',
             noPosts: 'No posts in the forum yet.',
+            noResultsFilter: 'No posts match this filter.',
             edit: 'Edit',
             delete: 'Delete',
             save: 'Save',
             cancel: 'Cancel',
+            close: 'Close',
             confirmDeleteTitle: 'Delete this post?',
             confirmDeleteDesc: 'This action cannot be undone.',
             mustLoginLike: 'You must log in to like posts.',
@@ -151,6 +169,7 @@ export default function ComunidadPage() {
             tooLarge: (mb: number) => `The image exceeds the ${mb}MB limit.`,
             emailTaken: 'This email is already registered.',
             signUpOk: 'Registration successful! Check your email.',
+            anonymous: 'Anonymous',
             auth: {
                 signInTitle: 'Sign in to the forum',
                 signUpTitle: 'Create an account',
@@ -353,6 +372,7 @@ export default function ComunidadPage() {
                         image_url: publicUrl,
                         instagram_handle: authorHandle.startsWith('@') ? authorHandle : '@' + authorHandle,
                         instagram_url: newPostInstagramUrl.trim() || null,
+                        category: newPostCategory,
                         user_id: user.id,
                     },
                 ]);
@@ -366,6 +386,7 @@ export default function ComunidadPage() {
 
             setNewPostTitle('');
             setNewPostInstagramUrl('');
+            setNewPostCategory(null);
             setFile(null);
             await loadCommunityPosts();
         } catch (error) {
@@ -382,6 +403,7 @@ export default function ComunidadPage() {
         if (!pendingDelete) return;
         const { id: postId, imageUrl } = pendingDelete;
         setPendingDelete(null);
+        setSelectedPostId((current) => (current === postId ? null : current));
 
         try {
             const { error: dbError } = await supabase
@@ -425,9 +447,8 @@ export default function ComunidadPage() {
 
     const displayedPosts = posts
         .filter(post => {
-            if (filterMyPosts && user) {
-                return post.user_id === user.id;
-            }
+            if (filterMyPosts && user && post.user_id !== user.id) return false;
+            if (filterCategory && post.category !== filterCategory) return false;
             return true;
         })
         .slice()
@@ -438,12 +459,20 @@ export default function ComunidadPage() {
             return 0; // ya vienen ordenados por fecha desde la consulta
         });
 
+    // El modal siempre muestra la versión más fresca del post (no la foto
+    // congelada del momento en que se abrió), para que el contador de likes
+    // se actualice en vivo si alguien más le da like mientras está abierto.
+    const selectedPost = selectedPostId ? posts.find((p) => p.id === selectedPostId) ?? null : null;
+    const closeModal = () => setSelectedPostId(null);
+    const { closeButtonRef, handleBackdropClick } = useModal(!!selectedPost, closeModal);
+    const modalTheme = getCategoryTheme(selectedPost?.category ?? null);
+
     const inputClass = "bg-[var(--color-ink)] border border-[var(--color-border)] rounded-xl px-4 py-3 text-sm text-[var(--color-text)] font-medium focus:outline-none focus:border-[var(--color-accent)] transition-colors placeholder:text-[var(--color-text-faint)]";
 
     return (
         <main className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
             <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)] px-6 py-4">
-                <div className="max-w-2xl mx-auto flex justify-between items-center">
+                <div className="max-w-6xl mx-auto flex justify-between items-center">
                     <Link href="/" className="text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
                         {t.volver}
                     </Link>
@@ -458,7 +487,11 @@ export default function ComunidadPage() {
                 </div>
             </header>
 
-            <div className="max-w-2xl mx-auto px-4 py-10">
+            <div className="max-w-2xl mx-auto px-4 pt-12">
+                <div className="mb-10 text-center">
+                    <h1 className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-text)]">{t.pageTitle}</h1>
+                    <p className="text-sm text-[var(--color-text-muted)] mt-1">{t.pageSubtitle}</p>
+                </div>
 
                 {!user ? (
                     <motion.div
@@ -565,6 +598,31 @@ export default function ComunidadPage() {
                                 onChange={(e) => setNewPostInstagramUrl(e.target.value)}
                                 className={inputClass}
                             />
+
+                            <div>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-faint)] block mb-2">{t.categoryLabel}</span>
+                                <div className="flex flex-wrap gap-2">
+                                    {CATEGORY_KEYS.map((key) => (
+                                        <button
+                                            key={key}
+                                            type="button"
+                                            onClick={() => setNewPostCategory((prev) => (prev === key ? null : key))}
+                                            style={
+                                                newPostCategory === key
+                                                    ? { background: getCategoryTheme(key)!.accent, color: getCategoryTheme(key)!.ink, borderColor: getCategoryTheme(key)!.accent }
+                                                    : undefined
+                                            }
+                                            className={`px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wide border transition-colors ${newPostCategory === key
+                                                ? ''
+                                                : 'bg-transparent text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'
+                                                }`}
+                                        >
+                                            {formatCategoryLabel(key)}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
                             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                                 <input
                                     type="file"
@@ -586,138 +644,225 @@ export default function ComunidadPage() {
                         </form>
                     </motion.div>
                 )}
+            </div>
 
-                <div className="space-y-4">
-                    <div className="flex flex-wrap justify-between items-center gap-3 mb-2">
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-faint)] flex items-center gap-2">
-                            {t.feedTitle}
-                            <span className="relative flex h-2 w-2" title="En vivo">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-accent-4)] opacity-75" />
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-accent-4)]" />
-                            </span>
-                        </h3>
-                        <div className="flex flex-wrap gap-2">
-                            <div className="flex gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
-                                <button
-                                    onClick={() => setSortBy('recent')}
-                                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${sortBy === 'recent' ? 'bg-[var(--color-accent-3)] text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
-                                >
-                                    {t.sortRecent}
-                                </button>
-                                <button
-                                    onClick={() => setSortBy('popular')}
-                                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${sortBy === 'popular' ? 'bg-[var(--color-accent-3)] text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
-                                >
-                                    {t.sortPopular}
-                                </button>
-                            </div>
-                            {user && (
-                                <div className="flex gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
-                                    <button
-                                        onClick={() => setFilterMyPosts(false)}
-                                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${!filterMyPosts ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
-                                    >
-                                        {t.filterAll}
-                                    </button>
-                                    <button
-                                        onClick={() => setFilterMyPosts(true)}
-                                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${filterMyPosts ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
-                                    >
-                                        {t.filterMine}
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+            {/* FEED — cuadrícula ancha, como la galería principal */}
+            <div className="max-w-6xl mx-auto px-4 pb-16">
+                <div className="mb-10 flex flex-col items-center text-center gap-6">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-faint)] flex items-center gap-2">
+                        {t.feedTitle}
+                        <span className="relative flex h-2 w-2" title="En vivo">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-accent-4)] opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-accent-4)]" />
+                        </span>
+                    </h3>
+
+                    <div className="flex items-center justify-center gap-3 flex-wrap">
+                        <FilterPill onClick={() => setFilterCategory(null)} active={filterCategory === null}>
+                            {t.filterAll}
+                        </FilterPill>
+                        {CATEGORY_KEYS.map((key) => (
+                            <FilterPill
+                                key={key}
+                                onClick={() => setFilterCategory(key)}
+                                active={filterCategory === key}
+                                theme={getCategoryTheme(key)}
+                            >
+                                {formatCategoryLabel(key)}
+                            </FilterPill>
+                        ))}
                     </div>
 
-                    {feedLoading ? (
-                        <div className="space-y-4" aria-hidden="true">
-                            {[0, 1, 2].map((i) => (
-                                <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-5 flex flex-col gap-3">
-                                    <div className="h-4 w-32 rounded-full animate-shimmer" />
-                                    <div className="h-4 w-full rounded-full animate-shimmer" />
-                                    <div className="h-48 w-full rounded-xl animate-shimmer" />
-                                </div>
-                            ))}
+                    <div className="flex flex-wrap justify-center gap-2">
+                        <div className="flex gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
+                            <button
+                                onClick={() => setSortBy('recent')}
+                                className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${sortBy === 'recent' ? 'bg-[var(--color-accent-3)] text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
+                            >
+                                {t.sortRecent}
+                            </button>
+                            <button
+                                onClick={() => setSortBy('popular')}
+                                className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${sortBy === 'popular' ? 'bg-[var(--color-accent-3)] text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
+                            >
+                                {t.sortPopular}
+                            </button>
                         </div>
-                    ) : displayedPosts.length === 0 ? (
-                        <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-muted)] font-medium text-sm">
-                            {t.noPosts}
-                        </div>
-                    ) : (
-                        displayedPosts.map((post, index) => {
+                        {user && (
+                            <button
+                                onClick={() => setFilterMyPosts((v) => !v)}
+                                className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all border ${filterMyPosts ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-[var(--color-accent)]' : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'}`}
+                            >
+                                {t.filterMine}
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {feedLoading ? (
+                    <div className="columns-1 sm:columns-2 lg:columns-3 gap-6" aria-hidden="true">
+                        {[0, 1, 2, 3, 4, 5].map((i) => (
+                            <div key={i} className="mb-6 break-inside-avoid bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl overflow-hidden">
+                                <div className="h-56 w-full animate-shimmer" />
+                            </div>
+                        ))}
+                    </div>
+                ) : displayedPosts.length === 0 ? (
+                    <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-muted)] font-medium text-sm">
+                        {posts.length === 0 ? t.noPosts : t.noResultsFilter}
+                    </div>
+                ) : (
+                    <div className="columns-1 sm:columns-2 lg:columns-3 gap-6">
+                        {displayedPosts.map((post, index) => {
                             const likes = post.post_likes || [];
                             const hasLiked = user ? likes.some((l) => l.user_id === user.id) : false;
+                            const cardTheme = getCategoryTheme(post.category);
 
                             return (
-                                <motion.div
+                                <motion.figure
                                     key={post.id}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3, delay: Math.min(index, 8) * 0.05 }}
-                                    className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-5 flex flex-col gap-3"
+                                    onClick={() => setSelectedPostId(post.id)}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-label={post.title}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setSelectedPostId(post.id);
+                                        }
+                                    }}
+                                    style={{ '--card-accent': cardTheme?.accent ?? 'var(--color-accent)' } as React.CSSProperties}
+                                    className="mb-6 break-inside-avoid group cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--card-accent)]/60 transition-colors relative focus-visible:border-[var(--card-accent)]"
                                 >
-                                    <div className="flex items-center justify-between flex-wrap gap-y-2">
-                                        <div className="flex items-center gap-2.5 min-w-0">
+                                    <div className="relative overflow-hidden bg-black">
+                                        <Image
+                                            src={post.image_url}
+                                            alt={post.title}
+                                            width={0}
+                                            height={0}
+                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                            className="w-full h-auto object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+                                        />
+                                        {cardTheme && post.category && (
                                             <div
-                                                className="w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-[11px] font-black text-[#14100a]"
-                                                style={{ background: avatarColorFor(post.instagram_handle || 'anon') }}
-                                                aria-hidden="true"
+                                                className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+                                                style={{ background: cardTheme.accent, color: cardTheme.ink }}
                                             >
-                                                {(post.instagram_handle || 'A').replace('@', '').charAt(0).toUpperCase()}
+                                                {formatCategoryLabel(post.category)}
                                             </div>
-                                            {post.instagram_url ? (
-                                                <a
-                                                    href={post.instagram_url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide hover:underline flex items-center gap-1 truncate"
-                                                >
-                                                    <span className="truncate">{post.instagram_handle || 'Anónimo'}</span> ↗
-                                                </a>
-                                            ) : (
-                                                <span className="font-bold text-xs text-[var(--color-accent)] uppercase tracking-wide truncate">
-                                                    {post.instagram_handle || 'Anónimo'}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        <div className="flex items-center gap-3 shrink-0">
-                                            {user?.id === post.user_id && (
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => {
-                                                            setEditingPostId(post.id);
-                                                            setEditText(post.title);
-                                                        }}
-                                                        className="text-[10px] bg-[var(--color-surface-2)] text-[var(--color-accent)] hover:brightness-110 px-2.5 py-1 rounded-full font-bold uppercase border border-[var(--color-border)] tracking-wider transition-colors"
-                                                    >
-                                                        {t.edit}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => requestDelete(post.id, post.image_url)}
-                                                        className="text-[10px] bg-[var(--color-accent-2)]/10 text-[var(--color-accent-2)] hover:bg-[var(--color-accent-2)]/20 px-2.5 py-1 rounded-full font-bold uppercase border border-[var(--color-accent-2)]/30 tracking-wider transition-colors"
-                                                    >
-                                                        {t.delete}
-                                                    </button>
-                                                </div>
-                                            )}
-                                            <span className="text-[10px] text-[var(--color-text-faint)] font-semibold">
-                                                {new Date(post.created_at).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', { month: 'short', day: 'numeric' })}
-                                            </span>
+                                        )}
+                                        <motion.button
+                                            whileTap={{ scale: 1.3 }}
+                                            transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                                            onClick={(e) => { e.stopPropagation(); handleToggleLike(post.id, likes); }}
+                                            aria-pressed={hasLiked}
+                                            className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1.5 rounded-full"
+                                        >
+                                            <motion.span key={hasLiked ? 'liked' : 'unliked'} initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={{ duration: 0.2 }}>
+                                                {hasLiked ? '❤️' : '🤍'}
+                                            </motion.span>
+                                            <span>{likes.length}</span>
+                                        </motion.button>
+                                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 pt-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <figcaption className="text-sm font-bold text-white line-clamp-1">{post.title}</figcaption>
+                                            <p className="text-xs text-white/70 mt-0.5 truncate">{post.instagram_handle || t.anonymous}</p>
                                         </div>
                                     </div>
+                                </motion.figure>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
 
-                                    <AnimatePresence>
-                                        {editingPostId === post.id ? (
+            {/* MODAL DE PUBLICACIÓN */}
+            <AnimatePresence>
+                {selectedPost && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={handleBackdropClick}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label={selectedPost.title}
+                        className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, y: 16, opacity: 0 }}
+                            animate={{ scale: 1, y: 0, opacity: 1 }}
+                            exit={{ scale: 0.95, y: 16, opacity: 0 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl"
+                        >
+                            <div className="w-full md:w-3/5 bg-black relative min-h-[320px] md:min-h-[480px] flex items-center justify-center overflow-hidden">
+                                <div
+                                    className="absolute inset-0 bg-cover bg-center filter blur-2xl opacity-30 scale-110 pointer-events-none"
+                                    style={{ backgroundImage: `url(${selectedPost.image_url})` }}
+                                />
+                                <Image
+                                    src={selectedPost.image_url}
+                                    alt={selectedPost.title}
+                                    width={0}
+                                    height={0}
+                                    sizes="(max-width: 768px) 100vw, 60vw"
+                                    className="relative z-10 max-h-[70vh] w-full h-auto object-contain"
+                                />
+                            </div>
+                            <div className="w-full md:w-2/5 p-6 flex flex-col">
+                                <div className="flex justify-between items-center gap-3">
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                        <div
+                                            className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-black text-[#14100a]"
+                                            style={{ background: avatarColorFor(selectedPost.instagram_handle || 'anon') }}
+                                            aria-hidden="true"
+                                        >
+                                            {(selectedPost.instagram_handle || 'A').replace('@', '').charAt(0).toUpperCase()}
+                                        </div>
+                                        {selectedPost.instagram_url ? (
+                                            <a
+                                                href={selectedPost.instagram_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="font-bold text-xs uppercase tracking-wide hover:underline flex items-center gap-1 truncate"
+                                                style={{ color: modalTheme?.accent ?? 'var(--color-accent)' }}
+                                            >
+                                                <span className="truncate">{selectedPost.instagram_handle || t.anonymous}</span> ↗
+                                            </a>
+                                        ) : (
+                                            <span
+                                                className="font-bold text-xs uppercase tracking-wide truncate"
+                                                style={{ color: modalTheme?.accent ?? 'var(--color-accent)' }}
+                                            >
+                                                {selectedPost.instagram_handle || t.anonymous}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <button
+                                        ref={closeButtonRef}
+                                        onClick={closeModal}
+                                        aria-label={t.close}
+                                        className="w-8 h-8 shrink-0 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+
+                                <div className="flex-1 flex flex-col justify-center py-6">
+                                    <AnimatePresence mode="wait">
+                                        {editingPostId === selectedPost.id ? (
                                             <motion.div
-                                                initial={{ opacity: 0, height: 0 }}
-                                                animate={{ opacity: 1, height: 'auto' }}
-                                                exit={{ opacity: 0, height: 0 }}
-                                                className="flex flex-col gap-2 mt-2"
+                                                key="editing"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="flex flex-col gap-2"
                                             >
                                                 <textarea
-                                                    rows={2}
+                                                    rows={3}
                                                     maxLength={TITLE_MAX_LENGTH}
                                                     value={editText}
                                                     onChange={(e) => setEditText(e.target.value)}
@@ -725,7 +870,7 @@ export default function ComunidadPage() {
                                                 />
                                                 <div className="flex gap-2 justify-end">
                                                     <button
-                                                        onClick={() => handleEdit(post.id)}
+                                                        onClick={() => handleEdit(selectedPost.id)}
                                                         className="bg-[var(--color-accent-4)] hover:brightness-110 text-white font-bold px-3 py-1.5 rounded-full text-[10px] uppercase transition-all"
                                                     >
                                                         {t.save}
@@ -742,52 +887,75 @@ export default function ComunidadPage() {
                                                 </div>
                                             </motion.div>
                                         ) : (
-                                            <p className="text-sm font-medium text-[var(--color-text)] leading-relaxed">{post.title}</p>
+                                            <motion.p
+                                                key="text"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="text-sm font-medium text-[var(--color-text)] leading-relaxed whitespace-pre-line"
+                                            >
+                                                {selectedPost.title}
+                                            </motion.p>
                                         )}
                                     </AnimatePresence>
+                                </div>
 
-                                    {post.image_url && (
-                                        <div className="rounded-xl overflow-hidden border border-[var(--color-border)] bg-black mt-2 flex justify-center items-center">
-                                            <Image
-                                                src={post.image_url}
-                                                alt="Foto publicada por el usuario"
-                                                width={0}
-                                                height={0}
-                                                sizes="(max-width: 640px) 100vw, 600px"
-                                                className="w-full h-auto max-h-[600px] object-contain"
-                                            />
-                                        </div>
-                                    )}
-
-                                    <div className="flex items-center gap-2 pt-2 border-t border-[var(--color-border)] mt-1">
+                                <div
+                                    className="w-full pt-4 flex flex-col gap-2.5"
+                                    style={{ borderTop: `1px solid ${modalTheme ? `${modalTheme.accent}40` : 'var(--color-border)'}` }}
+                                >
+                                    <div className="flex items-center justify-between gap-2">
                                         <motion.button
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 1.3 }}
                                             transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-                                            onClick={() => handleToggleLike(post.id, likes)}
-                                            aria-pressed={hasLiked}
-                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold transition-all ${hasLiked
+                                            onClick={() => handleToggleLike(selectedPost.id, selectedPost.post_likes || [])}
+                                            aria-pressed={user ? (selectedPost.post_likes || []).some((l) => l.user_id === user.id) : false}
+                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold transition-all ${user && (selectedPost.post_likes || []).some((l) => l.user_id === user.id)
                                                 ? 'bg-[var(--color-accent-2)]/10 text-[var(--color-accent-2)] border-[var(--color-accent-2)]/30'
                                                 : 'bg-[var(--color-surface-2)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'
                                                 }`}
                                         >
                                             <motion.span
-                                                key={hasLiked ? 'liked' : 'unliked'}
+                                                key={user && (selectedPost.post_likes || []).some((l) => l.user_id === user.id) ? 'liked' : 'unliked'}
                                                 initial={{ scale: 0.6 }}
                                                 animate={{ scale: 1 }}
                                                 transition={{ duration: 0.2 }}
                                             >
-                                                {hasLiked ? '❤️' : '🤍'}
+                                                {user && (selectedPost.post_likes || []).some((l) => l.user_id === user.id) ? '❤️' : '🤍'}
                                             </motion.span>
-                                            <span>{likes.length}</span>
+                                            <span>{(selectedPost.post_likes || []).length}</span>
                                         </motion.button>
+
+                                        {user?.id === selectedPost.user_id && editingPostId !== selectedPost.id && (
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => {
+                                                        setEditingPostId(selectedPost.id);
+                                                        setEditText(selectedPost.title);
+                                                    }}
+                                                    className="text-[10px] bg-[var(--color-surface-2)] text-[var(--color-accent)] hover:brightness-110 px-2.5 py-1 rounded-full font-bold uppercase border border-[var(--color-border)] tracking-wider transition-colors"
+                                                >
+                                                    {t.edit}
+                                                </button>
+                                                <button
+                                                    onClick={() => requestDelete(selectedPost.id, selectedPost.image_url)}
+                                                    className="text-[10px] bg-[var(--color-accent-2)]/10 text-[var(--color-accent-2)] hover:bg-[var(--color-accent-2)]/20 px-2.5 py-1 rounded-full font-bold uppercase border border-[var(--color-accent-2)]/30 tracking-wider transition-colors"
+                                                >
+                                                    {t.delete}
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
-                                </motion.div>
-                            );
-                        })
-                    )}
-                </div>
-            </div>
+                                    <span className="text-[10px] text-[var(--color-text-faint)] font-semibold">
+                                        {new Date(selectedPost.created_at).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                    </span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <ConfirmDialog
                 open={!!pendingDelete}
