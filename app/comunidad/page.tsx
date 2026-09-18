@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 import { useToasts, ToastViewport } from '@/components/ui/Toast';
@@ -10,19 +11,9 @@ import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { CATEGORY_KEYS, formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
 import { useModal } from '@/lib/useModal';
+import { type Like, type Post, avatarColorFor } from '@/lib/community';
+import { PostCard } from '@/components/community/PostCard';
 
-type Like = { user_id: string };
-type Post = {
-    id: string;
-    title: string;
-    image_url: string;
-    instagram_handle: string | null;
-    instagram_url: string | null;
-    user_id: string;
-    created_at: string;
-    category: string | null;
-    post_likes: Like[];
-};
 type AppUser = {
     id: string;
     email?: string;
@@ -34,20 +25,12 @@ function buildUploadFileName(originalName: string): string {
     return `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
 }
 
-const AVATAR_COLORS = ['var(--color-accent)', 'var(--color-accent-2)', 'var(--color-accent-3)', 'var(--color-accent-4)'];
-
-/** Color determinista para el avatar, derivado del handle (mismo usuario = mismo color siempre). */
-function avatarColorFor(handle: string): string {
-    let hash = 0;
-    for (let i = 0; i < handle.length; i++) hash = (hash * 31 + handle.charCodeAt(i)) >>> 0;
-    return AVATAR_COLORS[hash % AVATAR_COLORS.length];
-}
-
 const TITLE_MAX_LENGTH = 280;
 const HANDLE_MAX_LENGTH = 30;
 const URL_MAX_LENGTH = 200;
 
 export default function ComunidadPage() {
+    const router = useRouter();
     const [lang, setLang] = useState<'es' | 'en'>('es');
     const { toasts, push, dismiss } = useToasts();
 
@@ -63,6 +46,22 @@ export default function ComunidadPage() {
     const [filterCategory, setFilterCategory] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<'recent' | 'popular'>('recent');
     const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+
+    // Permite enlazar directo a una publicación (?post=<id>) — así el perfil
+    // y la actividad pueden abrir el modal de esta misma página en vez de
+    // duplicar toda su lógica. Se lee con la API del navegador en vez de
+    // useSearchParams para no forzar esta página a salir del prerenderizado
+    // estático (useSearchParams exige un límite de Suspense).
+    useEffect(() => {
+        const postId = new URLSearchParams(window.location.search).get('post');
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (postId) setSelectedPostId(postId);
+    }, []);
+
+    const openPost = (postId: string) => {
+        setSelectedPostId(postId);
+        router.replace(`/comunidad?post=${postId}`, { scroll: false });
+    };
 
     // Estados para Registro / Login
     const [isSignUp, setIsSignUp] = useState(false);
@@ -121,6 +120,7 @@ export default function ComunidadPage() {
             emailTaken: 'Este correo ya está registrado.',
             signUpOk: '¡Registro exitoso! Revisa tu correo.',
             anonymous: 'Anónimo',
+            viewProfile: 'Ver perfil',
             auth: {
                 signInTitle: 'Iniciar sesión en el foro',
                 signUpTitle: 'Crear una cuenta',
@@ -170,6 +170,7 @@ export default function ComunidadPage() {
             emailTaken: 'This email is already registered.',
             signUpOk: 'Registration successful! Check your email.',
             anonymous: 'Anonymous',
+            viewProfile: 'View profile',
             auth: {
                 signInTitle: 'Sign in to the forum',
                 signUpTitle: 'Create an account',
@@ -463,7 +464,10 @@ export default function ComunidadPage() {
     // congelada del momento en que se abrió), para que el contador de likes
     // se actualice en vivo si alguien más le da like mientras está abierto.
     const selectedPost = selectedPostId ? posts.find((p) => p.id === selectedPostId) ?? null : null;
-    const closeModal = () => setSelectedPostId(null);
+    const closeModal = () => {
+        setSelectedPostId(null);
+        router.replace('/comunidad', { scroll: false });
+    };
     const { closeButtonRef, handleBackdropClick } = useModal(!!selectedPost, closeModal);
     const modalTheme = getCategoryTheme(selectedPost?.category ?? null);
 
@@ -657,7 +661,7 @@ export default function ComunidadPage() {
                         </span>
                     </h3>
 
-                    <div className="flex items-center justify-center gap-3 flex-wrap">
+                    <div className="w-full flex items-center gap-3 overflow-x-auto px-4 sm:px-0 sm:flex-wrap sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                         <FilterPill onClick={() => setFilterCategory(null)} active={filterCategory === null}>
                             {t.filterAll}
                         </FilterPill>
@@ -700,80 +704,20 @@ export default function ComunidadPage() {
                 </div>
 
                 {feedLoading ? (
-                    <div className="columns-1 sm:columns-2 lg:columns-3 gap-6" aria-hidden="true">
-                        {[0, 1, 2, 3, 4, 5].map((i) => (
-                            <div key={i} className="mb-6 break-inside-avoid bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl overflow-hidden">
-                                <div className="h-56 w-full animate-shimmer" />
-                            </div>
+                    <div className="grid grid-cols-3 gap-0.5 sm:gap-1 -mx-4 sm:mx-0" aria-hidden="true">
+                        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                            <div key={i} className="aspect-square animate-shimmer" />
                         ))}
                     </div>
                 ) : displayedPosts.length === 0 ? (
-                    <div className="text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-muted)] font-medium text-sm">
+                    <div className="mx-4 sm:mx-0 text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-muted)] font-medium text-sm">
                         {posts.length === 0 ? t.noPosts : t.noResultsFilter}
                     </div>
                 ) : (
-                    <div className="columns-1 sm:columns-2 lg:columns-3 gap-6">
-                        {displayedPosts.map((post, index) => {
-                            const likes = post.post_likes || [];
-                            const hasLiked = user ? likes.some((l) => l.user_id === user.id) : false;
-                            const cardTheme = getCategoryTheme(post.category);
-
-                            return (
-                                <motion.figure
-                                    key={post.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3, delay: Math.min(index, 8) * 0.05 }}
-                                    onClick={() => setSelectedPostId(post.id)}
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-label={post.title}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter' || e.key === ' ') {
-                                            e.preventDefault();
-                                            setSelectedPostId(post.id);
-                                        }
-                                    }}
-                                    style={{ '--card-accent': cardTheme?.accent ?? 'var(--color-accent)' } as React.CSSProperties}
-                                    className="mb-6 break-inside-avoid group cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--card-accent)]/60 transition-colors relative focus-visible:border-[var(--card-accent)]"
-                                >
-                                    <div className="relative overflow-hidden bg-black">
-                                        <Image
-                                            src={post.image_url}
-                                            alt={post.title}
-                                            width={0}
-                                            height={0}
-                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                            className="w-full h-auto object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
-                                        />
-                                        {cardTheme && post.category && (
-                                            <div
-                                                className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
-                                                style={{ background: cardTheme.accent, color: cardTheme.ink }}
-                                            >
-                                                {formatCategoryLabel(post.category)}
-                                            </div>
-                                        )}
-                                        <motion.button
-                                            whileTap={{ scale: 1.3 }}
-                                            transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-                                            onClick={(e) => { e.stopPropagation(); handleToggleLike(post.id, likes); }}
-                                            aria-pressed={hasLiked}
-                                            className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1.5 rounded-full"
-                                        >
-                                            <motion.span key={hasLiked ? 'liked' : 'unliked'} initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={{ duration: 0.2 }}>
-                                                {hasLiked ? '❤️' : '🤍'}
-                                            </motion.span>
-                                            <span>{likes.length}</span>
-                                        </motion.button>
-                                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 pt-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <figcaption className="text-sm font-bold text-white line-clamp-1">{post.title}</figcaption>
-                                            <p className="text-xs text-white/70 mt-0.5 truncate">{post.instagram_handle || t.anonymous}</p>
-                                        </div>
-                                    </div>
-                                </motion.figure>
-                            );
-                        })}
+                    <div className="grid grid-cols-3 gap-0.5 sm:gap-1 -mx-4 sm:mx-0">
+                        {displayedPosts.map((post) => (
+                            <PostCard key={post.id} post={post} onClick={() => openPost(post.id)} />
+                        ))}
                     </div>
                 )}
             </div>
@@ -815,13 +759,14 @@ export default function ComunidadPage() {
                             <div className="w-full md:w-2/5 p-6 flex flex-col">
                                 <div className="flex justify-between items-center gap-3">
                                     <div className="flex items-center gap-2.5 min-w-0">
-                                        <div
-                                            className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-black text-[#14100a]"
+                                        <Link
+                                            href={`/comunidad/u/${selectedPost.user_id}`}
+                                            className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-black text-[#14100a] hover:brightness-110 transition"
                                             style={{ background: avatarColorFor(selectedPost.instagram_handle || 'anon') }}
-                                            aria-hidden="true"
+                                            title={t.viewProfile}
                                         >
                                             {(selectedPost.instagram_handle || 'A').replace('@', '').charAt(0).toUpperCase()}
-                                        </div>
+                                        </Link>
                                         {selectedPost.instagram_url ? (
                                             <a
                                                 href={selectedPost.instagram_url}
@@ -833,12 +778,13 @@ export default function ComunidadPage() {
                                                 <span className="truncate">{selectedPost.instagram_handle || t.anonymous}</span> ↗
                                             </a>
                                         ) : (
-                                            <span
-                                                className="font-bold text-xs uppercase tracking-wide truncate"
+                                            <Link
+                                                href={`/comunidad/u/${selectedPost.user_id}`}
+                                                className="font-bold text-xs uppercase tracking-wide hover:underline truncate"
                                                 style={{ color: modalTheme?.accent ?? 'var(--color-accent)' }}
                                             >
                                                 {selectedPost.instagram_handle || t.anonymous}
-                                            </span>
+                                            </Link>
                                         )}
                                     </div>
                                     <button

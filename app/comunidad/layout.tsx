@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { CommunityBottomNav } from '@/components/community/CommunityBottomNav';
 
 // La página de /comunidad es un Client Component ('use client'), y los
 // Client Components no pueden exportar `metadata` directamente — por eso
@@ -20,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function ComunidadLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <div className="pb-16 md:pb-0">{children}</div>
+      <CommunityBottomNav />
+    </>
+  );
 }
