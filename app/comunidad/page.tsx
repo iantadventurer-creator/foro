@@ -506,7 +506,7 @@ export default function ComunidadPage() {
                                 whileHover={{ y: -2 }}
                                 whileTap={{ y: 2 }}
                                 onClick={() => setShowUploadModal(true)}
-                                className="font-button bg-[var(--color-accent-3)] text-white text-xs px-5 py-2 rounded-full shadow-[0_4px_0_0_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]"
+                                className="font-button uppercase tracking-wider bg-[var(--color-accent-3)] text-white text-xs px-5 py-2 rounded-full shadow-[0_4px_0_0_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]"
                             >
                                 {t.publishBtn}
                             </motion.button>
