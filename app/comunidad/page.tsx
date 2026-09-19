@@ -493,7 +493,7 @@ export default function ComunidadPage() {
                         {t.volver}
                     </Link>
 
-                    <nav className="justify-self-center flex items-center gap-5 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+                    <nav className="hidden md:flex justify-self-center items-center gap-5 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
                         <Link href="/comunidad/actividad" className="hover:text-[var(--color-text)] transition-colors">
                             {t.activity}
                         </Link>
