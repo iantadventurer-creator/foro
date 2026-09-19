@@ -10,6 +10,7 @@ import { type Post, avatarColorFor } from '@/lib/community';
 import { PostCard } from '@/components/community/PostCard';
 import { CommunityHeaderNav } from '@/components/community/CommunityHeaderNav';
 import { CommunityLogoutButton } from '@/components/community/CommunityLogoutButton';
+import { LangToggle } from '@/components/community/LangToggle';
 import { useToasts, ToastViewport } from '@/components/ui/Toast';
 
 const AVATAR_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -20,9 +21,45 @@ function buildAvatarFileName(userId: string, originalName: string): string {
     return `avatars/${userId}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
 }
 
+const content = {
+    es: {
+        volver: '← Volver a la comunidad',
+        activityLabel: 'Actividad',
+        publishLabel: 'Publicar',
+        profileLabel: 'Mi perfil',
+        logoutLabel: 'Cerrar sesión',
+        defaultHandle: 'Usuario',
+        editAvatar: 'Editar foto de perfil',
+        badFormat: 'Formato no admitido. Usa JPG, PNG, WEBP o GIF.',
+        tooLarge: (mb: number) => `La imagen no puede superar los ${mb}MB.`,
+        avatarUpdated: 'Foto de perfil actualizada.',
+        unknownError: 'Error desconocido',
+        posts: (n: number) => `${n} publicacion${n === 1 ? '' : 'es'}`,
+        likes: (n: number) => `❤️ ${n} me gusta`,
+        noPosts: 'Este usuario todavía no tiene publicaciones.',
+    },
+    en: {
+        volver: '← Back to community',
+        activityLabel: 'Activity',
+        publishLabel: 'Post',
+        profileLabel: 'My profile',
+        logoutLabel: 'Log out',
+        defaultHandle: 'User',
+        editAvatar: 'Edit profile photo',
+        badFormat: 'Unsupported format. Use JPG, PNG, WEBP or GIF.',
+        tooLarge: (mb: number) => `The image can't be larger than ${mb}MB.`,
+        avatarUpdated: 'Profile photo updated.',
+        unknownError: 'Unknown error',
+        posts: (n: number) => `${n} post${n === 1 ? '' : 's'}`,
+        likes: (n: number) => `❤️ ${n} like${n === 1 ? '' : 's'}`,
+        noPosts: "This user doesn't have any posts yet.",
+    },
+};
+
 export default function CommunityProfilePage({ params }: { params: Promise<{ userId: string }> }) {
     const { userId } = use(params);
     const router = useRouter();
+    const [lang, setLang] = useState<'es' | 'en'>('es');
     const { toasts, push, dismiss } = useToasts();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [posts, setPosts] = useState<Post[]>([]);
@@ -30,6 +67,7 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
+    const t = content[lang];
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -60,7 +98,7 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
         return () => { cancelled = true; };
     }, [userId]);
 
-    const handle = posts[0]?.instagram_handle || 'Usuario';
+    const handle = posts[0]?.instagram_handle || t.defaultHandle;
     const instagramUrl = posts.find((p) => p.instagram_url)?.instagram_url;
     const totalLikes = posts.reduce((sum, p) => sum + (p.post_likes?.length || 0), 0);
     const isOwnProfile = currentUserId !== null && currentUserId === userId;
@@ -71,11 +109,11 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
         if (!file) return;
 
         if (!AVATAR_ALLOWED_TYPES.includes(file.type)) {
-            push('Formato no admitido. Usa JPG, PNG, WEBP o GIF.', 'error');
+            push(t.badFormat, 'error');
             return;
         }
         if (file.size > AVATAR_MAX_SIZE_MB * 1024 * 1024) {
-            push(`La imagen no puede superar los ${AVATAR_MAX_SIZE_MB}MB.`, 'error');
+            push(t.tooLarge(AVATAR_MAX_SIZE_MB), 'error');
             return;
         }
 
@@ -100,7 +138,7 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
             }
 
             setAvatarUrl(publicUrl);
-            push('Foto de perfil actualizada.', 'success');
+            push(t.avatarUpdated, 'success');
 
             if (previousAvatarUrl?.includes('/foro-fotos/')) {
                 const oldFileName = previousAvatarUrl.split('/foro-fotos/').pop();
@@ -108,7 +146,7 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
             }
         } catch (error) {
             console.error('Error al subir el avatar:', error);
-            push(error instanceof Error ? error.message : 'Error desconocido', 'error');
+            push(error instanceof Error ? error.message : t.unknownError, 'error');
         } finally {
             setUploadingAvatar(false);
         }
@@ -119,13 +157,14 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
             <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)] px-6 py-4">
                 <div className="max-w-4xl mx-auto grid grid-cols-3 items-center">
                     <Link href="/comunidad" className="justify-self-start text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
-                        ← Volver a la comunidad
+                        {t.volver}
                     </Link>
                     <div className="justify-self-center">
-                        <CommunityHeaderNav />
+                        <CommunityHeaderNav activityLabel={t.activityLabel} publishLabel={t.publishLabel} profileLabel={t.profileLabel} />
                     </div>
-                    <div className="justify-self-end">
-                        <CommunityLogoutButton />
+                    <div className="justify-self-end flex items-center gap-3">
+                        <CommunityLogoutButton label={t.logoutLabel} />
+                        <LangToggle lang={lang} onChange={setLang} />
                     </div>
                 </div>
             </header>
@@ -153,8 +192,8 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
                                     disabled={uploadingAvatar}
-                                    aria-label="Editar foto de perfil"
-                                    title="Editar foto de perfil"
+                                    aria-label={t.editAvatar}
+                                    title={t.editAvatar}
                                     className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[var(--color-accent-3)] border-2 border-[var(--color-ink)] flex items-center justify-center text-xs text-white shadow-md hover:brightness-110 transition-[filter] disabled:opacity-60"
                                 >
                                     {uploadingAvatar ? '…' : '✎'}
@@ -182,9 +221,9 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
                         <h1 className="font-display text-xl font-semibold text-[var(--color-text)]">{handle}</h1>
                     )}
                     <div className="flex items-center gap-4 text-xs text-[var(--color-text-muted)] font-semibold uppercase tracking-wide">
-                        <span>{posts.length} publicacion{posts.length === 1 ? '' : 'es'}</span>
+                        <span>{t.posts(posts.length)}</span>
                         <span className="w-1 h-1 rounded-full bg-[var(--color-border)]" aria-hidden="true" />
-                        <span>❤️ {totalLikes} me gusta</span>
+                        <span>{t.likes(totalLikes)}</span>
                     </div>
                 </motion.div>
 
@@ -196,7 +235,7 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
                     </div>
                 ) : posts.length === 0 ? (
                     <div className="mx-4 sm:mx-0 text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-muted)] font-medium text-sm">
-                        Este usuario todavía no tiene publicaciones.
+                        {t.noPosts}
                     </div>
                 ) : (
                     <div className="grid grid-cols-3 gap-0.5 sm:gap-1 -mx-4 sm:mx-0">
