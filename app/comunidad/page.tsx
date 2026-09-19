@@ -875,7 +875,15 @@ export default function ComunidadPage() {
                                     </button>
                                 </div>
 
-                                <div className="flex-1 flex flex-col justify-center py-6">
+                                <div className="flex-1 flex flex-col gap-4 mt-5 min-h-0">
+                                    {modalTheme && selectedPost.category && (
+                                        <span
+                                            className="self-start text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide"
+                                            style={{ background: `${modalTheme.accent}22`, color: modalTheme.accent }}
+                                        >
+                                            {formatCategoryLabel(selectedPost.category)}
+                                        </span>
+                                    )}
                                     <AnimatePresence mode="wait">
                                         {editingPostId === selectedPost.id ? (
                                             <motion.div
@@ -916,7 +924,7 @@ export default function ComunidadPage() {
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 exit={{ opacity: 0 }}
-                                                className="text-sm font-medium text-[var(--color-text)] leading-relaxed whitespace-pre-line"
+                                                className="font-display text-lg md:text-xl font-semibold text-[var(--color-text)] leading-snug whitespace-pre-line"
                                             >
                                                 {selectedPost.title}
                                             </motion.p>
@@ -925,7 +933,7 @@ export default function ComunidadPage() {
                                 </div>
 
                                 <div
-                                    className="w-full pt-4 flex flex-col gap-2.5"
+                                    className="w-full mt-6 pt-4 flex flex-col gap-2.5"
                                     style={{ borderTop: `1px solid ${modalTheme ? `${modalTheme.accent}40` : 'var(--color-border)'}` }}
                                 >
                                     <div className="flex items-center justify-between gap-2">
