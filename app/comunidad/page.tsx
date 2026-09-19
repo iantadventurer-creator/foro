@@ -825,46 +825,7 @@ export default function ComunidadPage() {
                                 />
                             </div>
                             <div className="w-full md:w-2/5 p-6 flex flex-col">
-                                <div className="flex justify-between items-center gap-3">
-                                    <div className="flex items-center gap-2.5 min-w-0">
-                                        <Link
-                                            href={`/comunidad/u/${selectedPost.user_id}`}
-                                            className="relative w-8 h-8 shrink-0 rounded-full overflow-hidden flex items-center justify-center text-xs font-black text-[#14100a] hover:brightness-110 transition"
-                                            style={{ background: avatarColorFor(selectedPost.instagram_handle || 'anon') }}
-                                            title={t.viewProfile}
-                                        >
-                                            <span className="relative z-0">
-                                                {(selectedPost.instagram_handle || 'A').replace('@', '').charAt(0).toUpperCase()}
-                                            </span>
-                                            {avatarByUserId[selectedPost.user_id] && (
-                                                // eslint-disable-next-line @next/next/no-img-element
-                                                <img
-                                                    src={avatarByUserId[selectedPost.user_id]}
-                                                    alt=""
-                                                    className="absolute inset-0 z-10 w-full h-full object-cover"
-                                                />
-                                            )}
-                                        </Link>
-                                        {selectedPost.instagram_url ? (
-                                            <a
-                                                href={selectedPost.instagram_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="font-bold text-xs uppercase tracking-wide hover:underline flex items-center gap-1 truncate"
-                                                style={{ color: modalTheme?.accent ?? 'var(--color-accent)' }}
-                                            >
-                                                <span className="truncate">{selectedPost.instagram_handle || t.anonymous}</span> ↗
-                                            </a>
-                                        ) : (
-                                            <Link
-                                                href={`/comunidad/u/${selectedPost.user_id}`}
-                                                className="font-bold text-xs uppercase tracking-wide hover:underline truncate"
-                                                style={{ color: modalTheme?.accent ?? 'var(--color-accent)' }}
-                                            >
-                                                {selectedPost.instagram_handle || t.anonymous}
-                                            </Link>
-                                        )}
-                                    </div>
+                                <div className="flex justify-end">
                                     <button
                                         ref={closeButtonRef}
                                         onClick={closeModal}
@@ -875,7 +836,47 @@ export default function ComunidadPage() {
                                     </button>
                                 </div>
 
-                                <div className="flex flex-col gap-4 mt-5">
+                                <div className="flex flex-col items-center text-center gap-2 -mt-2 mb-5">
+                                    <Link
+                                        href={`/comunidad/u/${selectedPost.user_id}`}
+                                        className="relative w-20 h-20 shrink-0 rounded-full overflow-hidden flex items-center justify-center text-2xl font-black text-[#14100a] hover:brightness-110 transition"
+                                        style={{ background: avatarColorFor(selectedPost.instagram_handle || 'anon') }}
+                                        title={t.viewProfile}
+                                    >
+                                        <span className="relative z-0">
+                                            {(selectedPost.instagram_handle || 'A').replace('@', '').charAt(0).toUpperCase()}
+                                        </span>
+                                        {avatarByUserId[selectedPost.user_id] && (
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img
+                                                src={avatarByUserId[selectedPost.user_id]}
+                                                alt=""
+                                                className="absolute inset-0 z-10 w-full h-full object-cover"
+                                            />
+                                        )}
+                                    </Link>
+                                    {selectedPost.instagram_url ? (
+                                        <a
+                                            href={selectedPost.instagram_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="font-bold text-sm uppercase tracking-wide hover:underline flex items-center gap-1 max-w-full"
+                                            style={{ color: modalTheme?.accent ?? 'var(--color-accent)' }}
+                                        >
+                                            <span className="truncate">{selectedPost.instagram_handle || t.anonymous}</span> ↗
+                                        </a>
+                                    ) : (
+                                        <Link
+                                            href={`/comunidad/u/${selectedPost.user_id}`}
+                                            className="font-bold text-sm uppercase tracking-wide hover:underline max-w-full truncate"
+                                            style={{ color: modalTheme?.accent ?? 'var(--color-accent)' }}
+                                        >
+                                            {selectedPost.instagram_handle || t.anonymous}
+                                        </Link>
+                                    )}
+                                </div>
+
+                                <div className="flex flex-col gap-4">
                                     {modalTheme && selectedPost.category && (
                                         <span
                                             className="self-start text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide"
