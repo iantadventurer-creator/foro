@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { type Post, avatarColorFor } from '@/lib/community';
 import { PostCard } from '@/components/community/PostCard';
 import { CommunityHeaderNav } from '@/components/community/CommunityHeaderNav';
+import { CommunityLogoutButton } from '@/components/community/CommunityLogoutButton';
 import { useToasts, ToastViewport } from '@/components/ui/Toast';
 
 const AVATAR_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -116,11 +117,16 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
     return (
         <main className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
             <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)] px-6 py-4">
-                <div className="max-w-4xl mx-auto flex justify-between items-center">
-                    <Link href="/comunidad" className="text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
+                <div className="max-w-4xl mx-auto grid grid-cols-3 items-center">
+                    <Link href="/comunidad" className="justify-self-start text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
                         ← Volver a la comunidad
                     </Link>
-                    <CommunityHeaderNav />
+                    <div className="justify-self-center">
+                        <CommunityHeaderNav />
+                    </div>
+                    <div className="justify-self-end">
+                        <CommunityLogoutButton />
+                    </div>
                 </div>
             </header>
 

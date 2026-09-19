@@ -126,6 +126,7 @@ export default function ComunidadPage() {
             anonymous: 'Anónimo',
             viewProfile: 'Ver perfil',
             activity: 'Actividad',
+            profile: 'Mi perfil',
             auth: {
                 signInTitle: 'Iniciar sesión en el foro',
                 signUpTitle: 'Crear una cuenta',
@@ -175,6 +176,7 @@ export default function ComunidadPage() {
             anonymous: 'Anonymous',
             viewProfile: 'View profile',
             activity: 'Activity',
+            profile: 'My profile',
             auth: {
                 signInTitle: 'Sign in to the forum',
                 signUpTitle: 'Create an account',
@@ -526,6 +528,11 @@ export default function ComunidadPage() {
                             >
                                 {t.publishBtn}
                             </motion.button>
+                        )}
+                        {user && (
+                            <Link href={`/comunidad/u/${user.id}`} className="hover:text-[var(--color-text)] transition-colors">
+                                {t.profile}
+                            </Link>
                         )}
                     </nav>
 

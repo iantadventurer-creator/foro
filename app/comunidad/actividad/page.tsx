@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
 import { avatarColorFor } from '@/lib/community';
 import { CommunityHeaderNav } from '@/components/community/CommunityHeaderNav';
+import { CommunityLogoutButton } from '@/components/community/CommunityLogoutButton';
 
 type ActivityItem = {
     likeId: string;
@@ -117,11 +118,16 @@ export default function CommunityActivityPage() {
     return (
         <main className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
             <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)] px-6 py-4">
-                <div className="max-w-2xl mx-auto flex justify-between items-center">
-                    <Link href="/comunidad" className="text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
+                <div className="max-w-2xl mx-auto grid grid-cols-3 items-center">
+                    <Link href="/comunidad" className="justify-self-start text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
                         ← Volver a la comunidad
                     </Link>
-                    <CommunityHeaderNav />
+                    <div className="justify-self-center">
+                        <CommunityHeaderNav />
+                    </div>
+                    <div className="justify-self-end">
+                        <CommunityLogoutButton />
+                    </div>
                 </div>
             </header>
 
