@@ -808,7 +808,7 @@ export default function ComunidadPage() {
                             animate={{ scale: 1, y: 0, opacity: 1 }}
                             exit={{ scale: 0.95, y: 16, opacity: 0 }}
                             onClick={(e) => e.stopPropagation()}
-                            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row md:items-start shadow-2xl"
+                            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl"
                         >
                             <div className="w-full md:w-3/5 bg-black relative min-h-[320px] md:min-h-[480px] flex items-center justify-center overflow-hidden">
                                 <div
@@ -824,19 +824,17 @@ export default function ComunidadPage() {
                                     className="relative z-10 max-h-[70vh] w-full h-auto object-contain"
                                 />
                             </div>
-                            <div className="w-full md:w-2/5 p-6 flex flex-col">
-                                <div className="flex justify-end">
-                                    <button
-                                        ref={closeButtonRef}
-                                        onClick={closeModal}
-                                        aria-label={t.close}
-                                        className="w-8 h-8 shrink-0 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
+                            <div className="relative w-full md:w-2/5 p-6 flex flex-col justify-center overflow-y-auto">
+                                <button
+                                    ref={closeButtonRef}
+                                    onClick={closeModal}
+                                    aria-label={t.close}
+                                    className="absolute top-4 right-4 z-10 w-8 h-8 shrink-0 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
+                                >
+                                    ✕
+                                </button>
 
-                                <div className="flex flex-col items-center text-center gap-2 -mt-2 mb-5">
+                                <div className="flex flex-col items-center text-center gap-2 mb-5">
                                     <Link
                                         href={`/comunidad/u/${selectedPost.user_id}`}
                                         className="relative w-20 h-20 shrink-0 rounded-full overflow-hidden flex items-center justify-center text-2xl font-black text-[#14100a] hover:brightness-110 transition"
