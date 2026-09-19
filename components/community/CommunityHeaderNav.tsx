@@ -5,18 +5,16 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 
-/** Links de "Actividad" / "Publicar" / "Mi perfil" / "Cerrar sesión" para el
- * header — se repiten en el feed, el perfil y la actividad, así que viven en
- * un solo lugar. "Publicar" navega al feed con ?publish=1, que ya sabe abrir
- * el modal de subida solo con ese parámetro en la URL. */
+/** Links de "Actividad" / "Publicar" / "Cerrar sesión" para el header — se
+ * repiten en el feed, el perfil y la actividad, así que viven en un solo
+ * lugar. "Publicar" navega al feed con ?publish=1, que ya sabe abrir el
+ * modal de subida solo con ese parámetro en la URL. */
 export function CommunityHeaderNav({
     activityLabel = 'Actividad',
-    profileLabel = 'Mi perfil',
     publishLabel = 'Publicar',
     logoutLabel = 'Cerrar sesión',
 }: {
     activityLabel?: string;
-    profileLabel?: string;
     publishLabel?: string;
     logoutLabel?: string;
 }) {
@@ -47,11 +45,6 @@ export function CommunityHeaderNav({
                             {publishLabel}
                         </Link>
                     </motion.div>
-                )}
-                {userId && (
-                    <Link href={`/comunidad/u/${userId}`} className="hover:text-[var(--color-text)] transition-colors">
-                        {profileLabel}
-                    </Link>
                 )}
             </nav>
             {userId && (
