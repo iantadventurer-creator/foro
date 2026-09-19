@@ -40,6 +40,7 @@ export default function ComunidadPage() {
     }, [lang]);
 
     const [posts, setPosts] = useState<Post[]>([]);
+    const [avatarByUserId, setAvatarByUserId] = useState<Record<string, string>>({});
     const [feedLoading, setFeedLoading] = useState(true);
     const [user, setUser] = useState<AppUser | null>(null);
     const [filterMyPosts, setFilterMyPosts] = useState(false);
@@ -233,6 +234,27 @@ export default function ComunidadPage() {
         loadCommunityPosts();
         return () => subscription.unsubscribe();
     }, []);
+
+    // Fotos de perfil de quienes publicaron — solo se vuelve a pedir cuando
+    // aparece un autor nuevo en el feed, no en cada like/actualización.
+    const distinctAuthorIds = Array.from(new Set(posts.map((p) => p.user_id))).sort().join(',');
+    useEffect(() => {
+        if (!distinctAuthorIds) return;
+        let cancelled = false;
+        supabase
+            .from('profiles')
+            .select('user_id, avatar_url')
+            .in('user_id', distinctAuthorIds.split(','))
+            .then(({ data }) => {
+                if (cancelled || !data) return;
+                const map: Record<string, string> = {};
+                data.forEach((row) => {
+                    if (row.avatar_url) map[row.user_id] = row.avatar_url;
+                });
+                setAvatarByUserId(map);
+            });
+        return () => { cancelled = true; };
+    }, [distinctAuthorIds]);
 
     // Feed en vivo: cuando alguien publica, edita, borra o da like, el feed se
     // refresca solo para todos los que tengan la página abierta. Requiere que
@@ -807,11 +829,15 @@ export default function ComunidadPage() {
                                     <div className="flex items-center gap-2.5 min-w-0">
                                         <Link
                                             href={`/comunidad/u/${selectedPost.user_id}`}
-                                            className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-xs font-black text-[#14100a] hover:brightness-110 transition"
-                                            style={{ background: avatarColorFor(selectedPost.instagram_handle || 'anon') }}
+                                            className="relative w-8 h-8 shrink-0 rounded-full overflow-hidden flex items-center justify-center text-xs font-black text-[#14100a] hover:brightness-110 transition"
+                                            style={avatarByUserId[selectedPost.user_id] ? undefined : { background: avatarColorFor(selectedPost.instagram_handle || 'anon') }}
                                             title={t.viewProfile}
                                         >
-                                            {(selectedPost.instagram_handle || 'A').replace('@', '').charAt(0).toUpperCase()}
+                                            {avatarByUserId[selectedPost.user_id] ? (
+                                                <Image src={avatarByUserId[selectedPost.user_id]} alt="" fill sizes="32px" className="object-cover" />
+                                            ) : (
+                                                (selectedPost.instagram_handle || 'A').replace('@', '').charAt(0).toUpperCase()
+                                            )}
                                         </Link>
                                         {selectedPost.instagram_url ? (
                                             <a
