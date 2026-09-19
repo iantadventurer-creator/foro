@@ -808,7 +808,7 @@ export default function ComunidadPage() {
                             animate={{ scale: 1, y: 0, opacity: 1 }}
                             exit={{ scale: 0.95, y: 16, opacity: 0 }}
                             onClick={(e) => e.stopPropagation()}
-                            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl"
+                            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row md:items-start shadow-2xl"
                         >
                             <div className="w-full md:w-3/5 bg-black relative min-h-[320px] md:min-h-[480px] flex items-center justify-center overflow-hidden">
                                 <div
@@ -875,7 +875,7 @@ export default function ComunidadPage() {
                                     </button>
                                 </div>
 
-                                <div className="flex-1 flex flex-col gap-4 mt-5 min-h-0">
+                                <div className="flex flex-col gap-4 mt-5">
                                     {modalTheme && selectedPost.category && (
                                         <span
                                             className="self-start text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide"
