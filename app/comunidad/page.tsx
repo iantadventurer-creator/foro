@@ -830,13 +830,19 @@ export default function ComunidadPage() {
                                         <Link
                                             href={`/comunidad/u/${selectedPost.user_id}`}
                                             className="relative w-8 h-8 shrink-0 rounded-full overflow-hidden flex items-center justify-center text-xs font-black text-[#14100a] hover:brightness-110 transition"
-                                            style={avatarByUserId[selectedPost.user_id] ? undefined : { background: avatarColorFor(selectedPost.instagram_handle || 'anon') }}
+                                            style={{ background: avatarColorFor(selectedPost.instagram_handle || 'anon') }}
                                             title={t.viewProfile}
                                         >
-                                            {avatarByUserId[selectedPost.user_id] ? (
-                                                <Image src={avatarByUserId[selectedPost.user_id]} alt="" fill sizes="32px" className="object-cover" />
-                                            ) : (
-                                                (selectedPost.instagram_handle || 'A').replace('@', '').charAt(0).toUpperCase()
+                                            <span className="relative z-0">
+                                                {(selectedPost.instagram_handle || 'A').replace('@', '').charAt(0).toUpperCase()}
+                                            </span>
+                                            {avatarByUserId[selectedPost.user_id] && (
+                                                // eslint-disable-next-line @next/next/no-img-element
+                                                <img
+                                                    src={avatarByUserId[selectedPost.user_id]}
+                                                    alt=""
+                                                    className="absolute inset-0 z-10 w-full h-full object-cover"
+                                                />
                                             )}
                                         </Link>
                                         {selectedPost.instagram_url ? (
