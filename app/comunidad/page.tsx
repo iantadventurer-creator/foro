@@ -13,6 +13,8 @@ import { CATEGORY_KEYS, formatCategoryLabel, getCategoryTheme } from '@/lib/cate
 import { useModal } from '@/lib/useModal';
 import { type Like, type Post, avatarColorFor } from '@/lib/community';
 import { PostCard } from '@/components/community/PostCard';
+import { CommunityLogoutButton } from '@/components/community/CommunityLogoutButton';
+import { LangToggle } from '@/components/community/LangToggle';
 
 type AppUser = {
     id: string;
@@ -349,11 +351,6 @@ export default function ComunidadPage() {
         }
     };
 
-    const handleLogout = async () => {
-        await supabase.auth.signOut();
-        setFilterMyPosts(false);
-    };
-
     const handleUpload = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user) {
@@ -536,19 +533,9 @@ export default function ComunidadPage() {
                         )}
                     </nav>
 
-                    <div className="justify-self-end flex items-center gap-4">
-                        {user && (
-                            <button
-                                onClick={handleLogout}
-                                className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider text-[var(--color-accent-2)] bg-[var(--color-accent-2)]/10 hover:bg-[var(--color-accent-2)]/20 border border-[var(--color-accent-2)]/30 rounded-full px-3 py-1.5 transition-colors"
-                            >
-                                {t.logout}
-                            </button>
-                        )}
-                        <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
-                            <button onClick={() => setLang('es')} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'es' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>ES</button>
-                            <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>EN</button>
-                        </div>
+                    <div className="justify-self-end flex items-center gap-3">
+                        <CommunityLogoutButton label={t.logout} onLogout={() => setFilterMyPosts(false)} />
+                        <LangToggle lang={lang} onChange={setLang} />
                     </div>
                 </div>
             </header>
