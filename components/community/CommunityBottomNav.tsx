@@ -35,7 +35,7 @@ export function CommunityBottomNav() {
     const active = item.match(pathname);
     return (
       <Link
-        key={item.href}
+        key={item.label}
         href={item.href}
         className={`flex flex-col items-center gap-0.5 py-2.5 px-4 text-[10px] font-bold uppercase tracking-wide transition-colors ${active ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'
           }`}
