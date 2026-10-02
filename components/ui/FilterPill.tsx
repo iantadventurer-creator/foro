@@ -19,17 +19,17 @@ export function FilterPill({
     <motion.button
       onClick={onClick}
       aria-pressed={active}
-      whileTap={active ? { y: 1 } : undefined}
+      whileTap={{ scale: 0.96 }}
       style={
         active && theme
-          ? { background: theme.accent, color: theme.ink, borderColor: theme.accent, boxShadow: `0 3px 0 0 ${theme.shadow}` }
+          ? { background: `${theme.accent}26`, color: theme.accent, borderColor: `${theme.accent}99`, boxShadow: `0 6px 20px -10px ${theme.accent}` }
           : undefined
       }
-      className={`px-6 py-3 rounded-full text-sm font-semibold uppercase tracking-wider transition-colors duration-200 whitespace-nowrap border ${active
+      className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition-colors duration-200 whitespace-nowrap border ${active
           ? theme
             ? ''
-            : 'bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-[var(--color-accent)] shadow-[0_3px_0_0_var(--shadow-accent)]'
-          : 'bg-transparent text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)] hover:border-[var(--color-text-muted)]'
+            : 'bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-[var(--color-accent)] shadow-[0_8px_24px_-10px_var(--shadow-accent)]'
+          : 'bg-[var(--color-surface)]/60 text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)] hover:border-[var(--color-text-faint)]'
         }`}
     >
       {children}

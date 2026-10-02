@@ -56,7 +56,7 @@ export function CommunityBottomNav() {
         <Link
           href="/comunidad?publish=1"
           aria-label="Publicar"
-          className="flex items-center justify-center w-12 h-12 -mt-4 rounded-full bg-[var(--color-accent-3)] text-white text-2xl leading-none shadow-[0_4px_0_0_var(--shadow-accent-3)] border-4 border-[var(--color-ink)]"
+          className="flex items-center justify-center w-12 h-12 -mt-4 rounded-full bg-[var(--color-accent-3)] text-white text-2xl leading-none shadow-[0_8px_24px_-8px_var(--shadow-accent-3)] border-4 border-[var(--color-ink)]"
         >
           +
         </Link>

@@ -97,6 +97,7 @@ export default function ComunidadPage() {
             volver: '← Volver al inicio',
             pageTitle: 'Comunidad',
             pageSubtitle: 'Comparte tus propias creaciones LEGO y descubre las de otros fans.',
+            steps: ['Crea tu cuenta gratis', 'Publica tu foto', 'Recibe me gusta'],
             connectedAs: 'Conectado como',
             logout: 'Cerrar sesión',
             newPostTitle: 'Nueva publicación',
@@ -147,6 +148,7 @@ export default function ComunidadPage() {
             volver: '← Back to home',
             pageTitle: 'Community',
             pageSubtitle: 'Share your own LEGO creations and discover other fans’.',
+            steps: ['Create a free account', 'Post your photo', 'Get likes'],
             connectedAs: 'Logged in as',
             logout: 'Log out',
             newPostTitle: 'New post',
@@ -521,7 +523,7 @@ export default function ComunidadPage() {
                                 whileHover={{ y: -2 }}
                                 whileTap={{ y: 2 }}
                                 onClick={() => setShowUploadModal(true)}
-                                className="font-button uppercase tracking-wider bg-[var(--color-accent-3)] text-white text-xs px-5 py-2 rounded-full shadow-[0_4px_0_0_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]"
+                                className="font-button uppercase tracking-wider bg-[var(--color-accent-3)] text-white text-xs px-5 py-2 rounded-full shadow-[0_8px_24px_-8px_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]"
                             >
                                 {t.publishBtn}
                             </motion.button>
@@ -543,7 +545,16 @@ export default function ComunidadPage() {
             <div className="max-w-2xl mx-auto px-4 pt-12">
                 <div className="mb-10 text-center">
                     <h1 className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-text)]">{t.pageTitle}</h1>
-                    <p className="text-sm text-[var(--color-text-muted)] mt-1">{t.pageSubtitle}</p>
+                    <p className="text-sm text-[var(--color-text-muted)] mt-2">{t.pageSubtitle}</p>
+                    <ol className="mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-xs font-semibold text-[var(--color-text-muted)]">
+                        {t.steps.map((step, i) => (
+                            <li key={step} className="flex items-center gap-2">
+                                {i > 0 && <span aria-hidden="true" className="text-[var(--color-text-faint)] mr-1">→</span>}
+                                <span className="w-5 h-5 rounded-full bg-[var(--color-accent-3)]/20 text-[var(--color-accent-3)] text-[11px] flex items-center justify-center">{i + 1}</span>
+                                {step}
+                            </li>
+                        ))}
+                    </ol>
                 </div>
 
                 {!user ? (

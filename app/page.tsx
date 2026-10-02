@@ -354,9 +354,19 @@ export default function Home() {
         stat1: 'Fotos publicadas',
         stat2: 'Universo',
       },
+      intro: {
+        eyebrow: 'Qué encontrarás aquí',
+        title: 'Tres espacios, una sola pasión',
+        cards: [
+          { title: 'Galería', desc: 'Mis fotos de dioramas y minifiguras LEGO, ordenadas por universo: Star Wars, Ninjago, Marvel y más.', cta: 'Ver las fotos' },
+          { title: 'Comunidad', desc: 'Crea una cuenta gratis, publica tus propias fotos LEGO y dale me gusta a las de otros fans.', cta: 'Entrar a la comunidad' },
+          { title: 'Sobre mí', desc: 'Quién soy, cómo trabajo y dónde seguir mis novedades.', cta: 'Conocerme' },
+        ],
+      },
       gallery: {
-        title: 'Universo creado',
-        subtitle: 'Cada escena es un set construido desde cero: piezas, luz y paciencia.',
+        eyebrow: 'Galería',
+        title: 'Fotos de miniaturas LEGO',
+        subtitle: 'Toca una foto para verla en grande. Filtra por universo y guarda tus favoritas con el corazón.',
         filterAll: 'Todo',
         favorites: 'Favoritos',
         noResults: 'Todavía no marcaste ninguna foto como favorita.',
@@ -399,9 +409,19 @@ export default function Home() {
         stat1: 'Photos published',
         stat2: 'Universe',
       },
+      intro: {
+        eyebrow: 'What you will find here',
+        title: 'Three spaces, one passion',
+        cards: [
+          { title: 'Gallery', desc: 'My LEGO diorama and minifigure photos, sorted by universe: Star Wars, Ninjago, Marvel and more.', cta: 'See the photos' },
+          { title: 'Community', desc: "Create a free account, post your own LEGO photos and like other fans' work.", cta: 'Join the community' },
+          { title: 'About me', desc: 'Who I am, how I work and where to follow my updates.', cta: 'Meet me' },
+        ],
+      },
       gallery: {
-        title: 'Crafted universe',
-        subtitle: 'Every scene is a set built from scratch: bricks, light, and patience.',
+        eyebrow: 'Gallery',
+        title: 'LEGO miniature photos',
+        subtitle: 'Tap a photo to see it larger. Filter by universe and save your favorites with the heart.',
         filterAll: 'All',
         favorites: 'Favorites',
         noResults: "You haven't favorited any photos yet.",
@@ -444,7 +464,7 @@ export default function Home() {
       <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)]">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
           <a href="#top" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 shadow-[0_3px_0_0_var(--shadow-accent)] group-hover:-translate-y-0.5 group-hover:shadow-[0_4px_0_0_var(--shadow-accent)] transition-all rounded-md overflow-hidden">
+            <div className="w-9 h-9 shadow-[0_8px_24px_-8px_var(--shadow-accent)] group-hover:-translate-y-0.5 group-hover:shadow-[0_8px_24px_-8px_var(--shadow-accent)] transition-all rounded-md overflow-hidden">
               <svg viewBox="0 0 36 36" className="w-full h-full" aria-hidden="true">
                 <rect x="0" y="0" width="36" height="36" fill="var(--color-accent)" />
                 {[[11, 11], [25, 11], [11, 25], [25, 25]].map(([cx, cy]) => (
@@ -496,7 +516,7 @@ export default function Home() {
               href="https://instagram.com/iantadventurer"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-button hidden sm:inline-flex items-center text-xs font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-5 py-2.5 rounded-full shadow-[0_3px_0_0_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
+              className="font-button hidden sm:inline-flex items-center text-xs font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-5 py-2.5 rounded-full shadow-[0_8px_24px_-8px_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
             >
               {t.nav.cta}
             </motion.a>
@@ -554,7 +574,7 @@ export default function Home() {
             {t.hero.badge}
           </motion.div>
 
-          <motion.h1 variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.05 }} className="font-display text-4xl md:text-6xl font-semibold tracking-tight text-[var(--color-text)] mb-6 leading-[1.05]">
+          <motion.h1 variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.05 }} className="font-display text-4xl md:text-6xl font-semibold tracking-tight mb-6 leading-[1.05] bg-gradient-to-b from-white to-[#a9b5d3] bg-clip-text text-transparent">
             {t.hero.title}
           </motion.h1>
           <motion.p variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.1 }} className="text-[var(--color-text-muted)] text-base md:text-lg max-w-lg mb-10 leading-relaxed">
@@ -565,12 +585,12 @@ export default function Home() {
               whileHover={{ y: -3 }}
               whileTap={{ y: 2 }}
               href="#gallery"
-              className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-7 py-3.5 rounded-full shadow-[0_5px_0_0_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
+              className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-7 py-3.5 rounded-full shadow-[0_8px_24px_-8px_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
             >
               {t.hero.btnExplore} ↓
             </motion.a>
             <motion.div whileHover={{ y: -3 }} whileTap={{ y: 2 }}>
-              <Link href="/comunidad" className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white bg-[var(--color-accent-3)] px-7 py-3.5 rounded-full shadow-[0_5px_0_0_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]">
+              <Link href="/comunidad" className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white bg-[var(--color-accent-3)] px-7 py-3.5 rounded-full shadow-[0_8px_24px_-8px_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]">
                 {t.nav.community}
               </Link>
             </motion.div>
@@ -607,7 +627,47 @@ export default function Home() {
         </div>
       </section>
 
-      <StudDivider />
+      {/* QUÉ ENCONTRARÁS */}
+      <section id="intro" className="max-w-7xl mx-auto px-6 pb-20 relative z-10">
+        <div className="text-center mb-10">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-accent)] mb-3">{t.intro.eyebrow}</p>
+          <h2 className="font-display text-2xl md:text-3xl font-semibold tracking-tight">{t.intro.title}</h2>
+        </div>
+        <div className="grid md:grid-cols-3 gap-5">
+          {t.intro.cards.map((card, i) => {
+            const tone = ['var(--color-accent)', 'var(--color-accent-3)', 'var(--color-accent-4)'][i];
+            const href = ['#gallery', '/comunidad', '#about'][i];
+            const icon = [
+              <path key="g" d="M4 7a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Zm8 9.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />,
+              <path key="c" d="M16 11a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm-8 0a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm0 2c-2.3 0-7 1.2-7 3.5V19h8v-2.5c0-1 .4-1.9 1.1-2.7C9.4 13.3 8.6 13 8 13Zm8 0c-2.3 0-7 1.2-7 3.5V19h14v-2.5c0-2.3-4.7-3.5-7-3.5Z" />,
+              <path key="a" d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2c-3 0-8 1.5-8 4.5V21h16v-2.5c0-3-5-4.5-8-4.5Z" />,
+            ][i];
+            const cardClass = 'group relative flex flex-col h-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/70 backdrop-blur-sm p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[var(--card-tone)]/60';
+            const inner = (
+              <>
+                <span
+                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
+                  style={{ background: `color-mix(in srgb, ${tone} 16%, transparent)`, color: tone }}
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5" aria-hidden="true">{icon}</svg>
+                </span>
+                <h3 className="font-display text-lg font-semibold mb-2">{card.title}</h3>
+                <p className="text-sm text-[var(--color-text-muted)] leading-relaxed mb-6">{card.desc}</p>
+                <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold" style={{ color: tone }}>
+                  {card.cta}
+                  <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </span>
+              </>
+            );
+            const style = { '--card-tone': tone } as React.CSSProperties;
+            return href.startsWith('/') ? (
+              <Link key={card.title} href={href} className={cardClass} style={style}>{inner}</Link>
+            ) : (
+              <a key={card.title} href={href} className={cardClass} style={style}>{inner}</a>
+            );
+          })}
+        </div>
+      </section>
 
       {/* GALLERY */}
       <section id="gallery" ref={galleryRef} className="max-w-7xl mx-auto px-6 py-16 relative z-10 overflow-hidden">
@@ -619,10 +679,11 @@ export default function Home() {
         />
         <div className="mb-12 flex flex-col items-center text-center gap-6">
           <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-accent)] mb-3">{t.gallery.eyebrow}</p>
             <motion.h2 initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-text)]">
               {t.gallery.title}
             </motion.h2>
-            <p className="text-sm text-[var(--color-text-muted)] mt-1">{t.gallery.subtitle}</p>
+            <p className="text-sm text-[var(--color-text-muted)] mt-2 max-w-md mx-auto">{t.gallery.subtitle}</p>
           </div>
           {categories.length > 0 && (
             <div className="flex items-center justify-center gap-3 flex-wrap">
@@ -890,7 +951,7 @@ export default function Home() {
                       style={{
                         color: modalTheme?.ink ?? 'var(--color-accent-ink)',
                         background: modalTheme?.accent ?? 'var(--color-accent)',
-                        boxShadow: `0 4px 0 0 ${modalTheme?.shadow ?? 'var(--shadow-accent)'}`,
+                        boxShadow: `0 8px 24px -8px ${modalTheme?.accent ?? 'var(--shadow-accent)'}`,
                       }}
                     >
                       {t.modal.viewOnIg} ↗

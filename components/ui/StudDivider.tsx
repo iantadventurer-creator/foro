@@ -13,7 +13,7 @@ export function StudDivider() {
                     <span className="w-1 h-1 rounded-full bg-[var(--color-accent)]" />
                     <span className="w-1 h-1 rounded-full bg-[var(--color-accent)]" />
                 </div>
-                <div className="w-full h-full rounded-[2px] bg-[var(--color-accent)] shadow-[0_2px_0_0_var(--shadow-accent)]" />
+                <div className="w-full h-full rounded-[2px] bg-[var(--color-accent)] shadow-[0_8px_24px_-8px_var(--shadow-accent)]" />
             </div>
         </div>
     );

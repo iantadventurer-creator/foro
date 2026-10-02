@@ -41,7 +41,7 @@ export function CommunityHeaderNav({
                 <motion.div whileHover={{ y: -2 }} whileTap={{ y: 2 }}>
                     <Link
                         href="/comunidad?publish=1"
-                        className="font-button uppercase tracking-wider bg-[var(--color-accent-3)] text-white text-xs px-5 py-2 rounded-full shadow-[0_4px_0_0_var(--shadow-accent-3)] hover:brightness-110 transition-[filter] inline-block"
+                        className="font-button uppercase tracking-wider bg-[var(--color-accent-3)] text-white text-xs px-5 py-2 rounded-full shadow-[0_8px_24px_-8px_var(--shadow-accent-3)] hover:brightness-110 transition-[filter] inline-block"
                     >
                         {publishLabel}
                     </Link>
