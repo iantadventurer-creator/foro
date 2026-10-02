@@ -28,7 +28,6 @@ function buildUploadFileName(originalName: string): string {
 }
 
 const TITLE_MAX_LENGTH = 280;
-const HANDLE_MAX_LENGTH = 30;
 const URL_MAX_LENGTH = 200;
 
 export default function ComunidadPage() {
@@ -71,11 +70,9 @@ export default function ComunidadPage() {
         router.replace(`/comunidad?post=${postId}`, { scroll: false });
     };
 
-    // Estados para Registro / Login
-    const [isSignUp, setIsSignUp] = useState(false);
+    // Estados del inicio de sesión (la creación de perfil vive en /comunidad/registro)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [instagramHandle, setInstagramHandle] = useState('');
     const [authSubmitting, setAuthSubmitting] = useState(false);
 
     // Estados del Formulario del Foro
@@ -124,24 +121,17 @@ export default function ComunidadPage() {
             fillForm: 'Completa el mensaje y selecciona una imagen.',
             badFormat: 'Formato no permitido. Usa JPG, PNG, WEBP o GIF.',
             tooLarge: (mb: number) => `La imagen supera los ${mb}MB permitidos.`,
-            emailTaken: 'Este correo ya está registrado.',
-            signUpOk: '¡Registro exitoso! Revisa tu correo.',
             anonymous: 'Anónimo',
             viewProfile: 'Ver perfil',
             activity: 'Actividad',
             profile: 'Mi perfil',
             auth: {
                 signInTitle: 'Iniciar sesión en el foro',
-                signUpTitle: 'Crear una cuenta',
                 signInDesc: 'Inicia sesión con tu cuenta para poder publicar y dar like.',
-                signUpDesc: 'Regístrate para unirte a la comunidad y compartir tus fotos.',
-                handlePlaceholder: 'Tu usuario de Instagram (ej. @tu_cuenta)',
                 emailPlaceholder: 'Correo electrónico',
                 passwordPlaceholder: 'Contraseña',
-                toSignUp: '¿No tienes cuenta? Regístrate',
-                toSignIn: '¿Ya tienes cuenta? Inicia sesión',
+                toSignUp: '¿No tienes cuenta? Crea tu perfil',
                 loginBtn: 'Entrar',
-                registerBtn: 'Registrarse',
             }
         },
         en: {
@@ -175,24 +165,17 @@ export default function ComunidadPage() {
             fillForm: 'Complete the message and select an image.',
             badFormat: 'Unsupported format. Use JPG, PNG, WEBP or GIF.',
             tooLarge: (mb: number) => `The image exceeds the ${mb}MB limit.`,
-            emailTaken: 'This email is already registered.',
-            signUpOk: 'Registration successful! Check your email.',
             anonymous: 'Anonymous',
             viewProfile: 'View profile',
             activity: 'Activity',
             profile: 'My profile',
             auth: {
                 signInTitle: 'Sign in to the forum',
-                signUpTitle: 'Create an account',
                 signInDesc: 'Sign in with your account to post and like.',
-                signUpDesc: 'Register to join the community and share your photos.',
-                handlePlaceholder: 'Your Instagram handle (e.g. @your_account)',
                 emailPlaceholder: 'Email address',
                 passwordPlaceholder: 'Password',
-                toSignUp: "Don't have an account? Register",
-                toSignIn: 'Already have an account? Sign in',
+                toSignUp: "Don't have an account? Create your profile",
                 loginBtn: 'Sign in',
-                registerBtn: 'Register',
             }
         }
     };
@@ -308,32 +291,6 @@ export default function ComunidadPage() {
             await loadCommunityPosts();
         } catch (err) {
             console.error('Error al actualizar like:', err);
-        }
-    };
-
-    const handleSignUp = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setAuthSubmitting(true);
-        try {
-            const { data, error } = await supabase.auth.signUp({
-                email: email.trim(),
-                password,
-                options: { data: { instagram_handle: instagramHandle.trim() } }
-            });
-
-            if (error) {
-                push(error.message, 'error');
-                return;
-            }
-
-            if (data?.user && data.user.identities && data.user.identities.length === 0) {
-                push(t.emailTaken, 'error');
-            } else {
-                push(t.signUpOk, 'success');
-                setIsSignUp(false);
-            }
-        } finally {
-            setAuthSubmitting(false);
         }
     };
 
@@ -564,24 +521,13 @@ export default function ComunidadPage() {
                         className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 mb-8"
                     >
                         <h2 className="font-display text-lg font-semibold tracking-tight text-[var(--color-text)] mb-2">
-                            {isSignUp ? t.auth.signUpTitle : t.auth.signInTitle}
+                            {t.auth.signInTitle}
                         </h2>
                         <p className="text-sm text-[var(--color-text-muted)] mb-6">
-                            {isSignUp ? t.auth.signUpDesc : t.auth.signInDesc}
+                            {t.auth.signInDesc}
                         </p>
 
-                        <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="flex flex-col gap-4">
-                            {isSignUp && (
-                                <input
-                                    type="text"
-                                    required
-                                    maxLength={HANDLE_MAX_LENGTH}
-                                    placeholder={t.auth.handlePlaceholder}
-                                    value={instagramHandle}
-                                    onChange={(e) => setInstagramHandle(e.target.value)}
-                                    className={inputClass}
-                                />
-                            )}
+                        <form onSubmit={handleLogin} className="flex flex-col gap-4">
                             <input
                                 type="email"
                                 required
@@ -595,7 +541,7 @@ export default function ComunidadPage() {
                                 type="password"
                                 required
                                 minLength={6}
-                                autoComplete={isSignUp ? 'new-password' : 'current-password'}
+                                autoComplete="current-password"
                                 placeholder={t.auth.passwordPlaceholder}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -603,13 +549,12 @@ export default function ComunidadPage() {
                             />
 
                             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsSignUp(!isSignUp)}
+                                <Link
+                                    href="/comunidad/registro"
                                     className="text-xs text-[var(--color-accent)] font-semibold hover:underline"
                                 >
-                                    {isSignUp ? t.auth.toSignIn : t.auth.toSignUp}
-                                </button>
+                                    {t.auth.toSignUp}
+                                </Link>
                                 <motion.button
                                     whileHover={{ y: -2 }}
                                     whileTap={{ y: 1 }}
@@ -617,7 +562,7 @@ export default function ComunidadPage() {
                                     disabled={authSubmitting}
                                     className="w-full sm:w-auto bg-[var(--color-accent)] text-[var(--color-accent-ink)] font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider hover:brightness-110 transition disabled:opacity-50"
                                 >
-                                    {isSignUp ? t.auth.registerBtn : t.auth.loginBtn}
+                                    {t.auth.loginBtn}
                                 </motion.button>
                             </div>
                         </form>
