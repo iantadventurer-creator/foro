@@ -70,11 +70,6 @@ export default function ComunidadPage() {
         router.replace(`/comunidad?post=${postId}`, { scroll: false });
     };
 
-    // Estados del inicio de sesión (la creación de perfil vive en /comunidad/registro)
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [authSubmitting, setAuthSubmitting] = useState(false);
-
     // Estados del Formulario del Foro
     const [newPostTitle, setNewPostTitle] = useState('');
     const [newPostInstagramUrl, setNewPostInstagramUrl] = useState('');
@@ -126,12 +121,10 @@ export default function ComunidadPage() {
             activity: 'Actividad',
             profile: 'Mi perfil',
             auth: {
-                signInTitle: 'Iniciar sesión en el foro',
-                signInDesc: 'Inicia sesión con tu cuenta para poder publicar y dar like.',
-                emailPlaceholder: 'Correo electrónico',
-                passwordPlaceholder: 'Contraseña',
-                toSignUp: '¿No tienes cuenta? Crea tu perfil',
-                loginBtn: 'Entrar',
+                joinTitle: 'Únete a la comunidad',
+                joinDesc: 'Crea una cuenta gratis o inicia sesión para publicar tus fotos y dar me gusta.',
+                signUpBtn: 'Registrarte',
+                loginBtn: 'Iniciar sesión',
             }
         },
         en: {
@@ -170,12 +163,10 @@ export default function ComunidadPage() {
             activity: 'Activity',
             profile: 'My profile',
             auth: {
-                signInTitle: 'Sign in to the forum',
-                signInDesc: 'Sign in with your account to post and like.',
-                emailPlaceholder: 'Email address',
-                passwordPlaceholder: 'Password',
-                toSignUp: "Don't have an account? Create your profile",
-                loginBtn: 'Sign in',
+                joinTitle: 'Join the community',
+                joinDesc: 'Create a free account or log in to post your photos and give likes.',
+                signUpBtn: 'Sign up',
+                loginBtn: 'Log in',
             }
         }
     };
@@ -291,22 +282,6 @@ export default function ComunidadPage() {
             await loadCommunityPosts();
         } catch (err) {
             console.error('Error al actualizar like:', err);
-        }
-    };
-
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setAuthSubmitting(true);
-        try {
-            const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-            if (error) {
-                push(error.message, 'error');
-            } else {
-                setEmail('');
-                setPassword('');
-            }
-        } finally {
-            setAuthSubmitting(false);
         }
     };
 
@@ -521,51 +496,25 @@ export default function ComunidadPage() {
                         className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 mb-8"
                     >
                         <h2 className="font-display text-lg font-semibold tracking-tight text-[var(--color-text)] mb-2">
-                            {t.auth.signInTitle}
+                            {t.auth.joinTitle}
                         </h2>
                         <p className="text-sm text-[var(--color-text-muted)] mb-6">
-                            {t.auth.signInDesc}
+                            {t.auth.joinDesc}
                         </p>
-
-                        <form onSubmit={handleLogin} className="flex flex-col gap-4">
-                            <input
-                                type="email"
-                                required
-                                autoComplete="email"
-                                placeholder={t.auth.emailPlaceholder}
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className={inputClass}
-                            />
-                            <input
-                                type="password"
-                                required
-                                minLength={6}
-                                autoComplete="current-password"
-                                placeholder={t.auth.passwordPlaceholder}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className={inputClass}
-                            />
-
-                            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-2">
-                                <Link
-                                    href="/comunidad/registro"
-                                    className="text-xs text-[var(--color-accent)] font-semibold hover:underline"
-                                >
-                                    {t.auth.toSignUp}
-                                </Link>
-                                <motion.button
-                                    whileHover={{ y: -2 }}
-                                    whileTap={{ y: 1 }}
-                                    type="submit"
-                                    disabled={authSubmitting}
-                                    className="w-full sm:w-auto bg-[var(--color-accent)] text-[var(--color-accent-ink)] font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider hover:brightness-110 transition disabled:opacity-50"
-                                >
-                                    {t.auth.loginBtn}
-                                </motion.button>
-                            </div>
-                        </form>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <Link
+                                href="/comunidad/registro"
+                                className="flex-1 text-center bg-[var(--color-accent)] text-[var(--color-accent-ink)] font-bold px-6 py-3 rounded-full text-sm hover:brightness-110 transition shadow-[0_8px_24px_-8px_var(--shadow-accent)]"
+                            >
+                                {t.auth.signUpBtn}
+                            </Link>
+                            <Link
+                                href="/comunidad/entrar"
+                                className="flex-1 text-center bg-[var(--color-surface-2)] text-[var(--color-text)] font-bold px-6 py-3 rounded-full text-sm border border-[var(--color-border)] hover:border-[var(--color-text-faint)] transition"
+                            >
+                                {t.auth.loginBtn}
+                            </Link>
+                        </div>
                     </motion.div>
                 ) : null}
             </div>
