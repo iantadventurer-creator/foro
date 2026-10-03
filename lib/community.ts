@@ -25,3 +25,10 @@ export function avatarColorFor(handle: string): string {
   for (let i = 0; i < handle.length; i++) hash = (hash * 31 + handle.charCodeAt(i)) >>> 0;
   return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 }
+
+/** Usuario con sesión iniciada, con los campos que usa la comunidad. */
+export type AppUser = {
+  id: string;
+  email?: string;
+  user_metadata?: { instagram_handle?: string };
+};

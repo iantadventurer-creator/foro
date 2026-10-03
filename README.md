@@ -35,10 +35,12 @@ Ejecuta los scripts de `supabase/` en **SQL Editor** en este orden (todos son se
 ## Estructura
 
 ```
-app/                  Rutas (/, /comunidad, /comunidad/entrar, /registro, /actividad, /u/[userId])
-components/community  Cabecera, navegación y tarjetas de la comunidad
+app/                  Rutas: cada página es solo un "esqueleto" que guarda el estado y compone componentes
+components/home       Secciones de la portada (cabecera, hero, galería, visor, sobre mí, pie)
+components/community  Cabecera, feed, tarjetas y modales (publicar / ver publicación) de la comunidad
 components/ui         Piezas reutilizables (toasts, diálogos, filtros, fondo...)
-lib/                  Lógica compartida y testeada (validación, temas, hooks de modal/sesión)
+lib/                  Lógica compartida y testeada: validación, temas, textos (homeContent,
+                      communityContent), carga de datos (gallery, useCommunityFeed) y hooks
 supabase/             Scripts SQL
 ```
 
