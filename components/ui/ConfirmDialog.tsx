@@ -1,6 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { useModal } from '@/lib/useModal';
 
 export function ConfirmDialog({
     open,
@@ -19,6 +20,9 @@ export function ConfirmDialog({
     onConfirm: () => void;
     onCancel: () => void;
 }) {
+    // Escape cancela, el foco se queda dentro del diálogo y empieza en
+    // "Cancelar" (la opción segura) en vez de en la acción destructiva.
+    const { closeButtonRef, dialogRef } = useModal(open, onCancel);
     return (
         <AnimatePresence>
             {open && (
@@ -27,6 +31,7 @@ export function ConfirmDialog({
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     className="fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+                    ref={dialogRef as React.Ref<HTMLDivElement>}
                     role="alertdialog"
                     aria-modal="true"
                     aria-label={title}
@@ -45,6 +50,7 @@ export function ConfirmDialog({
                         )}
                         <div className="flex justify-end gap-3">
                             <button
+                                ref={closeButtonRef}
                                 onClick={onCancel}
                                 className="px-4 py-2 rounded-lg text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
                             >
@@ -52,7 +58,7 @@ export function ConfirmDialog({
                             </button>
                             <button
                                 onClick={onConfirm}
-                                className="px-4 py-2 rounded-lg text-sm font-semibold bg-[var(--color-accent-2)] text-white hover:brightness-110 transition"
+                                className="px-4 py-2 rounded-lg text-sm font-semibold bg-[var(--color-accent)] text-white hover:brightness-110 transition"
                             >
                                 {confirmLabel}
                             </button>

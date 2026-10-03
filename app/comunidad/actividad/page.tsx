@@ -1,15 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
 import { avatarColorFor } from '@/lib/community';
-import { CommunityHeaderNav } from '@/components/community/CommunityHeaderNav';
-import { CommunityLogoutButton } from '@/components/community/CommunityLogoutButton';
-import { LangToggle } from '@/components/community/LangToggle';
+import { useSessionUserId } from '@/lib/useSessionUserId';
+import { CommunityHeader } from '@/components/community/CommunityHeader';
 
 type ActivityItem = {
     likeId: string;
@@ -60,19 +58,15 @@ const content = {
     },
 };
 
+const ACTIVITY_LIMIT = 100;
+
 export default function CommunityActivityPage() {
     const router = useRouter();
     const [lang, setLang] = useState<'es' | 'en'>('es');
-    const [userId, setUserId] = useState<string | null | undefined>(undefined); // undefined = todavía no se sabe
+    const userId = useSessionUserId(); // undefined = todavía no se sabe
     const [items, setItems] = useState<ActivityItem[]>([]);
     const [loading, setLoading] = useState(true);
     const t = content[lang];
-
-    useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUserId(session?.user?.id ?? null);
-        });
-    }, []);
 
     useEffect(() => {
         if (!userId) {
@@ -83,42 +77,48 @@ export default function CommunityActivityPage() {
         let cancelled = false;
 
         async function load() {
-            // Todas las publicaciones (para poder mostrar el handle de quien dio
-            // like — no hay tabla de perfiles públicos, así que se toma prestado
-            // del handle que esa persona usó en sus propias publicaciones).
-            const { data: allPosts } = await supabase
+            // Solo mis publicaciones (no todas las de la comunidad).
+            const { data: myPosts } = await supabase
                 .from('community_posts')
-                .select('id, title, image_url, user_id, instagram_handle');
+                .select('id, title, image_url')
+                .eq('user_id', userId);
 
-            if (!allPosts) {
-                if (!cancelled) setLoading(false);
-                return;
-            }
-
-            const handleByUserId = new Map<string, string>();
-            for (const p of allPosts) {
-                if (p.instagram_handle && !handleByUserId.has(p.user_id)) {
-                    handleByUserId.set(p.user_id, p.instagram_handle);
-                }
-            }
-
-            const myPostIds = allPosts.filter((p) => p.user_id === userId).map((p) => p.id);
-            if (myPostIds.length === 0) {
-                if (!cancelled) { setItems([]); setLoading(false); }
+            if (cancelled) return;
+            if (!myPosts || myPosts.length === 0) {
+                setItems([]);
+                setLoading(false);
                 return;
             }
 
             const { data: likes, error } = await supabase
                 .from('post_likes')
                 .select('id, user_id, created_at, post_id')
-                .in('post_id', myPostIds)
+                .in('post_id', myPosts.map((p) => p.id))
                 .neq('user_id', userId)
-                .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false })
+                .limit(ACTIVITY_LIMIT);
 
             if (cancelled) return;
             if (error || !likes) { setLoading(false); return; }
 
-            const postById = new Map(allPosts.map((p) => [p.id, p]));
+            // El nombre de quien dio like se toma del handle de sus publicaciones
+            // (solo de las personas que aparecen en esta lista).
+            const likerIds = Array.from(new Set(likes.map((like) => like.user_id)));
+            const handleByUserId = new Map<string, string>();
+            if (likerIds.length > 0) {
+                const { data: likerPosts } = await supabase
+                    .from('community_posts')
+                    .select('user_id, instagram_handle')
+                    .in('user_id', likerIds);
+                for (const p of likerPosts ?? []) {
+                    if (p.instagram_handle && !handleByUserId.has(p.user_id)) {
+                        handleByUserId.set(p.user_id, p.instagram_handle);
+                    }
+                }
+            }
+            if (cancelled) return;
+
+            const postById = new Map(myPosts.map((p) => [p.id, p]));
             const activity: ActivityItem[] = likes
                 .map((like) => {
                     const post = postById.get(like.post_id);
@@ -155,21 +155,17 @@ export default function CommunityActivityPage() {
     }
 
     return (
-        <main className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
-            <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)] px-6 py-4">
-                <div className="max-w-6xl mx-auto flex md:grid md:grid-cols-3 items-center justify-between">
-                    <Link href="/comunidad" className="justify-self-start text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
-                        {t.volver}
-                    </Link>
-                    <div className="justify-self-center">
-                        <CommunityHeaderNav activityLabel={t.activityLabel} publishLabel={t.publishLabel} profileLabel={t.profileLabel} />
-                    </div>
-                    <div className="justify-self-end flex items-center gap-3">
-                        <CommunityLogoutButton label={t.logoutLabel} />
-                        <LangToggle lang={lang} onChange={setLang} />
-                    </div>
-                </div>
-            </header>
+        <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
+            <CommunityHeader
+                backHref="/comunidad"
+                backLabel={t.volver}
+                lang={lang}
+                onLangChange={setLang}
+                activityLabel={t.activityLabel}
+                publishLabel={t.publishLabel}
+                profileLabel={t.profileLabel}
+                logoutLabel={t.logoutLabel}
+            />
 
             <div className="max-w-2xl mx-auto px-4 py-10">
                 <h1 className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-center mb-10">{t.title}</h1>
@@ -207,7 +203,7 @@ export default function CommunityActivityPage() {
                                     {(item.likerHandle || t.anonymous).replace('@', '').charAt(0).toUpperCase()}
                                 </div>
                                 <p className="flex-1 min-w-0 text-sm text-[var(--color-text)]">
-                                    <span className="font-bold" style={{ color: 'var(--color-accent)' }}>{item.likerHandle || t.anonymous}</span>
+                                    <span className="font-bold" style={{ color: 'var(--color-accent-text)' }}>{item.likerHandle || t.anonymous}</span>
                                     {' '}{t.likedYourPost}{' '}
                                     <span className="text-[var(--color-text-muted)]">&quot;{item.postTitle.slice(0, 40)}{item.postTitle.length > 40 ? '…' : ''}&quot;</span>
                                     <span className="block text-[10px] text-[var(--color-text-faint)] font-semibold uppercase tracking-wide mt-0.5">{timeAgo(item.likedAt)}</span>

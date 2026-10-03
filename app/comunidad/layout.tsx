@@ -6,6 +6,7 @@ import { CommunityBottomNav } from '@/components/community/CommunityBottomNav';
 // vive en este layout, que sí es un Server Component.
 export const metadata: Metadata = {
   title: 'Comunidad',
+  alternates: { canonical: '/comunidad' },
   description:
     'Comparte tus propias creaciones LEGO, dale like a las de otros fans y forma parte de la comunidad de IanTBuild.',
   openGraph: {

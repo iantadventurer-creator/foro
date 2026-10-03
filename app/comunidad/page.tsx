@@ -9,12 +9,12 @@ import { supabase } from '@/lib/supabaseClient';
 import { useToasts, ToastViewport } from '@/components/ui/Toast';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { FilterPill } from '@/components/ui/FilterPill';
-import { CATEGORY_KEYS, formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
+import { CATEGORY_KEYS, categoryTextColor, formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
 import { useModal } from '@/lib/useModal';
+import { ALLOWED_IMAGE_TYPES, extensionForMime, isTrustedImageUrl, safeExternalUrl } from '@/lib/validation';
 import { type Like, type Post, avatarColorFor } from '@/lib/community';
 import { PostCard } from '@/components/community/PostCard';
-import { CommunityLogoutButton } from '@/components/community/CommunityLogoutButton';
-import { LangToggle } from '@/components/community/LangToggle';
+import { CommunityHeader } from '@/components/community/CommunityHeader';
 
 type AppUser = {
     id: string;
@@ -22,13 +22,14 @@ type AppUser = {
     user_metadata?: { instagram_handle?: string };
 };
 
-function buildUploadFileName(originalName: string): string {
-    const ext = originalName.split('.').pop() || 'jpg';
+function buildUploadFileName(ext: string): string {
     return `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
 }
 
 const TITLE_MAX_LENGTH = 280;
 const URL_MAX_LENGTH = 200;
+const FEED_LIMIT = 120;
+const REALTIME_REFRESH_DELAY_MS = 800;
 
 export default function ComunidadPage() {
     const router = useRouter();
@@ -115,6 +116,10 @@ export default function ComunidadPage() {
             mustLogin: 'Debes iniciar sesión.',
             fillForm: 'Completa el mensaje y selecciona una imagen.',
             badFormat: 'Formato no permitido. Usa JPG, PNG, WEBP o GIF.',
+            badUrl: 'El enlace debe empezar por http:// o https://.',
+            fileLabel: 'Foto a publicar',
+            likeError: 'No se pudo registrar tu me gusta. Inténtalo de nuevo.',
+            deleteForbidden: 'No se pudo eliminar la publicación.',
             tooLarge: (mb: number) => `La imagen supera los ${mb}MB permitidos.`,
             anonymous: 'Anónimo',
             viewProfile: 'Ver perfil',
@@ -157,6 +162,10 @@ export default function ComunidadPage() {
             mustLogin: 'You must log in.',
             fillForm: 'Complete the message and select an image.',
             badFormat: 'Unsupported format. Use JPG, PNG, WEBP or GIF.',
+            badUrl: 'The link must start with http:// or https://.',
+            fileLabel: 'Photo to post',
+            likeError: 'Your like could not be saved. Please try again.',
+            deleteForbidden: 'The post could not be deleted.',
             tooLarge: (mb: number) => `The image exceeds the ${mb}MB limit.`,
             anonymous: 'Anonymous',
             viewProfile: 'View profile',
@@ -183,7 +192,8 @@ export default function ComunidadPage() {
                         user_id
                     )
                 `)
-                .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false })
+                .limit(FEED_LIMIT);
 
             if (error) throw error;
             if (data) setPosts(data as Post[]);
@@ -227,7 +237,7 @@ export default function ComunidadPage() {
                 if (cancelled || !data) return;
                 const map: Record<string, string> = {};
                 data.forEach((row) => {
-                    if (row.avatar_url) map[row.user_id] = row.avatar_url;
+                    if (isTrustedImageUrl(row.avatar_url)) map[row.user_id] = row.avatar_url;
                 });
                 setAvatarByUserId(map);
             });
@@ -239,17 +249,21 @@ export default function ComunidadPage() {
     // "community_posts" y "post_likes" tengan Realtime activado en Supabase
     // (Database → Replication) — ver supabase/rls-policies.sql.
     useEffect(() => {
+        // Varios eventos seguidos (p. ej. una ráfaga de likes) se agrupan en
+        // una sola recarga del feed en vez de una consulta completa por evento.
+        let refreshTimer: number | undefined;
+        const scheduleRefresh = () => {
+            window.clearTimeout(refreshTimer);
+            refreshTimer = window.setTimeout(() => loadCommunityPosts(), REALTIME_REFRESH_DELAY_MS);
+        };
         const channel = supabase
             .channel('community-feed')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'community_posts' }, () => {
-                loadCommunityPosts();
-            })
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'post_likes' }, () => {
-                loadCommunityPosts();
-            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'community_posts' }, scheduleRefresh)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'post_likes' }, scheduleRefresh)
             .subscribe();
 
         return () => {
+            window.clearTimeout(refreshTimer);
             supabase.removeChannel(channel);
         };
     }, []);
@@ -282,6 +296,7 @@ export default function ComunidadPage() {
             await loadCommunityPosts();
         } catch (err) {
             console.error('Error al actualizar like:', err);
+            push(t.likeError, 'error');
         }
     };
 
@@ -296,9 +311,9 @@ export default function ComunidadPage() {
             return;
         }
 
-        const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
         const MAX_FILE_SIZE_MB = 8;
-        if (!ALLOWED_TYPES.includes(file.type)) {
+        const ext = ALLOWED_IMAGE_TYPES.includes(file.type) ? extensionForMime(file.type) : null;
+        if (!ext) {
             push(t.badFormat, 'error');
             return;
         }
@@ -306,10 +321,15 @@ export default function ComunidadPage() {
             push(t.tooLarge(MAX_FILE_SIZE_MB), 'error');
             return;
         }
+        const instagramUrl = newPostInstagramUrl.trim() ? safeExternalUrl(newPostInstagramUrl) : null;
+        if (newPostInstagramUrl.trim() && !instagramUrl) {
+            push(t.badUrl, 'error');
+            return;
+        }
 
         setLoading(true);
         try {
-            const fileName = buildUploadFileName(file.name);
+            const fileName = buildUploadFileName(ext);
 
             const { error: storageError } = await supabase.storage
                 .from('foro-fotos')
@@ -330,7 +350,7 @@ export default function ComunidadPage() {
                         title: newPostTitle.trim(),
                         image_url: publicUrl,
                         instagram_handle: authorHandle.startsWith('@') ? authorHandle : '@' + authorHandle,
-                        instagram_url: newPostInstagramUrl.trim() || null,
+                        instagram_url: instagramUrl,
                         category: newPostCategory,
                         user_id: user.id,
                     },
@@ -366,12 +386,19 @@ export default function ComunidadPage() {
         setSelectedPostId((current) => (current === postId ? null : current));
 
         try {
-            const { error: dbError } = await supabase
+            const { data: deleted, error: dbError } = await supabase
                 .from('community_posts')
                 .delete()
-                .eq('id', postId);
+                .eq('id', postId)
+                .select('id');
 
             if (dbError) throw dbError;
+            // Si las políticas de seguridad impiden borrar (no eres el dueño),
+            // Supabase no da error: simplemente no borra nada. Se avisa.
+            if (!deleted || deleted.length === 0) {
+                push(t.deleteForbidden, 'error');
+                return;
+            }
 
             const fileName = imageUrl.split('/').pop()?.split('?')[0];
             if (fileName) {
@@ -427,52 +454,31 @@ export default function ComunidadPage() {
         setSelectedPostId(null);
         router.replace('/comunidad', { scroll: false });
     }, [router]);
-    const { closeButtonRef, handleBackdropClick } = useModal(!!selectedPost, closeModal);
+    const { closeButtonRef, dialogRef, handleBackdropClick } = useModal(!!selectedPost, closeModal);
 
     const closeUploadModal = useCallback(() => {
         setShowUploadModal(false);
         router.replace('/comunidad', { scroll: false });
     }, [router]);
-    const { closeButtonRef: uploadCloseButtonRef, handleBackdropClick: handleUploadBackdropClick } = useModal(showUploadModal, closeUploadModal);
+    const { closeButtonRef: uploadCloseButtonRef, dialogRef: uploadDialogRef, handleBackdropClick: handleUploadBackdropClick } = useModal(showUploadModal, closeUploadModal);
     const modalTheme = getCategoryTheme(selectedPost?.category ?? null);
 
     const inputClass = "bg-[var(--color-ink)] border border-[var(--color-border)] rounded-xl px-4 py-3 text-sm text-[var(--color-text)] font-medium focus:outline-none focus:border-[var(--color-accent)] transition-colors placeholder:text-[var(--color-text-faint)]";
 
     return (
-        <main className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
-            <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)] px-6 py-4">
-                <div className="max-w-6xl mx-auto flex md:grid md:grid-cols-3 items-center justify-between">
-                    <Link href="/" className="justify-self-start text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
-                        {t.volver}
-                    </Link>
-
-                    <nav className="hidden md:flex justify-self-center items-center gap-5 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
-                        <Link href="/comunidad/actividad" className="hover:text-[var(--color-text)] transition-colors">
-                            {t.activity}
-                        </Link>
-                        {user && (
-                            <motion.button
-                                whileHover={{ y: -2 }}
-                                whileTap={{ y: 2 }}
-                                onClick={() => setShowUploadModal(true)}
-                                className="font-button uppercase tracking-wider bg-[var(--color-accent-3)] text-white text-xs px-5 py-2 rounded-full shadow-[0_8px_24px_-8px_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]"
-                            >
-                                {t.publishBtn}
-                            </motion.button>
-                        )}
-                        {user && (
-                            <Link href={`/comunidad/u/${user.id}`} className="hover:text-[var(--color-text)] transition-colors">
-                                {t.profile}
-                            </Link>
-                        )}
-                    </nav>
-
-                    <div className="justify-self-end flex items-center gap-3">
-                        <CommunityLogoutButton label={t.logout} onLogout={() => setFilterMyPosts(false)} />
-                        <LangToggle lang={lang} onChange={setLang} />
-                    </div>
-                </div>
-            </header>
+        <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
+            <CommunityHeader
+                backHref="/"
+                backLabel={t.volver}
+                lang={lang}
+                onLangChange={setLang}
+                activityLabel={t.activity}
+                publishLabel={t.publishBtn}
+                profileLabel={t.profile}
+                logoutLabel={t.logout}
+                onLogout={() => setFilterMyPosts(false)}
+                onPublish={() => setShowUploadModal(true)}
+            />
 
             <div className="max-w-2xl mx-auto px-4 pt-12">
                 <div className="mb-10 text-center">
@@ -482,7 +488,7 @@ export default function ComunidadPage() {
                         {t.steps.map((step, i) => (
                             <li key={step} className="flex items-center gap-2">
                                 {i > 0 && <span aria-hidden="true" className="text-[var(--color-text-faint)] mr-1">→</span>}
-                                <span className="w-5 h-5 rounded-full bg-[var(--color-accent-3)]/20 text-[var(--color-accent-3)] text-[11px] flex items-center justify-center">{i + 1}</span>
+                                <span className="w-5 h-5 rounded-full bg-[var(--color-accent-3)]/20 text-[var(--color-accent-3-text)] text-[11px] flex items-center justify-center">{i + 1}</span>
                                 {step}
                             </li>
                         ))}
@@ -527,6 +533,7 @@ export default function ComunidadPage() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={handleUploadBackdropClick}
+                        ref={uploadDialogRef as React.Ref<HTMLDivElement>}
                         role="dialog"
                         aria-modal="true"
                         aria-label={t.newPostTitle}
@@ -555,6 +562,7 @@ export default function ComunidadPage() {
                                     required
                                     rows={3}
                                     maxLength={TITLE_MAX_LENGTH}
+                                    aria-label={t.placeholder}
                                     placeholder={t.placeholder}
                                     value={newPostTitle}
                                     onChange={(e) => setNewPostTitle(e.target.value)}
@@ -566,6 +574,7 @@ export default function ComunidadPage() {
                                 <input
                                     type="url"
                                     maxLength={URL_MAX_LENGTH}
+                                    aria-label={t.instagramUrlPlaceholder}
                                     placeholder={t.instagramUrlPlaceholder}
                                     value={newPostInstagramUrl}
                                     onChange={(e) => setNewPostInstagramUrl(e.target.value)}
@@ -599,6 +608,7 @@ export default function ComunidadPage() {
                                 <input
                                     type="file"
                                     accept="image/jpeg,image/png,image/webp,image/gif"
+                                    aria-label={t.fileLabel}
                                     required
                                     onChange={(e) => e.target.files && setFile(e.target.files[0])}
                                     className="w-full text-[var(--color-text-muted)] border border-[var(--color-border)] rounded-xl px-4 py-2 text-xs font-medium file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--color-accent)] file:text-[var(--color-accent-ink)] hover:file:cursor-pointer hover:file:brightness-110"
@@ -641,13 +651,13 @@ export default function ComunidadPage() {
                         <div className="flex gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
                             <button
                                 onClick={() => setSortBy('recent')}
-                                className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${sortBy === 'recent' ? 'bg-[var(--color-accent-3)] text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
+                                className={`px-3 py-1.5 rounded-full text-[11px] font-bold uppercase transition-all ${sortBy === 'recent' ? 'bg-[var(--color-accent-3)] text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
                             >
                                 {t.sortRecent}
                             </button>
                             <button
                                 onClick={() => setSortBy('popular')}
-                                className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all ${sortBy === 'popular' ? 'bg-[var(--color-accent-3)] text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
+                                className={`px-3 py-1.5 rounded-full text-[11px] font-bold uppercase transition-all ${sortBy === 'popular' ? 'bg-[var(--color-accent-3)] text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
                             >
                                 {t.sortPopular}
                             </button>
@@ -655,7 +665,7 @@ export default function ComunidadPage() {
                         {user && (
                             <button
                                 onClick={() => setFilterMyPosts((v) => !v)}
-                                className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all border ${filterMyPosts ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-[var(--color-accent)]' : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'}`}
+                                className={`px-3 py-1.5 rounded-full text-[11px] font-bold uppercase transition-all border ${filterMyPosts ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-[var(--color-accent)]' : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'}`}
                             >
                                 {t.filterMine}
                             </button>
@@ -690,6 +700,7 @@ export default function ComunidadPage() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={handleBackdropClick}
+                        ref={dialogRef as React.Ref<HTMLDivElement>}
                         role="dialog"
                         aria-modal="true"
                         aria-label={selectedPost.title}
@@ -745,13 +756,13 @@ export default function ComunidadPage() {
                                             />
                                         )}
                                     </Link>
-                                    {selectedPost.instagram_url ? (
+                                    {safeExternalUrl(selectedPost.instagram_url) ? (
                                         <a
-                                            href={selectedPost.instagram_url}
+                                            href={safeExternalUrl(selectedPost.instagram_url) ?? undefined}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="font-bold text-sm uppercase tracking-wide hover:underline flex items-center gap-1 max-w-full"
-                                            style={{ color: modalTheme?.accent ?? 'var(--color-accent)' }}
+                                            style={{ color: categoryTextColor(modalTheme) }}
                                         >
                                             <span className="truncate">{selectedPost.instagram_handle || t.anonymous}</span> ↗
                                         </a>
@@ -759,7 +770,7 @@ export default function ComunidadPage() {
                                         <Link
                                             href={`/comunidad/u/${selectedPost.user_id}`}
                                             className="font-bold text-sm uppercase tracking-wide hover:underline max-w-full truncate"
-                                            style={{ color: modalTheme?.accent ?? 'var(--color-accent)' }}
+                                            style={{ color: categoryTextColor(modalTheme) }}
                                         >
                                             {selectedPost.instagram_handle || t.anonymous}
                                         </Link>
@@ -770,7 +781,7 @@ export default function ComunidadPage() {
                                     {modalTheme && selectedPost.category && (
                                         <span
                                             className="self-start text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide"
-                                            style={{ background: `${modalTheme.accent}22`, color: modalTheme.accent }}
+                                            style={{ background: `${modalTheme.accent}22`, color: categoryTextColor(modalTheme) }}
                                         >
                                             {formatCategoryLabel(selectedPost.category)}
                                         </span>
@@ -787,6 +798,7 @@ export default function ComunidadPage() {
                                                 <textarea
                                                     rows={3}
                                                     maxLength={TITLE_MAX_LENGTH}
+                                                    aria-label={t.edit}
                                                     value={editText}
                                                     onChange={(e) => setEditText(e.target.value)}
                                                     className={`${inputClass} resize-none`}
@@ -794,7 +806,7 @@ export default function ComunidadPage() {
                                                 <div className="flex gap-2 justify-end">
                                                     <button
                                                         onClick={() => handleEdit(selectedPost.id)}
-                                                        className="bg-[var(--color-accent-4)] hover:brightness-110 text-white font-bold px-3 py-1.5 rounded-full text-[10px] uppercase transition-all"
+                                                        className="bg-[var(--color-accent-4)] hover:brightness-110 text-[#04170d] font-bold px-3 py-1.5 rounded-full text-[10px] uppercase transition-all"
                                                     >
                                                         {t.save}
                                                     </button>
@@ -857,7 +869,7 @@ export default function ComunidadPage() {
                                                         setEditingPostId(selectedPost.id);
                                                         setEditText(selectedPost.title);
                                                     }}
-                                                    className="text-[10px] bg-[var(--color-surface-2)] text-[var(--color-accent)] hover:brightness-110 px-2.5 py-1 rounded-full font-bold uppercase border border-[var(--color-border)] tracking-wider transition-colors"
+                                                    className="text-[10px] bg-[var(--color-surface-2)] text-[var(--color-accent-text)] hover:brightness-110 px-2.5 py-1 rounded-full font-bold uppercase border border-[var(--color-border)] tracking-wider transition-colors"
                                                 >
                                                     {t.edit}
                                                 </button>

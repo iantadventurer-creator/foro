@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
-import type { CategoryTheme } from '@/lib/categoryThemes';
+import { categoryTextColor, type CategoryTheme } from '@/lib/categoryThemes';
 
 export function FilterPill({
   children,
@@ -22,7 +22,7 @@ export function FilterPill({
       whileTap={{ scale: 0.96 }}
       style={
         active && theme
-          ? { background: `${theme.accent}26`, color: theme.accent, borderColor: `${theme.accent}99`, boxShadow: `0 6px 20px -10px ${theme.accent}` }
+          ? { background: `${theme.accent}26`, color: categoryTextColor(theme), borderColor: `${theme.accent}99`, boxShadow: `0 6px 20px -10px ${theme.accent}` }
           : undefined
       }
       className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition-colors duration-200 whitespace-nowrap border ${active

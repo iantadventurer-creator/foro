@@ -30,3 +30,10 @@ export function getCategoryTheme(category: string | null | undefined): CategoryT
   if (!category) return null;
   return CATEGORY_THEMES[category.trim().toLowerCase()] || null;
 }
+
+/** Versión del color de la categoría apta para TEXTO sobre fondo oscuro:
+ * mezcla un 30% de blanco para alcanzar contraste AA (Marvel y DC, por
+ * ejemplo, no lo cumplen con su color de marca puro). */
+export function categoryTextColor(theme: CategoryTheme | null | undefined): string {
+  return theme ? `color-mix(in srgb, ${theme.accent} 70%, white)` : 'var(--color-accent-text)';
+}

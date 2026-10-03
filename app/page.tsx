@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
@@ -10,19 +10,17 @@ import { QrCodeModal, pickRandomQrColor } from '@/components/ui/QrCodeButton';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { supabase } from '@/lib/supabaseClient';
 import { useBodyScrollLock } from '@/lib/useBodyScrollLock';
-import { formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
+import { useModal } from '@/lib/useModal';
+import { categoryTextColor, formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
 
 type FeedItem = {
   id: string;
   title: string;
-  captionFull: string;
-  tags: string[];
   src: string;
   videoUrl: string | null;
   permalink: string;
   mediaType: 'VIDEO' | 'IMAGE';
   author: string;
-  date: string;
   /** Nombre de la subcarpeta del bucket (p. ej. "STAR WARS"), o null si la foto está suelta en la raíz. */
   category: string | null;
   /** Fecha real (no formateada) para poder ordenar por más reciente entre categorías. */
@@ -32,6 +30,9 @@ type FeedItem = {
 /** Nombre del bucket público de Supabase Storage donde se suben las fotos de la galería. */
 const GALLERY_BUCKET = 'galeria';
 const VIDEO_EXTENSIONS = ['mp4', 'mov', 'webm'];
+// Supabase limita cada listado a 100 archivos por defecto; sin esto, una
+// carpeta con más fotos las perdería en silencio.
+const GALLERY_LIST_LIMIT = 1000;
 const FAVORITES_STORAGE_KEY = 'iantbuild:favorites';
 
 
@@ -101,7 +102,7 @@ export default function Home() {
 
   // Bloquea el scroll de fondo mientras el lightbox de fotos o el QR
   // están abiertos (antes se podía seguir desplazando la página detrás).
-  useBodyScrollLock(!!selectedItem || qrOpen);
+  useBodyScrollLock(qrOpen);
 
   // Cierra el menú móvil y, una vez terminada su animación de colapso (para
   // que la cabecera ya tenga su altura final), hace scroll a la sección.
@@ -116,9 +117,6 @@ export default function Home() {
   };
 
   const ITEMS_PER_PAGE = 12;
-  const lastFocusedRef = useRef<HTMLElement | null>(null);
-  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
-  const modalOpenedAtRef = useRef(0);
   const galleryRef = useRef<HTMLElement | null>(null);
   const aboutRef = useRef<HTMLElement | null>(null);
   const [activeSection, setActiveSection] = useState<'gallery' | 'about' | null>(null);
@@ -150,42 +148,15 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
-  // Date.now() en openItem/handleModalBackdropClick corre dentro de manejadores
-  // de evento (abrir/cerrar), nunca durante el render — pero la regla
-  // react-hooks/purity no distingue eso (ver nota sobre reglas inestables en AGENTS.md).
   const openItem = (item: FeedItem) => {
-    lastFocusedRef.current = document.activeElement as HTMLElement;
     setSelectedItem(item);
     setZoomed(false);
-    modalOpenedAtRef.current = Date.now();
   };
 
-  // En móvil, el mismo toque que abre el modal a veces también dispara un
-  // "click" fantasma sobre el fondo (que aparece al instante justo debajo
-  // del dedo) y lo cierra apenas se abrió. Se ignoran los clics en el
-  // fondo durante un instante después de abrir.
-  const handleModalBackdropClick = () => {
-    // eslint-disable-next-line react-hooks/purity
-    if (Date.now() - modalOpenedAtRef.current < 350) return;
-    closeModal();
-  };
-
-  const closeModal = () => setSelectedItem(null);
-
-  // Cierra el modal con Escape y devuelve el foco a quien lo abrió al cerrarse.
-  useEffect(() => {
-    if (!selectedItem) return;
-    closeButtonRef.current?.focus();
-
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') closeModal();
-    }
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      lastFocusedRef.current?.focus();
-    };
-  }, [selectedItem]);
+  const closeModal = useCallback(() => setSelectedItem(null), []);
+  // Escape, trampa de foco, devolución del foco y protección contra el
+  // "click fantasma" en móvil: todo en el hook compartido con la comunidad.
+  const { closeButtonRef, dialogRef, handleBackdropClick: handleModalBackdropClick } = useModal(!!selectedItem, closeModal);
 
   const [retryCount, setRetryCount] = useState(0);
 
@@ -206,8 +177,6 @@ export default function Home() {
       return {
         id: storagePath,
         title: category ? formatCategoryLabel(category) : 'Toy Photography',
-        captionFull: '',
-        tags: [],
         src: publicUrl,
         videoUrl: isVideoType ? publicUrl : null,
         permalink: 'https://instagram.com/iantadventurer',
@@ -215,13 +184,6 @@ export default function Home() {
         author: '@iantadventurer',
         category,
         createdAtMs,
-        date: createdAt
-          ? new Date(createdAt).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          })
-          : '',
       };
     }
 
@@ -234,29 +196,28 @@ export default function Home() {
       try {
         const { data: rootEntries, error } = await supabase.storage
           .from(GALLERY_BUCKET)
-          .list('', { sortBy: { column: 'name', order: 'asc' } });
+          .list('', { limit: GALLERY_LIST_LIMIT, sortBy: { column: 'name', order: 'asc' } });
 
         if (error) throw error;
 
-        const items: FeedItem[] = [];
+        // Cada subcarpeta se lista en paralelo (antes era una espera tras otra).
+        const groups = await Promise.all(
+          (rootEntries || [])
+            .filter((entry) => entry.name && !entry.name.startsWith('.'))
+            .map(async (entry): Promise<FeedItem[]> => {
+              const isFolder = entry.id === null;
+              if (!isFolder) return [buildItem(entry, null, entry.name)];
 
-        for (const entry of rootEntries || []) {
-          if (!entry.name || entry.name.startsWith('.')) continue;
-          const isFolder = entry.id === null;
+              const { data: subEntries } = await supabase.storage
+                .from(GALLERY_BUCKET)
+                .list(entry.name, { limit: GALLERY_LIST_LIMIT, sortBy: { column: 'created_at', order: 'desc' } });
 
-          if (isFolder) {
-            const { data: subEntries } = await supabase.storage
-              .from(GALLERY_BUCKET)
-              .list(entry.name, { sortBy: { column: 'created_at', order: 'desc' } });
-
-            for (const file of subEntries || []) {
-              if (!file.name || file.name.startsWith('.') || file.id === null) continue;
-              items.push(buildItem(file, entry.name, `${entry.name}/${file.name}`));
-            }
-          } else {
-            items.push(buildItem(entry, null, entry.name));
-          }
-        }
+              return (subEntries || [])
+                .filter((file) => file.name && !file.name.startsWith('.') && file.id !== null)
+                .map((file) => buildItem(file, entry.name, `${entry.name}/${file.name}`));
+            })
+        );
+        const items = groups.flat();
 
         items.sort((a, b) => b.createdAtMs - a.createdAtMs);
         if (!cancelled) setFeedItems(items);
@@ -272,12 +233,16 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, [lang, retryCount]);
+  }, [retryCount]);
 
-  const handleCopyLink = (url: string) => {
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+  const handleCopyLink = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // Sin permiso de portapapeles (o contexto no seguro): no se muestra "copiado".
+    }
   };
 
   // Categorías disponibles = nombres de subcarpeta encontrados, en el orden en que aparecen.
@@ -459,7 +424,7 @@ export default function Home() {
   const t = content[lang];
 
   return (
-    <main className="min-h-screen text-[var(--color-text)] font-sans relative z-0 overflow-x-hidden">
+    <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0 overflow-x-hidden focus:outline-none">
       {/* HEADER */}
       <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)]">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
@@ -478,7 +443,7 @@ export default function Home() {
             </div>
             <div className="leading-none">
               <span className="font-display font-semibold text-base tracking-tight text-[var(--color-text)] block">IanTBuild</span>
-              <span className="text-[10px] text-[var(--color-accent)] font-semibold tracking-[0.2em] uppercase">Studio</span>
+              <span className="text-[10px] text-[var(--color-accent-text)] font-semibold tracking-[0.2em] uppercase">Studio</span>
             </div>
           </a>
 
@@ -570,7 +535,7 @@ export default function Home() {
         <div className="absolute bottom-0 right-0 w-56 h-56 md:w-[24rem] md:h-[24rem] bg-[var(--color-accent)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
 
         <div>
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" className="inline-flex items-center gap-2 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-accent)] text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" className="inline-flex items-center gap-2 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-accent-text)] text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
             {t.hero.badge}
           </motion.div>
 
@@ -630,7 +595,7 @@ export default function Home() {
       {/* QUÉ ENCONTRARÁS */}
       <section id="intro" className="max-w-7xl mx-auto px-6 pb-20 relative z-10">
         <div className="text-center mb-10">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-accent)] mb-3">{t.intro.eyebrow}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-accent-text)] mb-3">{t.intro.eyebrow}</p>
           <h2 className="font-display text-2xl md:text-3xl font-semibold tracking-tight">{t.intro.title}</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-5">
@@ -679,7 +644,7 @@ export default function Home() {
         />
         <div className="mb-12 flex flex-col items-center text-center gap-6">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-accent)] mb-3">{t.gallery.eyebrow}</p>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-accent-text)] mb-3">{t.gallery.eyebrow}</p>
             <motion.h2 initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-text)]">
               {t.gallery.title}
             </motion.h2>
@@ -761,7 +726,7 @@ export default function Home() {
                         className="w-full h-auto object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
                       />
                       {isVideo && (
-                        <div className="absolute top-3 right-3 bg-[var(--color-accent-2)] text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                        <div className="absolute top-3 right-3 bg-[var(--color-accent-2)] text-[#2a1600] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
                           Reel
                         </div>
                       )}
@@ -833,6 +798,7 @@ export default function Home() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleModalBackdropClick}
+            ref={dialogRef as React.Ref<HTMLDivElement>}
             role="dialog"
             aria-modal="true"
             aria-label={selectedItem.title}
@@ -901,7 +867,7 @@ export default function Home() {
                 <div className="flex justify-between items-center">
                   <span
                     className="text-xs font-bold uppercase tracking-widest"
-                    style={{ color: modalTheme?.accent ?? 'var(--color-accent)' }}
+                    style={{ color: categoryTextColor(modalTheme) }}
                   >
                     {selectedItem.author}
                   </span>
@@ -936,9 +902,6 @@ export default function Home() {
                 </div>
                 <div className="flex-1 flex flex-col items-center justify-center text-center py-6">
                   <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-[var(--color-text)] mb-3">{selectedItem.title}</h3>
-                  {selectedItem.captionFull.trim() && (
-                    <p className="text-sm text-[var(--color-text-muted)] whitespace-pre-line leading-relaxed mb-6">{selectedItem.captionFull}</p>
-                  )}
                   <div
                     className="w-full pt-4 mt-3 flex flex-col gap-2.5"
                     style={{ borderTop: `1px solid ${modalTheme ? `${modalTheme.accent}40` : 'var(--color-border)'}` }}
@@ -982,12 +945,12 @@ export default function Home() {
           className="grid md:grid-cols-[1.2fr_0.8fr] gap-10 items-center bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-8 md:p-14"
         >
           <div>
-            <span className="text-xs font-bold text-[var(--color-accent)] uppercase tracking-widest">{t.aboutSection.eyebrow}</span>
+            <span className="text-xs font-bold text-[var(--color-accent-text)] uppercase tracking-widest">{t.aboutSection.eyebrow}</span>
             <h3 className="font-display text-2xl md:text-3xl font-semibold text-[var(--color-text)] mt-3 mb-5 tracking-tight">{t.aboutSection.title}</h3>
             <p className="text-[var(--color-text-muted)] text-base leading-relaxed">{t.aboutSection.desc}</p>
           </div>
           <div className="flex md:flex-col gap-4 md:gap-6 md:border-l md:border-[var(--color-border)] md:pl-10">
-            <a href="https://instagram.com/iantadventurer" target="_blank" rel="noopener noreferrer" className="font-button inline-flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text)] border border-[var(--color-border)] px-6 py-3.5 rounded-full hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition whitespace-nowrap">
+            <a href="https://instagram.com/iantadventurer" target="_blank" rel="noopener noreferrer" className="font-button inline-flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text)] border border-[var(--color-border)] px-6 py-3.5 rounded-full hover:border-[var(--color-accent)] hover:text-[var(--color-accent-text)] transition whitespace-nowrap">
               {t.aboutSection.cta}
             </a>
           </div>
@@ -1005,17 +968,17 @@ export default function Home() {
           </div>
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-faint)] block mb-3">{t.footer.linksTitle}</span>
-            <div className="flex flex-col gap-2 text-[var(--color-text-muted)]">
-              <a href="#gallery" className="hover:text-[var(--color-text)] w-fit">{t.nav.gallery}</a>
-              <Link href="/comunidad" className="hover:text-[var(--color-text)] w-fit">{t.nav.community}</Link>
-              <a href="#about" className="hover:text-[var(--color-text)] w-fit">{t.nav.about}</a>
+            <div className="flex flex-col gap-1 text-[var(--color-text-muted)]">
+              <a href="#gallery" className="hover:text-[var(--color-text)] w-fit block py-1">{t.nav.gallery}</a>
+              <Link href="/comunidad" className="hover:text-[var(--color-text)] w-fit block py-1">{t.nav.community}</Link>
+              <a href="#about" className="hover:text-[var(--color-text)] w-fit block py-1">{t.nav.about}</a>
             </div>
           </div>
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-faint)] block mb-3">{t.footer.followTitle}</span>
-            <div className="flex flex-col gap-2">
-              <a href="https://instagram.com/iantadventurer" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] w-fit block">Instagram ↗</a>
-              <button onClick={openQr} aria-label={t.footer.qrLabel} className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] w-fit text-left">
+            <div className="flex flex-col gap-1">
+              <a href="https://instagram.com/iantadventurer" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] w-fit block py-1">Instagram ↗</a>
+              <button onClick={openQr} aria-label={t.footer.qrLabel} className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] w-fit text-left py-1">
                 {t.footer.qrLabel}
               </button>
             </div>

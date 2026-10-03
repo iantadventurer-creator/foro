@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { useToasts, ToastViewport } from '@/components/ui/Toast';
 import { AuthShell, authButtonClass, authInputClass } from '@/components/community/AuthShell';
+import { authErrorMessage } from '@/lib/validation';
 
 const content = {
     es: {
@@ -52,7 +53,7 @@ export default function EntrarPage() {
         try {
             const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
             if (error) {
-                push(error.message, 'error');
+                push(authErrorMessage(error.message, lang), 'error');
                 return;
             }
             router.replace('/comunidad');

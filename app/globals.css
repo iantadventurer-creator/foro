@@ -14,15 +14,19 @@
   --color-border: #232e4d;
   --color-text: #f4f6fb;
   --color-text-muted: #9aa6c4;
-  --color-text-faint: #66729a;
+  --color-text-faint: #8592b6;
 
   /* Acentos — rojo y azul LEGO como pareja principal (acción / comunidad),
      naranja para avisos y verde para éxito; todos con luminosidad pareja. */
-  --color-accent: #e04436;    /* Rojo LEGO — acción principal */
+  --color-accent: #d23a2c;    /* Rojo LEGO — relleno de acción principal (texto blanco AA) */
   --color-accent-2: #f39a2b; /* Ámbar — avisos, borrar */
-  --color-accent-3: #3b82f6;  /* Azul — comunidad / acción secundaria */
+  --color-accent-3: #2b6be0;  /* Azul — relleno comunidad / acción secundaria (texto blanco AA) */
   --color-accent-4: #22b36b;  /* Verde — éxito */
   --color-accent-ink: #ffffff; /* texto sobre el acento principal */
+
+  /* Variantes claras de los acentos para usarlas COMO TEXTO sobre fondo oscuro (contraste AA) */
+  --color-accent-text: #f2675a;
+  --color-accent-3-text: #6ea2ff;
 
   /* Resplandor suave de cada acento (reemplaza la sombra "de canto") */
   --shadow-accent: rgba(224, 68, 54, 0.55);
@@ -83,4 +87,19 @@ button {
 
 .mask-fade-b {
   mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+}
+
+/* Respeta la preferencia del sistema "reducir movimiento" */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IanTBuild
 
-## Getting Started
+Portafolio de fotografía de miniaturas LEGO (`@iantadventurer`) con una comunidad donde otros fans publican sus propias fotos.
 
-First, run the development server:
+- **Frontend:** Next.js (App Router) · React · TypeScript · Tailwind CSS v4 · Framer Motion
+- **Backend:** Supabase (Postgres + Auth + Storage + Realtime). No hay servidor propio: la seguridad vive en las políticas RLS de la base de datos.
+- **Despliegue:** Vercel
+
+## Puesta en marcha
 
 ```bash
+npm install
+cp .env.example .env.local   # y rellena las dos variables de Supabase
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Comando | Qué hace |
+| --- | --- |
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Compilación de producción |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript sin emitir |
+| `npm test` | Tests unitarios (Vitest) de la lógica de `lib/` |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Base de datos (Supabase)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Ejecuta los scripts de `supabase/` en **SQL Editor** en este orden (todos son seguros de repetir):
 
-## Learn More
+1. `rls-policies.sql` — políticas de seguridad (quién puede leer/escribir qué).
+2. `add-profiles-avatar.sql` — tabla `profiles` con la foto de perfil.
+3. `add-community-category.sql` — categoría de las publicaciones.
+4. `add-profiles-username.sql` — nombre de usuario único y nombre completo (registro estilo Instagram).
+5. `harden-security.sql` — límites de datos, índices, un like por persona, restricciones del bucket y autor forzado.
 
-To learn more about Next.js, take a look at the following resources:
+## Estructura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+app/                  Rutas (/, /comunidad, /comunidad/entrar, /registro, /actividad, /u/[userId])
+components/community  Cabecera, navegación y tarjetas de la comunidad
+components/ui         Piezas reutilizables (toasts, diálogos, filtros, fondo...)
+lib/                  Lógica compartida y testeada (validación, temas, hooks de modal/sesión)
+supabase/             Scripts SQL
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notas de seguridad
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Las URLs escritas por usuarios solo se aceptan si son `http(s)` (`lib/validation.ts`), tanto al guardar como al mostrarlas.
+- La extensión de los archivos subidos se deduce del tipo MIME validado, nunca del nombre.
+- Las imágenes de perfil solo se muestran si viven en el Storage del propio proyecto.
+- Cabeceras de seguridad en `next.config.ts`. Pendiente: Content-Security-Policy (requiere nonces con Next.js).

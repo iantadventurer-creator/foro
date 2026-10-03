@@ -28,10 +28,10 @@ export function AuthShell({
     children: ReactNode;
 }) {
     return (
-        <main className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
+        <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
             <header className="px-6 py-4">
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
-                    <Link href="/comunidad" className="text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
+                    <Link href="/comunidad" className="text-xs font-semibold uppercase text-[var(--color-accent-text)] tracking-wider hover:underline">
                         {backLabel}
                     </Link>
                     <LangToggle lang={lang} onChange={onLangChange} />
@@ -70,7 +70,7 @@ export function AuthShell({
                     className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl px-8 py-5 text-center text-sm text-[var(--color-text-muted)]"
                 >
                     {switchText}{' '}
-                    <Link href={switchHref} className="text-[var(--color-accent)] font-semibold hover:underline">
+                    <Link href={switchHref} className="text-[var(--color-accent-text)] font-semibold hover:underline">
                         {switchLabel}
                     </Link>
                 </motion.div>

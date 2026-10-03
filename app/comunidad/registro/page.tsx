@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { useToasts, ToastViewport } from '@/components/ui/Toast';
 import { AuthShell, authButtonClass, authInputClass } from '@/components/community/AuthShell';
+import { authErrorMessage, isValidUsername, normalizeUsername } from '@/lib/validation';
 
-const USERNAME_PATTERN = /^[a-z0-9._]{3,30}$/;
 
 type UsernameStatus = 'idle' | 'invalid' | 'checking' | 'available' | 'taken';
 
@@ -87,7 +87,7 @@ export default function RegistroPage() {
             setUsernameStatus('idle');
             return;
         }
-        if (!USERNAME_PATTERN.test(username)) {
+        if (!isValidUsername(username)) {
             setUsernameStatus('invalid');
             return;
         }
@@ -122,7 +122,7 @@ export default function RegistroPage() {
                 },
             });
             if (error) {
-                push(error.message, 'error');
+                push(authErrorMessage(error.message, lang), 'error');
                 return;
             }
             if (data?.user && data.user.identities && data.user.identities.length === 0) {
@@ -140,7 +140,7 @@ export default function RegistroPage() {
         invalid: { text: t.usernameInvalid, tone: 'text-[var(--color-accent-2)]' },
         checking: { text: t.usernameChecking, tone: 'text-[var(--color-text-faint)]' },
         available: { text: t.usernameAvailable, tone: 'text-[var(--color-accent-4)]' },
-        taken: { text: t.usernameTaken, tone: 'text-[var(--color-accent)]' },
+        taken: { text: t.usernameTaken, tone: 'text-[var(--color-accent-text)]' },
     };
     const status = statusMessage[usernameStatus];
 
@@ -198,7 +198,7 @@ export default function RegistroPage() {
                                 aria-label={t.username}
                                 placeholder={t.username}
                                 value={username}
-                                onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))}
+                                onChange={(e) => setUsername(normalizeUsername(e.target.value))}
                                 className={authInputClass}
                             />
                             {status && <p className={`text-xs mt-1.5 ${status.tone}`} aria-live="polite">{status.text}</p>}

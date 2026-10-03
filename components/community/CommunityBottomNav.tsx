@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
+import { useSessionUserId } from '@/lib/useSessionUserId';
 
 /** Barra inferior fija, visible en todas las páginas de /comunidad — el
  * mismo tipo de navegación de app (Feed / Perfil / Actividad) que tienen
@@ -11,17 +10,7 @@ import { supabase } from '@/lib/supabaseClient';
  * espacio de sobra para navegar desde el contenido mismo. */
 export function CommunityBottomNav() {
   const pathname = usePathname();
-  const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUserId(session?.user?.id ?? null);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUserId(session?.user?.id ?? null);
-    });
-    return () => subscription.unsubscribe();
-  }, []);
+  const userId = useSessionUserId();
 
   const leftItems: { href: string; label: string; icon: string; match: (p: string) => boolean }[] = [
     { href: '/comunidad', label: 'Feed', icon: '⌂', match: (p) => p === '/comunidad' },
@@ -37,7 +26,7 @@ export function CommunityBottomNav() {
       <Link
         key={item.label}
         href={item.href}
-        className={`flex flex-col items-center gap-0.5 py-2.5 px-4 text-[10px] font-bold uppercase tracking-wide transition-colors ${active ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'
+        className={`flex flex-col items-center gap-0.5 py-2.5 px-4 text-[10px] font-bold uppercase tracking-wide transition-colors ${active ? 'text-[var(--color-accent-text)]' : 'text-[var(--color-text-muted)]'
           }`}
       >
         <span className="text-lg leading-none" aria-hidden="true">{item.icon}</span>

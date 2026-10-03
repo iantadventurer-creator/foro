@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { useSessionUserId } from '@/lib/useSessionUserId';
 
 /** Botón "Cerrar sesión" del header — mismo componente en las tres páginas
  * de la comunidad para que se vea igual en todas. Separado de
@@ -16,17 +16,7 @@ export function CommunityLogoutButton({
     label?: string;
     onLogout?: () => void;
 }) {
-    const [userId, setUserId] = useState<string | null>(null);
-
-    useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUserId(session?.user?.id ?? null);
-        });
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUserId(session?.user?.id ?? null);
-        });
-        return () => subscription.unsubscribe();
-    }, []);
+    const userId = useSessionUserId();
 
     if (!userId) return null;
 

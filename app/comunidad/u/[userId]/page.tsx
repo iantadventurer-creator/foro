@@ -7,17 +7,17 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 import { type Post, avatarColorFor } from '@/lib/community';
+import { fetchProfileInfo, type ProfileInfo } from '@/lib/profiles';
+import { ALLOWED_IMAGE_TYPES, extensionForMime, isTrustedImageUrl, safeExternalUrl } from '@/lib/validation';
 import { PostCard } from '@/components/community/PostCard';
-import { CommunityHeaderNav } from '@/components/community/CommunityHeaderNav';
-import { CommunityLogoutButton } from '@/components/community/CommunityLogoutButton';
-import { LangToggle } from '@/components/community/LangToggle';
 import { useToasts, ToastViewport } from '@/components/ui/Toast';
+import { useSessionUserId } from '@/lib/useSessionUserId';
+import { CommunityHeader } from '@/components/community/CommunityHeader';
 
-const AVATAR_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const AVATAR_MAX_SIZE_MB = 4;
+const PROFILE_POSTS_LIMIT = 200;
 
-function buildAvatarFileName(userId: string, originalName: string): string {
-    const ext = originalName.split('.').pop() || 'jpg';
+function buildAvatarFileName(userId: string, ext: string): string {
     return `avatars/${userId}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
 }
 
@@ -37,6 +37,8 @@ const content = {
         posts: (n: number) => `${n} publicacion${n === 1 ? '' : 'es'}`,
         likes: (n: number) => `❤️ ${n} me gusta`,
         noPosts: 'Este usuario todavía no tiene publicaciones.',
+        noPostsOwn: 'Aún no has publicado nada. Comparte tu primera foto LEGO con la comunidad.',
+        publishFirst: 'Publicar mi primera foto',
     },
     en: {
         volver: '← Back to community',
@@ -53,6 +55,8 @@ const content = {
         posts: (n: number) => `${n} post${n === 1 ? '' : 's'}`,
         likes: (n: number) => `❤️ ${n} like${n === 1 ? '' : 's'}`,
         noPosts: "This user doesn't have any posts yet.",
+        noPostsOwn: "You haven't posted anything yet. Share your first LEGO photo with the community.",
+        publishFirst: 'Post my first photo',
     },
 };
 
@@ -64,33 +68,30 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
+    const [profile, setProfile] = useState<ProfileInfo | null>(null);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+    const currentUserId = useSessionUserId() ?? null;
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
     const t = content[lang];
-
-    useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setCurrentUserId(session?.user?.id ?? null);
-        });
-    }, []);
 
     useEffect(() => {
         let cancelled = false;
         async function load() {
             setLoading(true);
-            const [{ data, error }, { data: profile }] = await Promise.all([
+            const [{ data, error }, profileInfo] = await Promise.all([
                 supabase
                     .from('community_posts')
                     .select(`*, post_likes ( id, user_id, created_at )`)
                     .eq('user_id', userId)
-                    .order('created_at', { ascending: false }),
-                supabase.from('profiles').select('avatar_url').eq('user_id', userId).maybeSingle(),
+                    .order('created_at', { ascending: false })
+                    .limit(PROFILE_POSTS_LIMIT),
+                fetchProfileInfo(userId),
             ]);
 
             if (!cancelled) {
                 if (!error && data) setPosts(data as Post[]);
-                setAvatarUrl(profile?.avatar_url ?? null);
+                setProfile(profileInfo);
+                setAvatarUrl(isTrustedImageUrl(profileInfo?.avatar_url) ? profileInfo?.avatar_url ?? null : null);
                 setLoading(false);
             }
         }
@@ -98,8 +99,8 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
         return () => { cancelled = true; };
     }, [userId]);
 
-    const handle = posts[0]?.instagram_handle || t.defaultHandle;
-    const instagramUrl = posts.find((p) => p.instagram_url)?.instagram_url;
+    const handle = profile?.username ? `@${profile.username}` : posts[0]?.instagram_handle || t.defaultHandle;
+    const instagramUrl = safeExternalUrl(posts.find((p) => p.instagram_url)?.instagram_url);
     const totalLikes = posts.reduce((sum, p) => sum + (p.post_likes?.length || 0), 0);
     const isOwnProfile = currentUserId !== null && currentUserId === userId;
 
@@ -108,7 +109,8 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
         e.target.value = '';
         if (!file) return;
 
-        if (!AVATAR_ALLOWED_TYPES.includes(file.type)) {
+        const ext = ALLOWED_IMAGE_TYPES.includes(file.type) ? extensionForMime(file.type) : null;
+        if (!ext) {
             push(t.badFormat, 'error');
             return;
         }
@@ -120,7 +122,7 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
         setUploadingAvatar(true);
         const previousAvatarUrl = avatarUrl;
         try {
-            const fileName = buildAvatarFileName(userId, file.name);
+            const fileName = buildAvatarFileName(userId, ext);
             const { error: storageError } = await supabase.storage.from('foro-fotos').upload(fileName, file);
             if (storageError) throw storageError;
 
@@ -153,21 +155,17 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
     };
 
     return (
-        <main className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
-            <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)] px-6 py-4">
-                <div className="max-w-6xl mx-auto flex md:grid md:grid-cols-3 items-center justify-between">
-                    <Link href="/comunidad" className="justify-self-start text-xs font-semibold uppercase text-[var(--color-accent)] tracking-wider hover:underline">
-                        {t.volver}
-                    </Link>
-                    <div className="justify-self-center">
-                        <CommunityHeaderNav activityLabel={t.activityLabel} publishLabel={t.publishLabel} profileLabel={t.profileLabel} />
-                    </div>
-                    <div className="justify-self-end flex items-center gap-3">
-                        <CommunityLogoutButton label={t.logoutLabel} />
-                        <LangToggle lang={lang} onChange={setLang} />
-                    </div>
-                </div>
-            </header>
+        <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
+            <CommunityHeader
+                backHref="/comunidad"
+                backLabel={t.volver}
+                lang={lang}
+                onLangChange={setLang}
+                activityLabel={t.activityLabel}
+                publishLabel={t.publishLabel}
+                profileLabel={t.profileLabel}
+                logoutLabel={t.logoutLabel}
+            />
 
             <div className="max-w-4xl mx-auto px-4 py-10">
                 <motion.div
@@ -220,6 +218,7 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
                     ) : (
                         <h1 className="font-display text-xl font-semibold text-[var(--color-text)]">{handle}</h1>
                     )}
+                    {profile?.full_name && <p className="text-sm text-[var(--color-text-muted)] -mt-1">{profile.full_name}</p>}
                     <div className="flex items-center gap-4 text-xs text-[var(--color-text-muted)] font-semibold uppercase tracking-wide">
                         <span>{t.posts(posts.length)}</span>
                         <span className="w-1 h-1 rounded-full bg-[var(--color-border)]" aria-hidden="true" />
@@ -235,7 +234,15 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
                     </div>
                 ) : posts.length === 0 ? (
                     <div className="mx-4 sm:mx-0 text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-muted)] font-medium text-sm">
-                        {t.noPosts}
+                        <p>{isOwnProfile ? t.noPostsOwn : t.noPosts}</p>
+                        {isOwnProfile && (
+                            <Link
+                                href="/comunidad?publish=1"
+                                className="inline-block mt-5 bg-[var(--color-accent)] text-[var(--color-accent-ink)] font-bold px-6 py-3 rounded-full text-sm hover:brightness-110 transition shadow-[0_8px_24px_-8px_var(--shadow-accent)]"
+                            >
+                                {t.publishFirst}
+                            </Link>
+                        )}
                     </div>
                 ) : (
                     <div className="grid grid-cols-3 gap-0.5 sm:gap-1 -mx-4 sm:mx-0">
