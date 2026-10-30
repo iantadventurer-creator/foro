@@ -13,7 +13,7 @@ export function AboutSection({ t, sectionRef }: { t: HomeContent; sectionRef: Re
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: '-80px' }}
-        className="lego-studs card-depth grid md:grid-cols-[1.2fr_0.8fr] gap-10 items-center bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-8 md:p-14"
+        className="card-depth border-t-4 border-t-[var(--color-accent)] grid md:grid-cols-[1.2fr_0.8fr] gap-10 items-center bg-[var(--color-surface)] border border-[var(--color-border)] rounded-3xl p-8 md:p-14"
       >
         <div>
           <span className="text-xs font-bold text-[var(--color-accent-text)] uppercase tracking-widest">{t.aboutSection.eyebrow}</span>

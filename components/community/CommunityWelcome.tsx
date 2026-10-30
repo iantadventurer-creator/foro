@@ -20,7 +20,7 @@ export function CommunityWelcome({
     avatarUrl?: string;
     onPublish: () => void;
 }) {
-    const cardClass = 'lego-studs card-depth bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 mb-10';
+    const cardClass = 'card-depth border-t-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 mb-10';
 
     if (user) {
         const rawHandle = user.user_metadata?.instagram_handle || user.email?.split('@')[0] || 'anon';
@@ -29,7 +29,7 @@ export function CommunityWelcome({
             <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`${cardClass} [--stud-color:color-mix(in_srgb,var(--color-accent-3)_55%,var(--color-surface))] flex flex-col sm:flex-row sm:items-center gap-5`}
+                className={`${cardClass} border-t-[var(--color-accent-3)] flex flex-col sm:flex-row sm:items-center gap-5`}
             >
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                     <Avatar handle={handle} imageUrl={avatarUrl} size={52} />
@@ -51,7 +51,7 @@ export function CommunityWelcome({
     }
 
     return (
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className={cardClass}>
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className={`${cardClass} border-t-[var(--color-accent)]`}>
             <h2 className="font-display text-lg font-semibold tracking-tight text-[var(--color-text)] mb-2">{t.auth.joinTitle}</h2>
             <p className="text-sm text-[var(--color-text-muted)] mb-5">{t.auth.joinDesc}</p>
             <ol className="mb-6 grid gap-2 sm:grid-cols-3">

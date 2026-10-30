@@ -17,7 +17,7 @@ export function IntroSection({ t }: { t: HomeContent }) {
             <path key="c" d="M16 11a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm-8 0a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm0 2c-2.3 0-7 1.2-7 3.5V19h8v-2.5c0-1 .4-1.9 1.1-2.7C9.4 13.3 8.6 13 8 13Zm8 0c-2.3 0-7 1.2-7 3.5V19h14v-2.5c0-2.3-4.7-3.5-7-3.5Z" />,
             <path key="a" d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2c-3 0-8 1.5-8 4.5V21h16v-2.5c0-3-5-4.5-8-4.5Z" />,
           ][i];
-          const cardClass = 'lego-studs [--stud-color:color-mix(in_srgb,var(--card-tone)_55%,var(--color-surface))] group relative flex flex-col h-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 card-depth card-depth-hover hover:border-[var(--card-tone)]/60';
+          const cardClass = 'group relative flex flex-col h-full rounded-2xl border border-[var(--color-border)] border-t-4 border-t-[var(--card-tone)] bg-[var(--color-surface)] p-6 card-depth card-depth-hover hover:border-[var(--card-tone)]/60';
           const inner = (
             <>
               <span

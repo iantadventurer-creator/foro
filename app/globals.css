@@ -159,26 +159,6 @@ button {
      Lenguaje visual LEGO
      --------------------------------------------------------------------------- */
 
-  /* Fila de "studs" (los botones redondos de las piezas) asomando por el borde
-     superior de un elemento: convierte una tarjeta en una pieza. El color de los
-     studs se elige con --stud-color (por defecto, el del borde de la tarjeta). */
-  .lego-studs {
-    position: relative;
-  }
-
-  .lego-studs::before {
-    content: '';
-    position: absolute;
-    left: 20px;
-    right: 20px;
-    top: -7px;
-    height: 7px;
-    pointer-events: none;
-    background:
-      radial-gradient(ellipse 7px 7px at 50% 100%, var(--stud-color, var(--color-border)) 0 6.5px, transparent 7px) 0 0 / 26px 7px repeat-x;
-    filter: drop-shadow(0 -1px 0 rgba(255, 255, 255, 0.08));
-  }
-
   /* Relieve de plástico: brillo arriba y canto oscuro abajo, como una pieza
      moldeada. Se suma al resplandor de color de cada botón. */
   .lego-bevel {

@@ -58,7 +58,7 @@ export function CommunityBottomNav() {
         <Link
           href={userId ? '/comunidad?publish=1' : '/comunidad/entrar'}
           aria-label={nav.publish}
-          className="lego-studs lego-bevel [--stud-color:var(--color-lego-yellow)] [--bevel-glow:rgba(246,201,14,0.45)] flex items-center justify-center w-12 h-11 -mt-5 rounded-lg bg-[var(--color-lego-yellow)] text-[var(--color-lego-yellow-ink)] text-2xl font-bold leading-none"
+          className="lego-bevel [--bevel-glow:rgba(245,197,24,0.45)] flex items-center justify-center w-12 h-11 -mt-5 rounded-lg bg-[var(--color-lego-yellow)] text-[var(--color-lego-yellow-ink)] text-2xl font-bold leading-none"
         >
           +
         </Link>

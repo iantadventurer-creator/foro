@@ -48,7 +48,7 @@ export function AuthShell({
                 <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="lego-studs card-depth bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl px-8 py-10"
+                    className="card-depth bg-[var(--color-surface)] border border-[var(--color-border)] border-t-4 border-t-[var(--color-accent)] rounded-2xl px-8 py-10"
                 >
                     <div className="flex flex-col items-center text-center mb-8">
                         <BrandMark className="w-14 h-14 rounded-xl lego-bevel [--bevel-glow:var(--shadow-accent)] mb-4" />
