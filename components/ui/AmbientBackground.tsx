@@ -23,7 +23,6 @@ const RED = '#e3000b';
 const YELLOW = '#ffd500';
 const BLUE = '#0055bf';
 const GREEN = '#00852b';
-const WHITE = '#ffffff';
 
 const BRICKS: Brick[] = [
   { top: '8%', left: '-1.5%', cols: 4, rows: 2, unit: 22, color: RED, dx: 18, dy: 26, r0: -14, r1: -4, duration: 22, delay: 0 },
