@@ -31,9 +31,9 @@ export function getCategoryTheme(category: string | null | undefined): CategoryT
   return CATEGORY_THEMES[category.trim().toLowerCase()] || null;
 }
 
-/** Versión del color de la categoría apta para TEXTO sobre fondo claro:
- * se oscurece mezclándolo con negro para alcanzar contraste AA (el amarillo
- * de Star Wars, por ejemplo, no se lee con su color de marca puro). */
+/** Versión del color de la categoría apta para TEXTO sobre el fondo del tema:
+ * se mezcla con negro (tema claro) o con blanco (tema oscuro) según las
+ * variables --category-mix de globals.css, para alcanzar contraste AA. */
 export function categoryTextColor(theme: CategoryTheme | null | undefined): string {
-  return theme ? `color-mix(in srgb, ${theme.accent} 55%, black)` : 'var(--color-accent-text)';
+  return theme ? `color-mix(in srgb, ${theme.accent} var(--category-mix-amount), var(--category-mix))` : 'var(--color-accent-text)';
 }

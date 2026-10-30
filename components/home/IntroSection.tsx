@@ -9,6 +9,8 @@ export function IntroSection({ t }: { t: HomeContent }) {
       <div className="grid md:grid-cols-3 gap-5">
         {t.intro.cards.map((card, i) => {
           const tone = ['var(--color-accent)', 'var(--color-accent-3)', 'var(--color-accent-4)'][i];
+          // El relleno usa el color de marca; el texto, su variante legible en cada tema.
+          const toneText = ['var(--color-accent-text)', 'var(--color-accent-3-text)', 'var(--color-accent-4-text)'][i];
           const href = ['#gallery', '/comunidad', '#about'][i];
           const icon = [
             <path key="g" d="M4 7a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Zm8 9.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />,
@@ -20,13 +22,13 @@ export function IntroSection({ t }: { t: HomeContent }) {
             <>
               <span
                 className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
-                style={{ background: `color-mix(in srgb, ${tone} 16%, transparent)`, color: tone }}
+                style={{ background: `color-mix(in srgb, ${tone} 16%, transparent)`, color: toneText }}
               >
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5" aria-hidden="true">{icon}</svg>
               </span>
               <h3 className="font-display text-lg font-semibold mb-2">{card.title}</h3>
               <p className="text-sm text-[var(--color-text-muted)] leading-relaxed mb-6">{card.desc}</p>
-              <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold" style={{ color: tone }}>
+              <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold" style={{ color: toneText }}>
                 {card.cta}
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </span>

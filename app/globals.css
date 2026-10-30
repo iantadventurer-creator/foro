@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* dark: sigue al botón de tema (data-theme), no solo a la preferencia del sistema */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -7,50 +10,82 @@
   --font-display: var(--font-space-grotesk);
   --font-button: var(--font-space-grotesk);
 
-  /* Base clara: página blanco roto, superficies blancas y texto gris oscuro.
-     (Los nombres de los tokens se mantienen para no tocar los componentes.) */
-  --color-ink: #f6f6f3;        /* fondo de página */
-  --color-surface: #ffffff;    /* tarjetas, modales, cabecera */
-  --color-surface-2: #f1f2f4;  /* campos, botones secundarios, zonas hundidas */
-  --color-border: #e2e4e8;
-  --color-text: #202124;       /* Gris oscuro LEGO */
-  --color-text-muted: #5f6368;
-  --color-text-faint: #666b71;
-
-  /* Paleta de ladrillos LEGO. Rojo y amarillo llevan el protagonismo; azul y
-     verde son complementos (enlaces/comunidad y estados positivos). */
-  --color-accent: #e3000b;     /* Rojo LEGO — acción principal (texto blanco AA) */
-  --color-accent-2: #b45309;   /* Ámbar oscuro — avisos (legible sobre blanco) */
-  --color-accent-3: #0055bf;   /* Azul LEGO — enlaces e interacción */
-  --color-accent-4: #00852b;   /* Verde LEGO — éxito */
-  --color-accent-ink: #ffffff; /* texto sobre el rojo */
-
-  /* Variantes para usar COMO TEXTO pequeño sobre fondos claros (contraste AA) */
-  --color-accent-text: #c8000a;
-  --color-accent-3-text: #0055bf;
-
-  /* Amarillo LEGO: solo como fondo (con texto oscuro), nunca como texto sobre blanco */
-  --color-lego-yellow: #ffd500;
-  --color-lego-yellow-ink: #202124;
-
-  /* Bandas oscuras (pie de página): mismo gris oscuro de la marca */
-  --color-dark: #202124;
-  --color-on-dark: #ffffff;
-  --color-on-dark-muted: #c4c7cc;
-
-  /* Sombras suaves: profundidad de tarjeta y resplandor de cada color */
-  --shadow-card: 0 1px 2px rgba(32, 33, 36, 0.06), 0 10px 28px -14px rgba(32, 33, 36, 0.22);
-  --shadow-card-hover: 0 2px 4px rgba(32, 33, 36, 0.06), 0 18px 36px -16px rgba(32, 33, 36, 0.3);
-  --shadow-accent: rgba(227, 0, 11, 0.35);
-  --shadow-accent-2: rgba(180, 83, 9, 0.3);
-  --shadow-accent-3: rgba(0, 85, 191, 0.32);
-  --shadow-accent-4: rgba(0, 133, 43, 0.3);
+  /* Paleta: rojo LEGO y amarillo cálido como protagonistas, azul marino como
+     color de texto y de fondo oscuro, azul y verde LEGO como complementos.
+     Todos los valores viven en :root (claro) y [data-theme='dark'] (oscuro). */
 }
 
 :root {
-  --background: #f6f6f3;
-  --foreground: #202124;
   color-scheme: light;
+
+  --color-ink: #faf7f0;          /* fondo de página (crema cálido) */
+  --color-surface: #ffffff;      /* tarjetas, modales, cabecera */
+  --color-surface-2: #f3efe6;    /* campos, botones secundarios, zonas hundidas */
+  --color-border: #e7e1d4;
+  --color-text: #1b2436;         /* azul marino casi negro */
+  --color-text-muted: #596273;
+  --color-text-faint: #636b79;
+
+  /* Rellenos (botones, chips): llevan texto blanco con contraste AA en ambos temas */
+  --color-accent: #d01012;       /* Rojo LEGO — acción principal */
+  --color-accent-2: #9a5600;     /* Ámbar — avisos */
+  --color-accent-3: #1e5aa8;     /* Azul LEGO — interacción, comunidad */
+  --color-accent-4: #237841;     /* Verde LEGO — éxito */
+  --color-accent-ink: #ffffff;
+
+  /* Variantes para usar COMO TEXTO sobre el fondo del tema (contraste AA) */
+  --color-accent-text: #b50d0f;
+  --color-accent-3-text: #1e5aa8;
+  --color-accent-4-text: #237841;
+
+  /* Amarillo LEGO: solo como fondo, siempre con texto oscuro */
+  --color-lego-yellow: #f5c518;
+  --color-lego-yellow-ink: #1b2436;
+
+  /* Banda oscura (pie de página) */
+  --color-dark: #14213d;
+  --color-on-dark: #ffffff;
+  --color-on-dark-muted: #c3cad8;
+
+  /* Texto de categorías: su color de marca oscurecido (claro) o aclarado (oscuro) */
+  --category-mix: black;
+  --category-mix-amount: 55%;
+
+  --shadow-card: 0 1px 2px rgba(27, 36, 54, 0.06), 0 10px 28px -14px rgba(27, 36, 54, 0.22);
+  --shadow-card-hover: 0 2px 4px rgba(27, 36, 54, 0.06), 0 18px 36px -16px rgba(27, 36, 54, 0.3);
+  --shadow-accent: rgba(208, 16, 18, 0.35);
+  --shadow-accent-2: rgba(154, 86, 0, 0.3);
+  --shadow-accent-3: rgba(30, 90, 168, 0.32);
+  --shadow-accent-4: rgba(35, 120, 65, 0.3);
+
+  --background: var(--color-ink);
+  --foreground: var(--color-text);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-ink: #0f1626;
+  --color-surface: #172034;
+  --color-surface-2: #1e2940;
+  --color-border: #2b3854;
+  --color-text: #f3f1ea;
+  --color-text-muted: #aab3c4;
+  --color-text-faint: #97a1b4;
+
+  --color-accent-2: #f0a640;
+
+  --color-accent-text: #ff7a6e;
+  --color-accent-3-text: #8db8ff;
+  --color-accent-4-text: #5fd08a;
+
+  --color-dark: #0a0f1c;
+
+  --category-mix: white;
+  --category-mix-amount: 65%;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 30px -14px rgba(0, 0, 0, 0.6);
+  --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.3), 0 20px 40px -16px rgba(0, 0, 0, 0.7);
 }
 
 * {

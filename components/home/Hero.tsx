@@ -95,49 +95,60 @@ export function Hero({
         </motion.ul>
       </div>
 
-      <div className="relative h-72 sm:h-80 md:h-[26rem]" aria-hidden="true">
-        {/* Placa amarilla con studs: el "escenario" sobre el que se apoyan las fotos */}
+      <div className="relative" aria-hidden="true">
+        {/* Acento: una sola pieza LEGO asomando por detrás del mosaico */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.94 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 160, damping: 22 }}
-          className="lego-bevel absolute inset-0 rounded-[1.75rem] bg-[var(--color-lego-yellow)]"
-          style={{
-            // Textura de placa base: studs en relieve dentro de la placa.
-            backgroundImage:
-              'radial-gradient(circle at 42% 38%, rgba(255,255,255,0.55) 0 2.5px, transparent 3px), radial-gradient(circle, rgba(150,110,0,0.22) 0 7px, transparent 7.5px)',
-            backgroundSize: '26px 26px',
-            backgroundPosition: '6px 6px',
-          }}
-        />
-        <div className="lego-bevel absolute -left-3 bottom-[8%] z-10 w-14 h-9 rounded-lg bg-[var(--color-accent)] hidden sm:block" />
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35, type: 'spring', stiffness: 180, damping: 20 }}
+          className="absolute -top-5 -right-3 z-10 hidden sm:block rotate-6"
+        >
+          <LegoBrick color="var(--color-lego-yellow)" studs={4} className="h-9 w-auto drop-shadow-md" />
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45, type: 'spring', stiffness: 180, damping: 20 }}
+          className="absolute -bottom-4 -left-4 z-10 hidden sm:block -rotate-6"
+        >
+          <LegoBrick color="var(--color-accent)" studs={2} className="h-8 w-auto drop-shadow-md" />
+        </motion.div>
 
-        {previewShots.length > 0 ? (
-          previewShots.map((item, i) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 30, rotate: 0 }}
-              animate={{ opacity: 1, y: 0, rotate: [-6, 4, -3][i] }}
-              transition={{ delay: 0.1 * i, type: 'spring', stiffness: 200, damping: 20 }}
-              whileHover={{ rotate: 0, scale: 1.03, zIndex: 10 }}
-              className="absolute rounded-2xl border-4 border-white shadow-[0_20px_40px_-18px_rgba(32,33,36,0.55)] overflow-hidden bg-[var(--color-surface-2)]"
-              style={{
-                width: '42%',
-                aspectRatio: '4 / 5',
-                top: `${[9, 24, 13][i]}%`,
-                left: `${[9, 49, 29][i]}%`,
-                zIndex: [1, 2, 3][i],
-              }}
-            >
-              <Image src={item.src} alt="" fill sizes="(max-width: 1024px) 50vw, 400px" className="object-cover" />
-            </motion.div>
-          ))
-        ) : (
-          <>
-            <div className="absolute rounded-2xl border-4 border-white bg-[var(--color-surface-2)] animate-shimmer" style={{ width: '52%', aspectRatio: '4/5', top: '6%', left: '14%' }} />
-            <div className="absolute rounded-2xl border-4 border-white bg-[var(--color-surface-2)] animate-shimmer" style={{ width: '52%', aspectRatio: '4/5', top: '24%', left: '44%' }} />
-          </>
-        )}
+        <div className="grid grid-cols-3 grid-rows-2 gap-3 sm:gap-4 h-72 sm:h-80 md:h-[26rem]">
+          {[0, 1, 2].map((i) => {
+            const item = previewShots[i];
+            const placement = i === 0 ? 'col-span-2 row-span-2' : 'col-span-1 row-span-1';
+            return (
+              <motion.div
+                key={item?.id ?? `placeholder-${i}`}
+                initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.08 * i, type: 'spring', stiffness: 200, damping: 22 }}
+                className={`group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-[var(--color-surface-2)] border border-[var(--color-border)] card-depth ${placement}`}
+              >
+                {item ? (
+                  <>
+                    <Image
+                      src={item.src}
+                      alt=""
+                      fill
+                      sizes={i === 0 ? '(max-width: 768px) 66vw, 420px' : '(max-width: 768px) 33vw, 210px'}
+                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                    />
+                    {item.category && (
+                      <span className="absolute left-2.5 bottom-2.5 sm:left-3 sm:bottom-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-surface)]/90 backdrop-blur-sm px-2.5 py-1 text-[10px] sm:text-xs font-bold text-[var(--color-text)] shadow-sm">
+                        <span className="w-2 h-2 rounded-full" style={{ background: ['var(--color-accent)', 'var(--color-lego-yellow)', 'var(--color-accent-3)'][i] }} />
+                        {item.title}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <div className="absolute inset-0 animate-shimmer" />
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

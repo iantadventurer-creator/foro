@@ -27,8 +27,8 @@ export function useToasts() {
 }
 
 const variantStyles: Record<ToastVariant, string> = {
-    error: 'bg-[#fff1f0] border-[var(--color-accent)]/40 text-[var(--color-accent-text)]',
-    success: 'bg-[#eefbf2] border-[var(--color-accent-4)]/40 text-[#006b23]',
+    error: 'bg-[color-mix(in_srgb,var(--color-accent)_10%,var(--color-surface))] border-[var(--color-accent)]/40 text-[var(--color-accent-text)]',
+    success: 'bg-[color-mix(in_srgb,var(--color-accent-4)_10%,var(--color-surface))] border-[var(--color-accent-4)]/40 text-[var(--color-accent-4-text)]',
     info: 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text)]',
 };
 

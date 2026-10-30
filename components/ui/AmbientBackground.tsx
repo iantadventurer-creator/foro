@@ -26,14 +26,13 @@ const GREEN = '#00852b';
 const WHITE = '#ffffff';
 
 const BRICKS: Brick[] = [
-  { top: '8%', left: '4%', cols: 4, rows: 2, unit: 22, color: RED, dx: 18, dy: 26, r0: -14, r1: -4, duration: 22, delay: 0 },
-  { top: '14%', left: '86%', cols: 2, rows: 2, unit: 22, color: YELLOW, dx: -20, dy: 22, r0: 12, r1: 24, duration: 19, delay: -4 },
+  { top: '8%', left: '-1.5%', cols: 4, rows: 2, unit: 22, color: RED, dx: 18, dy: 26, r0: -14, r1: -4, duration: 22, delay: 0 },
+  { top: '14%', left: '95%', cols: 2, rows: 2, unit: 22, color: YELLOW, dx: -20, dy: 22, r0: 12, r1: 24, duration: 19, delay: -4 },
   { top: '38%', left: '92%', cols: 2, rows: 1, unit: 20, color: BLUE, dx: -14, dy: -24, r0: -8, r1: 6, duration: 24, delay: -9, desktopOnly: true },
-  { top: '46%', left: '2%', cols: 2, rows: 2, unit: 20, color: GREEN, dx: 16, dy: -20, r0: 18, r1: 4, duration: 26, delay: -3, desktopOnly: true },
-  { top: '64%', left: '80%', cols: 4, rows: 2, unit: 20, color: YELLOW, dx: -22, dy: -18, r0: 6, r1: -10, duration: 28, delay: -12 },
-  { top: '72%', left: '10%', cols: 2, rows: 1, unit: 22, color: RED, dx: 20, dy: -16, r0: -20, r1: -6, duration: 21, delay: -7, desktopOnly: true },
-  { top: '86%', left: '46%', cols: 2, rows: 2, unit: 19, color: BLUE, dx: -16, dy: -22, r0: 10, r1: 26, duration: 25, delay: -15, desktopOnly: true },
-  { top: '24%', left: '52%', cols: 1, rows: 1, unit: 22, color: WHITE, dx: 14, dy: 18, r0: 0, r1: 14, duration: 18, delay: -6, desktopOnly: true },
+  { top: '46%', left: '-1.5%', cols: 2, rows: 2, unit: 20, color: GREEN, dx: 16, dy: -20, r0: 18, r1: 4, duration: 26, delay: -3, desktopOnly: true },
+  { top: '64%', left: '94%', cols: 4, rows: 2, unit: 20, color: YELLOW, dx: -22, dy: -18, r0: 6, r1: -10, duration: 28, delay: -12 },
+  { top: '76%', left: '-1%', cols: 2, rows: 1, unit: 22, color: RED, dx: 20, dy: -16, r0: -20, r1: -6, duration: 21, delay: -7, desktopOnly: true },
+  { top: '92%', left: '55%', cols: 2, rows: 2, unit: 19, color: BLUE, dx: -16, dy: -22, r0: 10, r1: 26, duration: 25, delay: -15, desktopOnly: true },
   { top: '90%', left: '90%', cols: 1, rows: 1, unit: 22, color: RED, dx: -12, dy: -14, r0: -6, r1: 10, duration: 17, delay: -2 },
 ];
 
@@ -78,7 +77,7 @@ export function AmbientBackground() {
       {BRICKS.map((brick, i) => (
         <div
           key={i}
-          className={`brick-drift absolute opacity-[0.2] md:opacity-[0.3] ${brick.desktopOnly ? 'hidden md:block' : ''}`}
+          className={`brick-drift absolute opacity-[0.2] md:opacity-[0.3] dark:opacity-[0.14] md:dark:opacity-[0.2] ${brick.desktopOnly ? 'hidden md:block' : ''}`}
           style={
             {
               top: brick.top,

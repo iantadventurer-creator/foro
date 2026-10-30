@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { CommunityHeaderNav } from '@/components/community/CommunityHeaderNav';
 import { CommunityLogoutButton } from '@/components/community/CommunityLogoutButton';
 import { LangToggle } from '@/components/ui/LangToggle';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { communityNav } from '@/lib/content/nav';
 import type { Lang } from '@/lib/lang';
 
@@ -40,8 +41,9 @@ export function CommunityHeader({
                 <div className="justify-self-center">
                     <CommunityHeaderNav nav={nav} onPublish={onPublish} />
                 </div>
-                <div className="justify-self-end flex items-center gap-3">
+                <div className="justify-self-end flex items-center gap-2 sm:gap-3">
                     <CommunityLogoutButton label={nav.logout} onLogout={onLogout} />
+                    <ThemeToggle />
                     <LangToggle lang={lang} onChange={onLangChange} />
                 </div>
             </div>

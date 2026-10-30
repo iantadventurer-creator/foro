@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
 import { MotionProvider } from "@/components/ui/MotionProvider";
 import { LangProvider } from "@/lib/hooks/useLang";
+import { themeInitScript } from "@/lib/theme";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,7 +55,10 @@ const structuredData = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f6f6f3",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf7f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f1626" },
+  ],
 };
 
 export default function RootLayout({
@@ -67,7 +71,13 @@ export default function RootLayout({
       lang="es"
       data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      // El script de <head> pone data-theme antes de que React hidrate.
+      suppressHydrationWarning
     >
+      <head>
+        {/* Aplica el tema claro/oscuro antes de pintar (sin destello). Texto estático. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col bg-[var(--color-ink)] text-[var(--color-text)]">
         <a
           href="#contenido"

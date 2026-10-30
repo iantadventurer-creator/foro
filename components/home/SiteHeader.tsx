@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BrandMark } from '@/components/ui/BrandMark';
 import { LangToggle } from '@/components/ui/LangToggle';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import type { HomeContent } from '@/lib/content/homeContent';
 import type { Lang } from '@/lib/lang';
 
@@ -71,10 +72,11 @@ export function SiteHeader({
           </button>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <div className="hidden sm:block">
             <LangToggle lang={lang} onChange={onLangChange} />
           </div>
+          <ThemeToggle />
           <motion.a
             whileHover={{ y: -2 }}
             whileTap={{ y: 1 }}

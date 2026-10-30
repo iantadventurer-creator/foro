@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { BrandMark } from '@/components/ui/BrandMark';
 import { LangToggle } from '@/components/ui/LangToggle';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import type { Lang } from '@/lib/lang';
 
 /** Marco común de las pantallas de acceso (entrar / registrarse), con el
@@ -36,7 +37,10 @@ export function AuthShell({
                     <Link href="/comunidad" className="inline-block py-2 text-xs font-semibold uppercase text-[var(--color-accent-text)] tracking-wider hover:underline">
                         {backLabel}
                     </Link>
-                    <LangToggle lang={lang} onChange={onLangChange} />
+                    <div className="flex items-center gap-2">
+                        <ThemeToggle />
+                        <LangToggle lang={lang} onChange={onLangChange} />
+                    </div>
                 </div>
             </header>
 
