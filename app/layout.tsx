@@ -6,7 +6,6 @@ import { Analytics } from "@vercel/analytics/next";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
 import { MotionProvider } from "@/components/ui/MotionProvider";
 import { LangProvider } from "@/lib/hooks/useLang";
-import { FilmGrainOverlay } from "@/components/ui/FilmGrainOverlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,7 +54,7 @@ const structuredData = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#070a13",
+  themeColor: "#f6f6f3",
 };
 
 export default function RootLayout({
@@ -85,7 +84,6 @@ export default function RootLayout({
         <LangProvider>
           <MotionProvider>{children}</MotionProvider>
         </LangProvider>
-        <FilmGrainOverlay />
         <Analytics />
       </body>
     </html>

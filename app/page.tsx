@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { QrCodeModal, pickRandomQrColor } from '@/components/ui/QrCodeButton';
-import { StudDivider } from '@/components/ui/StudDivider';
 import { SiteHeader, type ActiveSection } from '@/components/home/SiteHeader';
 import { Hero } from '@/components/home/Hero';
 import { IntroSection } from '@/components/home/IntroSection';
@@ -138,7 +137,7 @@ export default function Home() {
   return (
     <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0 overflow-x-hidden focus:outline-none">
       <SiteHeader t={t} lang={lang} onLangChange={setLang} activeSection={activeSection} onOpenQr={openQr} />
-      <Hero t={t} previewShots={feedItems.slice(0, 3)} />
+      <Hero t={t} previewShots={feedItems.slice(0, 3)} photoCount={feedItems.length} universeCount={categories.length} loading={loading} />
       <IntroSection t={t} />
       <GallerySection
         t={t}
@@ -171,7 +170,6 @@ export default function Home() {
       />
       <QrCodeModal isOpen={qrOpen} colorIndex={qrColorIndex} onClose={closeQr} />
       <AboutSection t={t} sectionRef={aboutRef} />
-      <StudDivider />
       <SiteFooter t={t} onOpenQr={openQr} />
     </main>
   );

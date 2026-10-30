@@ -38,7 +38,7 @@ export function CommunityBottomNav() {
       key={label}
       href={href}
       aria-current={active ? 'page' : undefined}
-      className={`relative flex flex-col items-center gap-1 py-2.5 px-4 text-[10px] font-bold uppercase tracking-wide transition-colors ${active ? 'text-[var(--color-lego-yellow)]' : 'text-[var(--color-text-muted)]'
+      className={`relative flex flex-col items-center gap-1 py-2.5 px-4 text-[10px] font-bold uppercase tracking-wide transition-colors ${active ? 'text-[var(--color-accent-text)]' : 'text-[var(--color-text-muted)]'
         }`}
     >
       {icon}

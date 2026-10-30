@@ -11,12 +11,10 @@ const SITE_URL = 'https://iantbuild.vercel.app';
 // tokens que ya se usan en el resto del sitio (acentos base + un par de
 // temas de categoría), nada inventado para esta pieza.
 export const QR_BRICK_COLORS = [
-  { name: 'Rojo', accent: '#b3382c', shadow: '#6e2019' },
-  { name: 'Naranja', accent: '#e0791f', shadow: '#8a4d0f' },
-  { name: 'Azul', accent: '#006cb7', shadow: '#003f5c' },
-  { name: 'Verde', accent: '#00852b', shadow: '#004d1a' },
-  { name: 'Dorado', accent: '#E8B923', shadow: '#8a6e14' },
-  { name: 'Morado', accent: '#8B7CF6', shadow: '#4f4499' },
+  { name: 'Rojo', accent: '#e3000b', shadow: '#8c0007' },
+  { name: 'Amarillo', accent: '#ffd500', shadow: '#a88c00' },
+  { name: 'Azul', accent: '#0055bf', shadow: '#003270' },
+  { name: 'Verde', accent: '#00852b', shadow: '#004d19' },
 ] as const;
 
 const MODULE = 10;

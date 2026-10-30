@@ -38,7 +38,7 @@ export function ActivityRow({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: Math.min(index, 10) * 0.03 }}
             onClick={() => onOpen(item.postId)}
-            className="flex items-center gap-3 bg-[var(--color-surface)] hover:bg-[var(--color-surface-2)] border border-[var(--color-border)] rounded-xl p-3 text-left transition-colors"
+            className="card-depth flex items-center gap-3 bg-[var(--color-surface)] hover:bg-[var(--color-surface-2)] border border-[var(--color-border)] rounded-xl p-3 text-left transition-colors"
         >
             <Avatar handle={who} size={36} />
             <p className="flex-1 min-w-0 text-sm text-[var(--color-text)]">

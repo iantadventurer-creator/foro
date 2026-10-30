@@ -5,7 +5,7 @@ export default function NotFound() {
     <main id="contenido" tabIndex={-1} className="min-h-screen flex flex-col items-center justify-center text-center px-6 bg-[var(--color-ink)] text-[var(--color-text)]">
       <div className="flex items-center gap-1.5 mb-8" aria-hidden="true">
         <span className="w-4 h-4 rounded-full bg-[var(--color-accent)]" />
-        <span className="w-4 h-4 rounded-full bg-[var(--color-accent-2)]" />
+        <span className="w-4 h-4 rounded-full bg-[var(--color-lego-yellow)]" />
         <span className="w-4 h-4 rounded-full bg-[var(--color-accent-3)]" />
         <span className="w-4 h-4 rounded-full bg-[var(--color-accent-4)]" />
       </div>

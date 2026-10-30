@@ -16,7 +16,7 @@ export function SectionHeading({
 }) {
   return (
     <div className={`text-center ${className}`.trim()}>
-      <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-lego-yellow)] mb-3">
+      <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-accent-text)] mb-3">
         <LegoBrick studs={2} className="h-3 w-auto" />
         {eyebrow}
       </p>

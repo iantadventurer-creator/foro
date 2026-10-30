@@ -7,41 +7,50 @@
   --font-display: var(--font-space-grotesk);
   --font-button: var(--font-space-grotesk);
 
-  /* Fondo — azul noche profundo, superficies en capas */
-  --color-ink: #070a13;
-  --color-surface: #0f1526;
-  --color-surface-2: #161e36;
-  --color-border: #232e4d;
-  --color-text: #f4f6fb;
-  --color-text-muted: #9aa6c4;
-  --color-text-faint: #8592b6;
+  /* Base clara: página blanco roto, superficies blancas y texto gris oscuro.
+     (Los nombres de los tokens se mantienen para no tocar los componentes.) */
+  --color-ink: #f6f6f3;        /* fondo de página */
+  --color-surface: #ffffff;    /* tarjetas, modales, cabecera */
+  --color-surface-2: #f1f2f4;  /* campos, botones secundarios, zonas hundidas */
+  --color-border: #e2e4e8;
+  --color-text: #202124;       /* Gris oscuro LEGO */
+  --color-text-muted: #5f6368;
+  --color-text-faint: #666b71;
 
-  /* Acentos — rojo y azul LEGO como pareja principal (acción / comunidad),
-     naranja para avisos y verde para éxito; todos con luminosidad pareja. */
-  --color-accent: #d23a2c;    /* Rojo LEGO — relleno de acción principal (texto blanco AA) */
-  --color-accent-2: #f39a2b; /* Ámbar — avisos, borrar */
-  --color-accent-3: #2b6be0;  /* Azul — relleno comunidad / acción secundaria (texto blanco AA) */
-  --color-accent-4: #22b36b;  /* Verde — éxito */
-  --color-accent-ink: #ffffff; /* texto sobre el acento principal */
+  /* Paleta de ladrillos LEGO. Rojo y amarillo llevan el protagonismo; azul y
+     verde son complementos (enlaces/comunidad y estados positivos). */
+  --color-accent: #e3000b;     /* Rojo LEGO — acción principal (texto blanco AA) */
+  --color-accent-2: #b45309;   /* Ámbar oscuro — avisos (legible sobre blanco) */
+  --color-accent-3: #0055bf;   /* Azul LEGO — enlaces e interacción */
+  --color-accent-4: #00852b;   /* Verde LEGO — éxito */
+  --color-accent-ink: #ffffff; /* texto sobre el rojo */
 
-  /* Variantes claras de los acentos para usarlas COMO TEXTO sobre fondo oscuro (contraste AA) */
-  --color-accent-text: #f2675a;
-  --color-accent-3-text: #6ea2ff;
+  /* Variantes para usar COMO TEXTO pequeño sobre fondos claros (contraste AA) */
+  --color-accent-text: #c8000a;
+  --color-accent-3-text: #0055bf;
 
-  /* Amarillo LEGO: el cuarto color clásico de las piezas, para detalles y etiquetas */
-  --color-lego-yellow: #f6c90e;
-  --color-lego-yellow-ink: #2a1f00;
+  /* Amarillo LEGO: solo como fondo (con texto oscuro), nunca como texto sobre blanco */
+  --color-lego-yellow: #ffd500;
+  --color-lego-yellow-ink: #202124;
 
-  /* Resplandor suave de cada acento (reemplaza la sombra "de canto") */
-  --shadow-accent: rgba(224, 68, 54, 0.55);
-  --shadow-accent-2: rgba(243, 154, 43, 0.5);
-  --shadow-accent-3: rgba(59, 130, 246, 0.55);
-  --shadow-accent-4: rgba(34, 179, 107, 0.5);
+  /* Bandas oscuras (pie de página): mismo gris oscuro de la marca */
+  --color-dark: #202124;
+  --color-on-dark: #ffffff;
+  --color-on-dark-muted: #c4c7cc;
+
+  /* Sombras suaves: profundidad de tarjeta y resplandor de cada color */
+  --shadow-card: 0 1px 2px rgba(32, 33, 36, 0.06), 0 10px 28px -14px rgba(32, 33, 36, 0.22);
+  --shadow-card-hover: 0 2px 4px rgba(32, 33, 36, 0.06), 0 18px 36px -16px rgba(32, 33, 36, 0.3);
+  --shadow-accent: rgba(227, 0, 11, 0.35);
+  --shadow-accent-2: rgba(180, 83, 9, 0.3);
+  --shadow-accent-3: rgba(0, 85, 191, 0.32);
+  --shadow-accent-4: rgba(0, 133, 43, 0.3);
 }
 
 :root {
-  --background: #070a13;
-  --foreground: #f4f6fb;
+  --background: #f6f6f3;
+  --foreground: #202124;
+  color-scheme: light;
 }
 
 * {
@@ -93,47 +102,6 @@ button {
   mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
 
-/* ---------------------------------------------------------------------------
-   Lenguaje visual LEGO
-   --------------------------------------------------------------------------- */
-
-/* Fila de "studs" (los botones redondos de las piezas) asomando por el borde
-   superior de un elemento: convierte una tarjeta en una pieza. El color de los
-   studs se elige con --stud-color (por defecto, el del borde de la tarjeta). */
-.lego-studs {
-  position: relative;
-}
-
-.lego-studs::before {
-  content: '';
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  top: -7px;
-  height: 7px;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 7px 7px at 50% 100%, var(--stud-color, var(--color-border)) 0 6.5px, transparent 7px) 0 0 / 26px 7px repeat-x;
-  filter: drop-shadow(0 -1px 0 rgba(255, 255, 255, 0.08));
-}
-
-/* Relieve de plástico: brillo arriba y canto oscuro abajo, como una pieza
-   moldeada. Se suma al resplandor de color de cada botón. */
-.lego-bevel {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    inset 0 -3px 0 rgba(0, 0, 0, 0.22),
-    0 8px 24px -8px var(--bevel-glow, transparent);
-}
-
-.lego-bevel:active {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 4px 14px -8px var(--bevel-glow, transparent);
-  transform: translateY(1px);
-}
-
 /* Respeta la preferencia del sistema "reducir movimiento" */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -146,5 +114,61 @@ button {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Utilidades propias en la capa "components": las utilidades de Tailwind
+   (absolute, shadow-*, transition-*) siguen teniendo prioridad sobre ellas. */
+@layer components {
+  /* ---------------------------------------------------------------------------
+     Lenguaje visual LEGO
+     --------------------------------------------------------------------------- */
+
+  /* Fila de "studs" (los botones redondos de las piezas) asomando por el borde
+     superior de un elemento: convierte una tarjeta en una pieza. El color de los
+     studs se elige con --stud-color (por defecto, el del borde de la tarjeta). */
+  .lego-studs {
+    position: relative;
+  }
+
+  .lego-studs::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: -7px;
+    height: 7px;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 7px 7px at 50% 100%, var(--stud-color, var(--color-border)) 0 6.5px, transparent 7px) 0 0 / 26px 7px repeat-x;
+    filter: drop-shadow(0 -1px 0 rgba(255, 255, 255, 0.08));
+  }
+
+  /* Relieve de plástico: brillo arriba y canto oscuro abajo, como una pieza
+     moldeada. Se suma al resplandor de color de cada botón. */
+  .lego-bevel {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -3px 0 rgba(0, 0, 0, 0.22),
+      0 8px 24px -8px var(--bevel-glow, transparent);
+  }
+
+  .lego-bevel:active {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+      0 4px 14px -8px var(--bevel-glow, transparent);
+    transform: translateY(1px);
+  }
+
+  /* Tarjeta con profundidad: sombra suave que crece al pasar el ratón */
+  .card-depth {
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  }
+
+  .card-depth-hover:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-3px);
   }
 }

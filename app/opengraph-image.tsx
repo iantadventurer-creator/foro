@@ -8,9 +8,9 @@ export const alt = 'IanTBuild — Fotografía de miniaturas LEGO';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-const ACCENT = '#b3382c';
-const ACCENT_SHADOW = '#6e2019';
-const STRIPE_COLORS = ['#b3382c', '#e0791f', '#006cb7', '#00852b'];
+const ACCENT = '#e3000b';
+const ACCENT_SHADOW = '#8c0007';
+const STRIPE_COLORS = ['#e3000b', '#ffd500', '#0055bf', '#00852b'];
 
 export default function Image() {
   return new ImageResponse(
@@ -23,7 +23,7 @@ export default function Image() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#05070c',
+          background: '#202124',
           position: 'relative',
         }}
       >
@@ -66,15 +66,15 @@ export default function Image() {
           }}
         >
           <div style={{ display: 'flex', gap: 14 }}>
-            <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#e2685a', display: 'flex' }} />
-            <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#e2685a', display: 'flex' }} />
+            <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#ff4d55', display: 'flex' }} />
+            <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#ff4d55', display: 'flex' }} />
           </div>
         </div>
 
-        <div style={{ display: 'flex', fontSize: 92, fontWeight: 700, color: '#f5f7fb', letterSpacing: -2 }}>
+        <div style={{ display: 'flex', fontSize: 92, fontWeight: 700, color: '#ffffff', letterSpacing: -2 }}>
           IanTBuild
         </div>
-        <div style={{ display: 'flex', fontSize: 34, color: '#8c99b8', marginTop: 18 }}>
+        <div style={{ display: 'flex', fontSize: 34, color: '#c4c7cc', marginTop: 18 }}>
           Fotografía de miniaturas LEGO
         </div>
 

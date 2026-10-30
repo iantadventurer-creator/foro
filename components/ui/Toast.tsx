@@ -27,9 +27,9 @@ export function useToasts() {
 }
 
 const variantStyles: Record<ToastVariant, string> = {
-    error: 'bg-[#2a1220] border-[var(--color-accent-2)]/50 text-[var(--color-accent-2)]',
-    success: 'bg-[#0f2a1c] border-[var(--color-accent-4)]/50 text-[var(--color-accent-4)]',
-    info: 'bg-[var(--color-surface-2)] border-[var(--color-border)] text-[var(--color-text)]',
+    error: 'bg-[#fff1f0] border-[var(--color-accent)]/40 text-[var(--color-accent-text)]',
+    success: 'bg-[#eefbf2] border-[var(--color-accent-4)]/40 text-[#006b23]',
+    info: 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text)]',
 };
 
 export function ToastViewport({ toasts, onDismiss }: { toasts: ToastItem[]; onDismiss: (id: number) => void }) {

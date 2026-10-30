@@ -116,6 +116,7 @@ export function GallerySection({
                   variants={fadeUp}
                   initial="hidden"
                   whileInView="visible"
+                  whileHover={{ y: -4 }}
                   viewport={{ once: true, margin: '80px' }}
                   onClick={() => onOpenItem(item)}
                   role="button"
@@ -128,7 +129,7 @@ export function GallerySection({
                     }
                   }}
                   style={{ '--card-accent': cardTheme?.accent ?? 'var(--color-accent)' } as React.CSSProperties}
-                  className="mb-6 break-inside-avoid group cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--card-accent)]/60 transition-colors relative focus-visible:border-[var(--card-accent)]"
+                  className="card-depth card-depth-hover mb-6 break-inside-avoid group cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--card-accent)]/60 transition-colors relative focus-visible:border-[var(--card-accent)]"
                 >
                   <div className="relative overflow-hidden bg-black">
                     <Image

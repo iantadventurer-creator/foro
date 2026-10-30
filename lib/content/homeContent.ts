@@ -10,7 +10,7 @@ export const homeContent = {
       description: 'Dioramas construidos a mano, iluminación cinematográfica y un ojo obsesionado con el detalle. Bienvenido al set de @iantadventurer.',
       btnExplore: 'Ver la galería',
       stat1: 'Fotos publicadas',
-      stat2: 'Universo',
+      stat2: 'Universos',
     },
     intro: {
       eyebrow: 'Qué encontrarás aquí',
@@ -65,7 +65,7 @@ export const homeContent = {
       description: 'Hand-built dioramas, cinematic lighting, and an eye obsessed with detail. Welcome to the set of @iantadventurer.',
       btnExplore: 'View gallery',
       stat1: 'Photos published',
-      stat2: 'Universe',
+      stat2: 'Universes',
     },
     intro: {
       eyebrow: 'What you will find here',

@@ -16,7 +16,7 @@ export function PostCard({ post, onClick }: { post: Post; onClick: () => void })
     <button
       onClick={onClick}
       aria-label={post.instagram_handle ? `${post.title} — ${post.instagram_handle}` : post.title}
-      className="relative aspect-square overflow-hidden rounded-lg bg-black group border border-[var(--color-border)] hover:border-[var(--color-text-faint)] transition-colors focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+      className="card-depth card-depth-hover relative aspect-square overflow-hidden rounded-lg bg-black group border border-[var(--color-border)] hover:border-[var(--color-text-faint)] focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
     >
       <Image
         src={post.image_url}

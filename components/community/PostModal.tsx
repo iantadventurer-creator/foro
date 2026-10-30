@@ -158,7 +158,7 @@ export function PostModal({
                                         <div className="flex gap-2 justify-end">
                                             <button
                                                 onClick={() => handleEdit(post.id)}
-                                                className="bg-[var(--color-accent-4)] hover:brightness-110 text-[#04170d] font-bold px-3 py-1.5 rounded-full text-[10px] uppercase transition-all"
+                                                className="bg-[var(--color-accent-4)] hover:brightness-110 text-white font-bold px-3 py-1.5 rounded-full text-[10px] uppercase transition-all"
                                             >
                                                 {t.save}
                                             </button>
@@ -198,7 +198,7 @@ export function PostModal({
                                     aria-pressed={liked}
                                     aria-label={`${liked ? t.unlike : t.like} · ${t.likesCount(likeCount)}`}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-bold transition-colors ${liked
-                                        ? 'lego-bevel bg-[#ff4d6d]/15 text-[#ff8099] border-[#ff4d6d]/40'
+                                        ? 'lego-bevel bg-[#d6204a]/10 text-[#d6204a] border-[#d6204a]/40'
                                         : 'bg-[var(--color-surface-2)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'
                                         }`}
                                 >

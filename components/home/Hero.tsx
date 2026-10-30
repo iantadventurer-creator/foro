@@ -3,45 +3,107 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { LegoBrick } from '@/components/ui/LegoBrick';
 import { fadeUp } from '@/lib/motion';
 import type { HomeContent } from '@/lib/content/homeContent';
 import type { FeedItem } from '@/lib/gallery';
 
-export function Hero({ t, previewShots }: { t: HomeContent; previewShots: FeedItem[] }) {
+export function Hero({
+  t,
+  previewShots,
+  photoCount,
+  universeCount,
+  loading,
+}: {
+  t: HomeContent;
+  previewShots: FeedItem[];
+  /** Cifras reales de la galería (se muestran cuando ya ha cargado). */
+  photoCount: number;
+  universeCount: number;
+  loading: boolean;
+}) {
   return (
-    <section id="top" className="relative z-0 overflow-hidden max-w-7xl mx-auto px-6 pt-20 pb-24 grid md:grid-cols-2 gap-16 items-center">
-      <div className="absolute top-10 left-0 w-64 h-64 md:w-[28rem] md:h-[28rem] bg-[var(--color-accent-3)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
-      <div className="absolute bottom-0 right-0 w-56 h-56 md:w-[24rem] md:h-[24rem] bg-[var(--color-accent)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
-
+    <section id="top" className="relative z-0 max-w-7xl mx-auto px-6 pt-14 md:pt-20 pb-20 md:pb-24 grid md:grid-cols-2 gap-12 md:gap-16 items-center">
       <div>
-        <motion.div variants={fadeUp} initial="hidden" animate="visible" className="lego-studs lego-bevel [--stud-color:var(--color-lego-yellow)] inline-flex items-center gap-2 bg-[var(--color-lego-yellow)] text-[var(--color-lego-yellow-ink)] text-xs font-bold px-4 py-2 rounded-md mt-2 mb-6 uppercase tracking-widest">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          className="lego-studs lego-bevel [--stud-color:var(--color-lego-yellow)] inline-flex items-center gap-2 bg-[var(--color-lego-yellow)] text-[var(--color-lego-yellow-ink)] text-xs font-bold px-4 py-2 rounded-md mt-2 mb-6 uppercase tracking-widest"
+        >
           {t.hero.badge}
         </motion.div>
 
-        <motion.h1 variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.05 }} className="font-display text-4xl md:text-6xl font-semibold tracking-tight mb-6 leading-[1.05] bg-gradient-to-b from-white to-[#a9b5d3] bg-clip-text text-transparent">
+        <motion.h1
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.05 }}
+          className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.04] text-[var(--color-text)]"
+        >
           {t.hero.title}
         </motion.h1>
-        <motion.p variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.1 }} className="text-[var(--color-text-muted)] text-base md:text-lg max-w-lg mb-10 leading-relaxed">
+        <motion.p
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.1 }}
+          className="text-[var(--color-text-muted)] text-base md:text-lg max-w-lg mb-9 leading-relaxed"
+        >
           {t.hero.description}
         </motion.p>
-        <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.15 }} className="flex flex-wrap gap-4">
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.15 }} className="flex flex-wrap gap-3 sm:gap-4">
           <motion.a
             whileHover={{ y: -3 }}
-            whileTap={{ y: 2 }}
+            whileTap={{ y: 1 }}
             href="#gallery"
             className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-7 py-3.5 rounded-full lego-bevel [--bevel-glow:var(--shadow-accent)] hover:brightness-110 transition-[filter]"
           >
             {t.hero.btnExplore} ↓
           </motion.a>
-          <motion.div whileHover={{ y: -3 }} whileTap={{ y: 2 }}>
-            <Link href="/comunidad" className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white bg-[var(--color-accent-3)] px-7 py-3.5 rounded-full lego-bevel [--bevel-glow:var(--shadow-accent-3)] hover:brightness-110 transition-[filter]">
+          <motion.div whileHover={{ y: -3 }} whileTap={{ y: 1 }}>
+            <Link
+              href="/comunidad"
+              className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-lego-yellow-ink)] bg-[var(--color-lego-yellow)] px-7 py-3.5 rounded-full lego-bevel [--bevel-glow:rgba(255,213,0,0.45)] hover:brightness-105 transition-[filter]"
+            >
               {t.nav.community}
             </Link>
           </motion.div>
         </motion.div>
+
+        <motion.ul
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.2 }}
+          className="mt-10 flex gap-8 border-t border-[var(--color-border)] pt-6"
+          aria-busy={loading}
+        >
+          {[
+            { value: photoCount, label: t.hero.stat1, color: 'var(--color-accent)' },
+            { value: universeCount, label: t.hero.stat2, color: 'var(--color-accent-3)' },
+          ].map((stat) => (
+            <li key={stat.label} className="flex items-center gap-3">
+              <LegoBrick color={stat.color} studs={1} className="h-6 w-auto" />
+              <p className="flex flex-col">
+                <span className="font-display text-2xl font-bold leading-none tabular-nums">{loading ? '–' : stat.value}</span>
+                <span className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)] mt-1">{stat.label}</span>
+              </p>
+            </li>
+          ))}
+        </motion.ul>
       </div>
 
-      <div className="relative h-64 sm:h-72 md:h-96" aria-hidden="true">
+      <div className="relative h-72 sm:h-80 md:h-[26rem]" aria-hidden="true">
+        {/* Placa amarilla con studs: el "escenario" sobre el que se apoyan las fotos */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.94 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 160, damping: 22 }}
+          className="lego-studs lego-bevel [--stud-color:var(--color-lego-yellow)] absolute left-[4%] right-[2%] top-[22%] bottom-[-2%] rounded-[1.75rem] bg-[var(--color-lego-yellow)]"
+        />
+        <div className="lego-bevel absolute -left-1 bottom-[10%] w-16 h-10 rounded-lg bg-[var(--color-accent)] hidden sm:block" />
+
         {previewShots.length > 0 ? (
           previewShots.map((item, i) => (
             <motion.div
@@ -50,22 +112,22 @@ export function Hero({ t, previewShots }: { t: HomeContent; previewShots: FeedIt
               animate={{ opacity: 1, y: 0, rotate: [-6, 4, -3][i] }}
               transition={{ delay: 0.1 * i, type: 'spring', stiffness: 200, damping: 20 }}
               whileHover={{ rotate: 0, scale: 1.03, zIndex: 10 }}
-              className="absolute rounded-2xl border-4 border-[var(--color-surface)] shadow-2xl overflow-hidden bg-black"
+              className="absolute rounded-2xl border-4 border-white shadow-[0_20px_40px_-18px_rgba(32,33,36,0.55)] overflow-hidden bg-[var(--color-surface-2)]"
               style={{
-                width: '55%',
+                width: '44%',
                 aspectRatio: '4 / 5',
-                top: `${[0, 30, 10][i]}%`,
-                left: `${[5, 45, 25][i]}%`,
+                top: `${[0, 18, 6][i]}%`,
+                left: `${[12, 48, 30][i]}%`,
                 zIndex: [1, 2, 3][i],
               }}
             >
-              <Image src={item.src} alt="" fill sizes="(max-width: 1024px) 50vw, 400px" className="object-cover" />
+              <Image src={item.src} alt="" fill sizes="(max-width: 1024px) 50vw, 400px" className="object-cover" priority={i === 2} />
             </motion.div>
           ))
         ) : (
           <>
-            <div className="absolute rounded-2xl bg-gradient-to-br from-[var(--color-accent-3)]/30 to-transparent border border-[var(--color-border)]" style={{ width: '55%', aspectRatio: '4/5', top: '0%', left: '5%' }} />
-            <div className="absolute rounded-2xl bg-gradient-to-br from-[var(--color-accent)]/30 to-transparent border border-[var(--color-border)]" style={{ width: '55%', aspectRatio: '4/5', top: '30%', left: '45%' }} />
+            <div className="absolute rounded-2xl border-4 border-white bg-[var(--color-surface-2)] animate-shimmer" style={{ width: '52%', aspectRatio: '4/5', top: '6%', left: '14%' }} />
+            <div className="absolute rounded-2xl border-4 border-white bg-[var(--color-surface-2)] animate-shimmer" style={{ width: '52%', aspectRatio: '4/5', top: '24%', left: '44%' }} />
           </>
         )}
       </div>

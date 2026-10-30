@@ -20,7 +20,7 @@ export function CommunityWelcome({
     avatarUrl?: string;
     onPublish: () => void;
 }) {
-    const cardClass = 'lego-studs bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 mb-10';
+    const cardClass = 'lego-studs card-depth bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 mb-10';
 
     if (user) {
         const rawHandle = user.user_metadata?.instagram_handle || user.email?.split('@')[0] || 'anon';
