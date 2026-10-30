@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { HomeContent } from '@/lib/homeContent';
+import type { HomeContent } from '@/lib/content/homeContent';
 
 export function SiteFooter({ t, onOpenQr }: { t: HomeContent; onOpenQr: () => void }) {
   return (

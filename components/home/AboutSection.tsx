@@ -3,7 +3,7 @@
 import type { Ref } from 'react';
 import { motion } from 'framer-motion';
 import { fadeUp } from '@/lib/motion';
-import type { HomeContent } from '@/lib/homeContent';
+import type { HomeContent } from '@/lib/content/homeContent';
 
 export function AboutSection({ t, sectionRef }: { t: HomeContent; sectionRef: Ref<HTMLElement> }) {
   return (

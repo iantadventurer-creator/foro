@@ -1,8 +1,9 @@
 'use client';
 
-/** Selector ES/EN — mismo control y estilo en todas las páginas de la
- * comunidad (feed, perfil, actividad). */
-export function LangToggle({ lang, onChange }: { lang: 'es' | 'en'; onChange: (lang: 'es' | 'en') => void }) {
+import type { Lang } from '@/lib/lang';
+
+/** Selector ES/EN — el mismo control y estilo en toda la web. */
+export function LangToggle({ lang, onChange }: { lang: Lang; onChange: (lang: Lang) => void }) {
     return (
         <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
             <button

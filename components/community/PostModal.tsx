@@ -5,11 +5,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { categoryTextColor, formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
-import { avatarColorFor, type AppUser, type Like, type Post } from '@/lib/community';
-import { useModal } from '@/lib/useModal';
+import type { AppUser, Like, Post } from '@/lib/community';
+import { useModal } from '@/lib/hooks/useModal';
 import { safeExternalUrl } from '@/lib/validation';
-import type { CommunityContent } from '@/lib/communityContent';
-import { communityInputClass } from '@/components/community/UploadModal';
+import type { CommunityContent } from '@/lib/content/communityContent';
+import { Avatar } from '@/components/ui/Avatar';
+import { inputClass } from '@/components/ui/inputStyles';
 
 const TITLE_MAX_LENGTH = 280;
 
@@ -40,7 +41,6 @@ export function PostModal({
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
   const { closeButtonRef, dialogRef, handleBackdropClick } = useModal(!!post, onClose);
-  const inputClass = communityInputClass;
   const modalTheme = getCategoryTheme(post?.category ?? null);
 
   const handleEdit = async (postId: string) => {
@@ -99,21 +99,11 @@ export function PostModal({
                         <div className="flex flex-col items-center text-center gap-2 mb-5">
                             <Link
                                 href={`/comunidad/u/${post.user_id}`}
-                                className="relative w-20 h-20 shrink-0 rounded-full overflow-hidden flex items-center justify-center text-2xl font-black text-[#14100a] hover:brightness-110 transition"
-                                style={{ background: avatarColorFor(post.instagram_handle || 'anon') }}
                                 title={t.viewProfile}
+                                aria-label={t.viewProfile}
+                                className="shrink-0 rounded-full hover:brightness-110 transition"
                             >
-                                <span className="relative z-0">
-                                    {(post.instagram_handle || 'A').replace('@', '').charAt(0).toUpperCase()}
-                                </span>
-                                {avatarUrl && (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img
-                                        src={avatarUrl}
-                                        alt=""
-                                        className="absolute inset-0 z-10 w-full h-full object-cover"
-                                    />
-                                )}
+                                <Avatar handle={post.instagram_handle || 'anon'} imageUrl={avatarUrl} size={80} />
                             </Link>
                             {safeExternalUrl(post.instagram_url) ? (
                                 <a

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { fadeUp } from '@/lib/motion';
-import type { HomeContent } from '@/lib/homeContent';
+import type { HomeContent } from '@/lib/content/homeContent';
 import type { FeedItem } from '@/lib/gallery';
 
 export function Hero({ t, previewShots }: { t: HomeContent; previewShots: FeedItem[] }) {

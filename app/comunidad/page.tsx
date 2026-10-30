@@ -1,22 +1,23 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useToasts, ToastViewport } from '@/components/ui/Toast';
+import { Button } from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { CommunityHeader } from '@/components/community/CommunityHeader';
 import { FeedSection, type FeedSort } from '@/components/community/FeedSection';
 import { PostModal } from '@/components/community/PostModal';
 import { UploadModal } from '@/components/community/UploadModal';
-import { communityContent } from '@/lib/communityContent';
-import { useCommunityFeed } from '@/lib/useCommunityFeed';
-import { useSessionUser } from '@/lib/useSessionUser';
+import { communityContent } from '@/lib/content/communityContent';
+import { useCommunityFeed } from '@/lib/hooks/useCommunityFeed';
+import { useLang } from '@/lib/hooks/useLang';
+import { useSessionUser } from '@/lib/hooks/useSessionUser';
 
 export default function ComunidadPage() {
     const router = useRouter();
-    const [lang, setLang] = useState<'es' | 'en'>('es');
+    const [lang, setLang] = useLang();
     const { toasts, push, dismiss } = useToasts();
     const user = useSessionUser();
     const t = communityContent[lang];
@@ -33,11 +34,6 @@ export default function ComunidadPage() {
     const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [pendingDelete, setPendingDelete] = useState<{ id: string; imageUrl: string } | null>(null);
-
-    // Mantiene el atributo lang del documento sincronizado con el selector ES/EN.
-    useEffect(() => {
-        document.documentElement.lang = lang;
-    }, [lang]);
 
     // Permite enlazar directo a una publicación (?post=<id>) o abrir el
     // formulario de publicar (?publish=1) — así el perfil, la actividad y
@@ -96,14 +92,9 @@ export default function ComunidadPage() {
     return (
         <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
             <CommunityHeader
-                backHref="/"
-                backLabel={t.volver}
+                back="home"
                 lang={lang}
                 onLangChange={setLang}
-                activityLabel={t.activity}
-                publishLabel={t.publishBtn}
-                profileLabel={t.profile}
-                logoutLabel={t.logout}
                 onLogout={() => setFilterMyPosts(false)}
                 onPublish={() => setShowUploadModal(true)}
             />
@@ -136,18 +127,12 @@ export default function ComunidadPage() {
                             {t.auth.joinDesc}
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3">
-                            <Link
-                                href="/comunidad/registro"
-                                className="flex-1 text-center bg-[var(--color-accent)] text-[var(--color-accent-ink)] font-bold px-6 py-3 rounded-full text-sm hover:brightness-110 transition shadow-[0_8px_24px_-8px_var(--shadow-accent)]"
-                            >
+                            <Button href="/comunidad/registro" className="flex-1">
                                 {t.auth.signUpBtn}
-                            </Link>
-                            <Link
-                                href="/comunidad/entrar"
-                                className="flex-1 text-center bg-[var(--color-surface-2)] text-[var(--color-text)] font-bold px-6 py-3 rounded-full text-sm border border-[var(--color-border)] hover:border-[var(--color-text-faint)] transition"
-                            >
+                            </Button>
+                            <Button href="/comunidad/entrar" variant="secondary" className="flex-1">
                                 {t.auth.loginBtn}
-                            </Link>
+                            </Button>
                         </div>
                     </motion.div>
                 ) : null}

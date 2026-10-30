@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { categoryTextColor, getCategoryTheme } from '@/lib/categoryThemes';
-import { useModal } from '@/lib/useModal';
-import type { HomeContent } from '@/lib/homeContent';
+import { useModal } from '@/lib/hooks/useModal';
+import type { HomeContent } from '@/lib/content/homeContent';
 import type { FeedItem } from '@/lib/gallery';
 
 export function Lightbox({

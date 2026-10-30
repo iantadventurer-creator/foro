@@ -3,11 +3,14 @@
 import type { MouseEvent, Ref } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { FilterPill } from '@/components/ui/FilterPill';
+import { SectionHeading } from '@/components/ui/SectionHeading';
 import { GallerySkeleton } from '@/components/ui/GallerySkeleton';
 import { formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
 import { fadeUp } from '@/lib/motion';
-import type { HomeContent } from '@/lib/homeContent';
+import type { HomeContent } from '@/lib/content/homeContent';
 import type { FeedItem } from '@/lib/gallery';
 
 export function GallerySection({
@@ -62,13 +65,7 @@ export function GallerySection({
         transition={{ duration: 0.6, ease: 'easeOut' }}
       />
       <div className="mb-12 flex flex-col items-center text-center gap-6">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-accent-text)] mb-3">{t.gallery.eyebrow}</p>
-          <motion.h2 initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-text)]">
-            {t.gallery.title}
-          </motion.h2>
-          <p className="text-sm text-[var(--color-text-muted)] mt-2 max-w-md mx-auto">{t.gallery.subtitle}</p>
-        </div>
+        <SectionHeading eyebrow={t.gallery.eyebrow} title={t.gallery.title} subtitle={t.gallery.subtitle} />
         {categories.length > 0 && (
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <FilterPill onClick={() => onSelectCategory(null)} active={filterCategory === null}>
@@ -98,17 +95,15 @@ export function GallerySection({
       {loading ? (
         <GallerySkeleton />
       ) : feedError ? (
-        <div className="flex flex-col items-center text-center py-24 gap-4 border border-dashed border-[var(--color-border)] rounded-2xl">
+        <EmptyState className="flex flex-col items-center py-24 gap-4">
           <p className="text-[var(--color-text)] font-semibold">{t.gallery.errorTitle}</p>
-          <p className="text-sm text-[var(--color-text-muted)] max-w-xs">{t.gallery.errorDesc}</p>
-          <button onClick={onRetry} className="mt-2 text-xs font-bold uppercase tracking-wide bg-[var(--color-accent)] text-[var(--color-accent-ink)] px-5 py-2.5 rounded-full hover:brightness-110 transition">
+          <p className="text-sm max-w-xs">{t.gallery.errorDesc}</p>
+          <Button onClick={onRetry} size="sm" className="mt-2">
             {t.gallery.retry}
-          </button>
-        </div>
+          </Button>
+        </EmptyState>
       ) : totalItems === 0 ? (
-        <div className="text-center py-20 text-[var(--color-text-muted)] font-medium text-sm border border-dashed border-[var(--color-border)] rounded-2xl">
-          {showOnlyFavorites ? t.gallery.noResults : t.gallery.empty}
-        </div>
+        <EmptyState className="py-20">{showOnlyFavorites ? t.gallery.noResults : t.gallery.empty}</EmptyState>
       ) : (
         <>
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-6">

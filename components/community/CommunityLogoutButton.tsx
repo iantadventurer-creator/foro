@@ -1,7 +1,7 @@
 'use client';
 
 import { supabase } from '@/lib/supabaseClient';
-import { useSessionUserId } from '@/lib/useSessionUserId';
+import { useSessionUserId } from '@/lib/hooks/useSessionUserId';
 
 /** Botón "Cerrar sesión" del header — mismo componente en las tres páginas
  * de la comunidad para que se vea igual en todas. Separado de

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSessionUserId } from '@/lib/useSessionUserId';
+import { useSessionUserId } from '@/lib/hooks/useSessionUserId';
 
 /** Barra inferior fija, visible en todas las páginas de /comunidad — el
  * mismo tipo de navegación de app (Feed / Perfil / Actividad) que tienen

@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { useModal } from '@/lib/useModal';
+import { useModal } from '@/lib/hooks/useModal';
 
 export function ConfirmDialog({
     open,

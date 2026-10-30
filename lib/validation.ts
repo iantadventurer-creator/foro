@@ -2,7 +2,8 @@
 // repartidas en cada página) para poder probarlas y para que todas las
 // pantallas apliquen exactamente las mismas reglas.
 
-export type Lang = 'es' | 'en';
+import type { Lang } from './lang';
+export type { Lang };
 
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 

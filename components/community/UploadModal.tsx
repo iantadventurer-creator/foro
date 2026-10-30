@@ -4,18 +4,16 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 import { CATEGORY_KEYS, formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
-import { useModal } from '@/lib/useModal';
+import { inputClass } from '@/components/ui/inputStyles';
+import { useModal } from '@/lib/hooks/useModal';
 import { ALLOWED_IMAGE_TYPES, extensionForMime, safeExternalUrl } from '@/lib/validation';
 import type { AppUser } from '@/lib/community';
-import type { CommunityContent } from '@/lib/communityContent';
+import type { CommunityContent } from '@/lib/content/communityContent';
 import type { ToastVariant } from '@/components/ui/Toast';
 
 const TITLE_MAX_LENGTH = 280;
 const URL_MAX_LENGTH = 200;
 const MAX_FILE_SIZE_MB = 8;
-
-export const communityInputClass =
-  'bg-[var(--color-ink)] border border-[var(--color-border)] rounded-xl px-4 py-3 text-sm text-[var(--color-text)] font-medium focus:outline-none focus:border-[var(--color-accent)] transition-colors placeholder:text-[var(--color-text-faint)]';
 
 function buildUploadFileName(ext: string): string {
   return `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
@@ -44,7 +42,6 @@ export function UploadModal({
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const { closeButtonRef, dialogRef, handleBackdropClick } = useModal(open, onClose);
-  const inputClass = communityInputClass;
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();

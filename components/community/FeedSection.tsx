@@ -2,9 +2,11 @@
 
 import { FilterPill } from '@/components/ui/FilterPill';
 import { PostCard } from '@/components/community/PostCard';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { PostGridSkeleton } from '@/components/ui/Skeletons';
 import { CATEGORY_KEYS, formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
 import type { Post } from '@/lib/community';
-import type { CommunityContent } from '@/lib/communityContent';
+import type { CommunityContent } from '@/lib/content/communityContent';
 
 export type FeedSort = 'recent' | 'popular';
 
@@ -84,15 +86,9 @@ export function FeedSection({
         </div>
 
         {loading ? (
-            <div className="grid grid-cols-3 gap-0.5 sm:gap-1 -mx-4 sm:mx-0" aria-hidden="true">
-                {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                    <div key={i} className="aspect-square animate-shimmer" />
-                ))}
-            </div>
+            <PostGridSkeleton count={9} />
         ) : posts.length === 0 ? (
-            <div className="mx-4 sm:mx-0 text-center py-16 bg-[var(--color-surface)] border border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-muted)] font-medium text-sm">
-                {hasAnyPosts ? t.noResultsFilter : t.noPosts}
-            </div>
+            <EmptyState className="mx-4 sm:mx-0">{hasAnyPosts ? t.noResultsFilter : t.noPosts}</EmptyState>
         ) : (
             <div className="grid grid-cols-3 gap-0.5 sm:gap-1 -mx-4 sm:mx-0">
                 {posts.map((post) => (

@@ -3,7 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { HomeContent } from '@/lib/homeContent';
+import { BrandMark } from '@/components/ui/BrandMark';
+import { LangToggle } from '@/components/ui/LangToggle';
+import type { HomeContent } from '@/lib/content/homeContent';
+import type { Lang } from '@/lib/lang';
 
 export type ActiveSection = 'gallery' | 'about' | null;
 
@@ -15,8 +18,8 @@ export function SiteHeader({
   onOpenQr,
 }: {
   t: HomeContent;
-  lang: 'es' | 'en';
-  onLangChange: (lang: 'es' | 'en') => void;
+  lang: Lang;
+  onLangChange: (lang: Lang) => void;
   activeSection: ActiveSection;
   onOpenQr: () => void;
 }) {
@@ -38,18 +41,7 @@ export function SiteHeader({
     <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)]">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
         <a href="#top" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 shadow-[0_8px_24px_-8px_var(--shadow-accent)] group-hover:-translate-y-0.5 group-hover:shadow-[0_8px_24px_-8px_var(--shadow-accent)] transition-all rounded-md overflow-hidden">
-            <svg viewBox="0 0 36 36" className="w-full h-full" aria-hidden="true">
-              <rect x="0" y="0" width="36" height="36" fill="var(--color-accent)" />
-              {[[11, 11], [25, 11], [11, 25], [25, 25]].map(([cx, cy]) => (
-                <g key={`${cx}-${cy}`}>
-                  <circle cx={cx + 1} cy={cy + 1.5} r="5.5" fill="rgba(0,0,0,0.3)" />
-                  <circle cx={cx} cy={cy} r="5.5" fill="var(--color-accent)" />
-                  <circle cx={cx - 2} cy={cy - 2} r="1.7" fill="white" opacity="0.5" />
-                </g>
-              ))}
-            </svg>
-          </div>
+          <BrandMark className="w-9 h-9 rounded-md shadow-[0_8px_24px_-8px_var(--shadow-accent)] group-hover:-translate-y-0.5 transition-all" />
           <div className="leading-none">
             <span className="font-display font-semibold text-base tracking-tight text-[var(--color-text)] block">IanTBuild</span>
             <span className="text-[10px] text-[var(--color-accent-text)] font-semibold tracking-[0.2em] uppercase">Studio</span>
@@ -80,9 +72,8 @@ export function SiteHeader({
         </nav>
 
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)]">
-            <button onClick={() => onLangChange('es')} aria-pressed={lang === 'es'} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'es' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>ES</button>
-            <button onClick={() => onLangChange('en')} aria-pressed={lang === 'en'} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}>EN</button>
+          <div className="hidden sm:block">
+            <LangToggle lang={lang} onChange={onLangChange} />
           </div>
           <motion.a
             whileHover={{ y: -2 }}
@@ -128,9 +119,8 @@ export function SiteHeader({
               >
                 {t.footer.qrLabel}
               </button>
-              <div className="flex items-center gap-1 bg-[var(--color-surface)] p-1 rounded-full border border-[var(--color-border)] w-fit mt-2">
-                <button onClick={() => onLangChange('es')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'es' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)]'}`}>ES</button>
-                <button onClick={() => onLangChange('en')} className={`px-3 py-1 rounded-full text-xs font-bold ${lang === 'en' ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'text-[var(--color-text-muted)]'}`}>EN</button>
+              <div className="mt-2 w-fit">
+                <LangToggle lang={lang} onChange={onLangChange} />
               </div>
             </div>
           </motion.div>

@@ -1,13 +1,11 @@
 import Link from 'next/link';
-import type { HomeContent } from '@/lib/homeContent';
+import { SectionHeading } from '@/components/ui/SectionHeading';
+import type { HomeContent } from '@/lib/content/homeContent';
 
 export function IntroSection({ t }: { t: HomeContent }) {
   return (
     <section id="intro" className="max-w-7xl mx-auto px-6 pb-20 relative z-10">
-      <div className="text-center mb-10">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-accent-text)] mb-3">{t.intro.eyebrow}</p>
-        <h2 className="font-display text-2xl md:text-3xl font-semibold tracking-tight">{t.intro.title}</h2>
-      </div>
+      <SectionHeading eyebrow={t.intro.eyebrow} title={t.intro.title} className="mb-10" />
       <div className="grid md:grid-cols-3 gap-5">
         {t.intro.cards.map((card, i) => {
           const tone = ['var(--color-accent)', 'var(--color-accent-3)', 'var(--color-accent-4)'][i];

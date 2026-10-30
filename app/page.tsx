@@ -10,15 +10,16 @@ import { GallerySection } from '@/components/home/GallerySection';
 import { Lightbox } from '@/components/home/Lightbox';
 import { AboutSection } from '@/components/home/AboutSection';
 import { SiteFooter } from '@/components/home/SiteFooter';
-import { homeContent } from '@/lib/homeContent';
+import { homeContent } from '@/lib/content/homeContent';
 import { loadGalleryItems, type FeedItem } from '@/lib/gallery';
-import { useFavorites } from '@/lib/useFavorites';
-import { useBodyScrollLock } from '@/lib/useBodyScrollLock';
+import { useFavorites } from '@/lib/hooks/useFavorites';
+import { useLang } from '@/lib/hooks/useLang';
+import { useBodyScrollLock } from '@/lib/hooks/useBodyScrollLock';
 
 const ITEMS_PER_PAGE = 12;
 
 export default function Home() {
-  const [lang, setLang] = useState<'es' | 'en'>('es');
+  const [lang, setLang] = useLang();
   const [selectedItem, setSelectedItem] = useState<FeedItem | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
@@ -47,12 +48,6 @@ export default function Home() {
   };
   const closeQr = () => setQrOpen(false);
   useBodyScrollLock(qrOpen);
-
-  // Mantiene el atributo lang del documento sincronizado con el selector ES/EN
-  // (accesibilidad para lectores de pantalla y SEO).
-  useEffect(() => {
-    document.documentElement.lang = lang;
-  }, [lang]);
 
   // Resalta en el nav qué sección se está viendo mientras se hace scroll
   // (se considera "activa" la sección que cruza la franja central de la pantalla).

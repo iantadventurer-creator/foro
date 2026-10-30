@@ -2,12 +2,9 @@
 
 export const communityContent = {
     es: {
-        volver: '← Volver al inicio',
         pageTitle: 'Comunidad',
         pageSubtitle: 'Comparte tus propias creaciones LEGO y descubre las de otros fans.',
         steps: ['Crea tu cuenta gratis', 'Publica tu foto', 'Recibe me gusta'],
-        connectedAs: 'Conectado como',
-        logout: 'Cerrar sesión',
         newPostTitle: 'Nueva publicación',
         placeholder: '¿Qué diorama o creación quieres compartir hoy?',
         instagramUrlPlaceholder: 'URL de tu perfil de Instagram (ej. https://instagram.com/tu_usuario)',
@@ -38,8 +35,6 @@ export const communityContent = {
         tooLarge: (mb: number) => `La imagen supera los ${mb}MB permitidos.`,
         anonymous: 'Anónimo',
         viewProfile: 'Ver perfil',
-        activity: 'Actividad',
-        profile: 'Mi perfil',
         auth: {
             joinTitle: 'Únete a la comunidad',
             joinDesc: 'Crea una cuenta gratis o inicia sesión para publicar tus fotos y dar me gusta.',
@@ -48,12 +43,9 @@ export const communityContent = {
         }
     },
     en: {
-        volver: '← Back to home',
         pageTitle: 'Community',
         pageSubtitle: 'Share your own LEGO creations and discover other fans’.',
         steps: ['Create a free account', 'Post your photo', 'Get likes'],
-        connectedAs: 'Logged in as',
-        logout: 'Log out',
         newPostTitle: 'New post',
         placeholder: 'What diorama or creation do you want to share today?',
         instagramUrlPlaceholder: 'Your Instagram profile URL (e.g. https://instagram.com/your_account)',
@@ -84,8 +76,6 @@ export const communityContent = {
         tooLarge: (mb: number) => `The image exceeds the ${mb}MB limit.`,
         anonymous: 'Anonymous',
         viewProfile: 'View profile',
-        activity: 'Activity',
-        profile: 'My profile',
         auth: {
             joinTitle: 'Join the community',
             joinDesc: 'Create a free account or log in to post your photos and give likes.',
