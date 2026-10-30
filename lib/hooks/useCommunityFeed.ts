@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { orThrow, withRetry } from '@/lib/retry';
 import { isTrustedImageUrl } from '@/lib/validation';
 import type { AppUser, Like, Post } from '@/lib/community';
 import type { ToastVariant } from '@/components/ui/Toast';
@@ -28,28 +29,40 @@ export function useCommunityFeed({
   const [posts, setPosts] = useState<Post[]>([]);
   const [avatarByUserId, setAvatarByUserId] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  // true si la última carga falló (para no mostrar "no hay publicaciones" cuando
+  // en realidad es un fallo de conexión).
+  const [error, setError] = useState(false);
 
   const reload = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from('community_posts')
-        .select(`
-          *,
-          post_likes (
-            user_id
-          )
-        `)
-        .order('created_at', { ascending: false })
-        .limit(FEED_LIMIT);
-
-      if (error) throw error;
-      if (data) setPosts(data as Post[]);
+      const data = await withRetry(() =>
+        orThrow(
+          supabase
+            .from('community_posts')
+            .select(`
+              *,
+              post_likes (
+                user_id
+              )
+            `)
+            .order('created_at', { ascending: false })
+            .limit(FEED_LIMIT)
+        )
+      );
+      setPosts((data ?? []) as Post[]);
+      setError(false);
     } catch (err) {
       console.error('Error cargando comunidad:', err);
+      setError(true);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  const retry = useCallback(() => {
+    setLoading(true);
+    reload();
+  }, [reload]);
 
   useEffect(() => {
     // Carga inicial del feed al montar. La regla experimental
@@ -173,5 +186,5 @@ export function useCommunityFeed({
     }
   };
 
-  return { posts, avatarByUserId, loading, reload, toggleLike, deletePost, updateTitle };
+  return { posts, avatarByUserId, loading, error, reload, retry, toggleLike, deletePost, updateTitle };
 }

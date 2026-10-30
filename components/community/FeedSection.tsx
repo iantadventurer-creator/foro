@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { FilterPill } from '@/components/ui/FilterPill';
 import { PostCard } from '@/components/community/PostCard';
+import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { PostGridSkeleton } from '@/components/ui/Skeletons';
 import { CATEGORY_KEYS, formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
@@ -29,6 +30,8 @@ export function FeedSection({
   canFilterMine,
   filterMyPosts,
   emptyAction,
+  error,
+  onRetry,
   onFilterCategory,
   onSortBy,
   onToggleMine,
@@ -46,6 +49,9 @@ export function FeedSection({
   filterMyPosts: boolean;
   /** Botón que se ofrece cuando el feed está vacío (publicar o registrarse). */
   emptyAction?: ReactNode;
+  /** La carga falló: se muestra el error con un botón para reintentar. */
+  error?: boolean;
+  onRetry?: () => void;
   onFilterCategory: (category: string | null) => void;
   onSortBy: (sort: FeedSort) => void;
   onToggleMine: () => void;
@@ -95,6 +101,15 @@ export function FeedSection({
 
       {loading ? (
         <PostGridSkeleton count={9} />
+      ) : error ? (
+        <EmptyState>
+          <p>{t.loadError}</p>
+          {onRetry && (
+            <Button onClick={onRetry} size="sm" className="mt-5">
+              {t.retry}
+            </Button>
+          )}
+        </EmptyState>
       ) : posts.length === 0 ? (
         <EmptyState>
           <p>{hasAnyPosts ? t.noResultsFilter : t.noPosts}</p>

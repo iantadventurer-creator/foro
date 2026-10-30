@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabaseClient';
 import { formatCategoryLabel } from '@/lib/categoryThemes';
+import { orThrow, withRetry } from '@/lib/retry';
 
 export type FeedItem = {
   id: string;
@@ -48,26 +49,33 @@ function buildItem(file: StorageFile, category: string | null, storagePath: stri
  * null): cada subcarpeta del bucket es una categoría de la galería (su
  * nombre es el que se muestra en el filtro). Lanza si Storage falla. */
 export async function loadGalleryItems(): Promise<FeedItem[]> {
-  const { data: rootEntries, error } = await supabase.storage
-    .from(GALLERY_BUCKET)
-    .list('', { limit: GALLERY_LIST_LIMIT, sortBy: { column: 'name', order: 'asc' } });
+  const rootEntries = await withRetry(() =>
+    orThrow(supabase.storage.from(GALLERY_BUCKET).list('', { limit: GALLERY_LIST_LIMIT, sortBy: { column: 'name', order: 'asc' } }))
+  );
 
-  if (error) throw error;
-
-  // Cada subcarpeta se lista en paralelo (antes era una espera tras otra).
+  // Cada subcarpeta se lista en paralelo y con reintentos. Si una carpeta
+  // sigue fallando, se omite en vez de dejar toda la galería en error.
   const groups = await Promise.all(
     (rootEntries || [])
       .filter((entry) => entry.name && !entry.name.startsWith('.'))
       .map(async (entry): Promise<FeedItem[]> => {
         if (entry.id !== null) return [buildItem(entry, null, entry.name)];
 
-        const { data: subEntries } = await supabase.storage
-          .from(GALLERY_BUCKET)
-          .list(entry.name, { limit: GALLERY_LIST_LIMIT, sortBy: { column: 'created_at', order: 'desc' } });
-
-        return (subEntries || [])
-          .filter((file) => file.name && !file.name.startsWith('.') && file.id !== null)
-          .map((file) => buildItem(file, entry.name, `${entry.name}/${file.name}`));
+        try {
+          const subEntries = await withRetry(() =>
+            orThrow(
+              supabase.storage
+                .from(GALLERY_BUCKET)
+                .list(entry.name, { limit: GALLERY_LIST_LIMIT, sortBy: { column: 'created_at', order: 'desc' } })
+            )
+          );
+          return (subEntries || [])
+            .filter((file) => file.name && !file.name.startsWith('.') && file.id !== null)
+            .map((file) => buildItem(file, entry.name, `${entry.name}/${file.name}`));
+        } catch (error) {
+          console.error(`No se pudo leer la carpeta ${entry.name} de la galería:`, error);
+          return [];
+        }
       })
   );
 

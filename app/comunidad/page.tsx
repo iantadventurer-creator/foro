@@ -23,7 +23,7 @@ export default function ComunidadPage() {
     const user = useSessionUser();
     const t = communityContent[lang];
 
-    const { posts, avatarByUserId, loading, reload, toggleLike, deletePost, updateTitle } = useCommunityFeed({
+    const { posts, avatarByUserId, loading, error, reload, retry, toggleLike, deletePost, updateTitle } = useCommunityFeed({
         user,
         messages: { mustLoginLike: t.mustLoginLike, likeError: t.likeError, deleteForbidden: t.deleteForbidden },
         notify: push,
@@ -133,6 +133,8 @@ export default function ComunidadPage() {
                 posts={displayedPosts}
                 hasAnyPosts={posts.length > 0}
                 loading={loading}
+                error={error}
+                onRetry={retry}
                 filterCategory={filterCategory}
                 sortBy={sortBy}
                 canFilterMine={!!user}

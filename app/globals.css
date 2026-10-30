@@ -172,3 +172,19 @@ button {
     transform: translateY(-3px);
   }
 }
+
+/* Piezas del fondo: vaivén lento (solo transform, para que sea fluido) */
+@keyframes brick-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(var(--r0, 0deg));
+  }
+  50% {
+    transform: translate3d(var(--dx, 0), var(--dy, 0), 0) rotate(var(--r1, 0deg));
+  }
+}
+
+.brick-drift {
+  animation: brick-drift 22s ease-in-out infinite;
+  will-change: transform;
+}

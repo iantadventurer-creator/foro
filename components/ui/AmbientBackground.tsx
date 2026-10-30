@@ -1,6 +1,70 @@
-// Fondo ambiental fijo: dos halos muy suaves (amarillo y rojo LEGO) sobre el
-// blanco roto, más una "placa base" de studs en relieve que se desvanece hacia
-// abajo. Es CSS puro, no se anima y queda detrás de todo el contenido.
+import type { CSSProperties } from 'react';
+
+type Brick = {
+  /** Posición (en % de la ventana) y tamaño en píxeles de un stud. */
+  top: string;
+  left: string;
+  cols: number;
+  rows: number;
+  unit: number;
+  color: string;
+  /** Recorrido de la animación: desplazamiento y giro inicial/final. */
+  dx: number;
+  dy: number;
+  r0: number;
+  r1: number;
+  duration: number;
+  delay: number;
+  /** Solo en pantallas medianas o grandes, para no saturar el móvil. */
+  desktopOnly?: boolean;
+};
+
+const RED = '#e3000b';
+const YELLOW = '#ffd500';
+const BLUE = '#0055bf';
+const GREEN = '#00852b';
+const WHITE = '#ffffff';
+
+const BRICKS: Brick[] = [
+  { top: '8%', left: '4%', cols: 4, rows: 2, unit: 22, color: RED, dx: 18, dy: 26, r0: -14, r1: -4, duration: 22, delay: 0 },
+  { top: '14%', left: '86%', cols: 2, rows: 2, unit: 22, color: YELLOW, dx: -20, dy: 22, r0: 12, r1: 24, duration: 19, delay: -4 },
+  { top: '38%', left: '92%', cols: 2, rows: 1, unit: 20, color: BLUE, dx: -14, dy: -24, r0: -8, r1: 6, duration: 24, delay: -9, desktopOnly: true },
+  { top: '46%', left: '2%', cols: 2, rows: 2, unit: 20, color: GREEN, dx: 16, dy: -20, r0: 18, r1: 4, duration: 26, delay: -3, desktopOnly: true },
+  { top: '64%', left: '80%', cols: 4, rows: 2, unit: 20, color: YELLOW, dx: -22, dy: -18, r0: 6, r1: -10, duration: 28, delay: -12 },
+  { top: '72%', left: '10%', cols: 2, rows: 1, unit: 22, color: RED, dx: 20, dy: -16, r0: -20, r1: -6, duration: 21, delay: -7, desktopOnly: true },
+  { top: '86%', left: '46%', cols: 2, rows: 2, unit: 19, color: BLUE, dx: -16, dy: -22, r0: 10, r1: 26, duration: 25, delay: -15, desktopOnly: true },
+  { top: '24%', left: '52%', cols: 1, rows: 1, unit: 22, color: WHITE, dx: 14, dy: 18, r0: 0, r1: 14, duration: 18, delay: -6, desktopOnly: true },
+  { top: '90%', left: '90%', cols: 1, rows: 1, unit: 22, color: RED, dx: -12, dy: -14, r0: -6, r1: 10, duration: 17, delay: -2 },
+];
+
+/** Pieza LEGO vista desde arriba: cuerpo con canto y una cuadrícula de studs. */
+function BrickTop({ cols, rows, unit, color }: Pick<Brick, 'cols' | 'rows' | 'unit' | 'color'>) {
+  const w = cols * unit;
+  const h = rows * unit;
+  const studR = unit * 0.3;
+  return (
+    <svg width={w} height={h + 3} viewBox={`0 0 ${w} ${h + 3}`} aria-hidden="true" focusable="false">
+      <rect x={0} y={3} width={w} height={h} rx={unit * 0.18} fill="rgba(32,33,36,0.28)" />
+      <rect x={0} y={0} width={w} height={h} rx={unit * 0.18} fill={color} stroke="rgba(32,33,36,0.12)" strokeWidth={1} />
+      {Array.from({ length: cols * rows }, (_, i) => {
+        const cx = (i % cols) * unit + unit / 2;
+        const cy = Math.floor(i / cols) * unit + unit / 2;
+        return (
+          <g key={i}>
+            <circle cx={cx} cy={cy + 1} r={studR} fill="rgba(0,0,0,0.18)" />
+            <circle cx={cx} cy={cy} r={studR} fill={color} stroke="rgba(32,33,36,0.1)" strokeWidth={0.8} />
+            <circle cx={cx - studR * 0.3} cy={cy - studR * 0.35} r={studR * 0.35} fill="white" opacity={0.45} />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+// Fondo fijo: halos muy suaves de amarillo y rojo y piezas LEGO que flotan
+// despacio. Solo se animan transformaciones (fluido y barato para el
+// navegador); con "reducir movimiento" activado se quedan quietas
+// (ver globals.css). Queda detrás de todo el contenido.
 export function AmbientBackground() {
   return (
     <div aria-hidden="true" className="fixed inset-0 -z-20 overflow-hidden pointer-events-none">
@@ -8,20 +72,29 @@ export function AmbientBackground() {
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(56rem 36rem at 8% -12%, rgba(255,213,0,0.22), transparent 62%), radial-gradient(48rem 34rem at 100% 110%, rgba(227,0,11,0.08), transparent 60%)',
+            'radial-gradient(56rem 36rem at 8% -12%, rgba(255,213,0,0.2), transparent 62%), radial-gradient(48rem 34rem at 100% 110%, rgba(227,0,11,0.07), transparent 60%)',
         }}
       />
-      <div
-        className="absolute inset-0"
-        style={{
-          // Cada celda: un stud (círculo gris) con un brillo blanco arriba a la izquierda.
-          backgroundImage:
-            'radial-gradient(circle at 44% 40%, rgba(255,255,255,0.95) 0 2px, transparent 2.6px), radial-gradient(circle, rgba(32,33,36,0.06) 0 6px, transparent 6.6px)',
-          backgroundSize: '28px 28px',
-          maskImage: 'linear-gradient(to bottom, black 0%, transparent 60%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 60%)',
-        }}
-      />
+      {BRICKS.map((brick, i) => (
+        <div
+          key={i}
+          className={`brick-drift absolute opacity-[0.2] md:opacity-[0.3] ${brick.desktopOnly ? 'hidden md:block' : ''}`}
+          style={
+            {
+              top: brick.top,
+              left: brick.left,
+              '--dx': `${brick.dx}px`,
+              '--dy': `${brick.dy}px`,
+              '--r0': `${brick.r0}deg`,
+              '--r1': `${brick.r1}deg`,
+              animationDuration: `${brick.duration}s`,
+              animationDelay: `${brick.delay}s`,
+            } as CSSProperties
+          }
+        >
+          <BrickTop cols={brick.cols} rows={brick.rows} unit={brick.unit} color={brick.color} />
+        </div>
+      ))}
     </div>
   );
 }

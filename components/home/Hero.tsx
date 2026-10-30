@@ -29,8 +29,9 @@ export function Hero({
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="lego-studs lego-bevel [--stud-color:var(--color-lego-yellow)] inline-flex items-center gap-2 bg-[var(--color-lego-yellow)] text-[var(--color-lego-yellow-ink)] text-xs font-bold px-4 py-2 rounded-md mt-2 mb-6 uppercase tracking-widest"
+          className="inline-flex items-center gap-2.5 rounded-full bg-[var(--color-lego-yellow)] text-[var(--color-lego-yellow-ink)] text-xs font-bold pl-2.5 pr-4 py-2 mb-6 uppercase tracking-widest shadow-[inset_0_-2px_0_rgba(0,0,0,0.12)]"
         >
+          <LegoBrick color="var(--color-accent)" studs={2} className="h-3.5 w-auto" />
           {t.hero.badge}
         </motion.div>
 
@@ -100,9 +101,16 @@ export function Hero({
           initial={{ opacity: 0, scale: 0.94 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: 'spring', stiffness: 160, damping: 22 }}
-          className="lego-studs lego-bevel [--stud-color:var(--color-lego-yellow)] absolute left-[4%] right-[2%] top-[22%] bottom-[-2%] rounded-[1.75rem] bg-[var(--color-lego-yellow)]"
+          className="lego-bevel absolute inset-0 rounded-[1.75rem] bg-[var(--color-lego-yellow)]"
+          style={{
+            // Textura de placa base: studs en relieve dentro de la placa.
+            backgroundImage:
+              'radial-gradient(circle at 42% 38%, rgba(255,255,255,0.55) 0 2.5px, transparent 3px), radial-gradient(circle, rgba(150,110,0,0.22) 0 7px, transparent 7.5px)',
+            backgroundSize: '26px 26px',
+            backgroundPosition: '6px 6px',
+          }}
         />
-        <div className="lego-bevel absolute -left-1 bottom-[10%] w-16 h-10 rounded-lg bg-[var(--color-accent)] hidden sm:block" />
+        <div className="lego-bevel absolute -left-3 bottom-[8%] z-10 w-14 h-9 rounded-lg bg-[var(--color-accent)] hidden sm:block" />
 
         {previewShots.length > 0 ? (
           previewShots.map((item, i) => (
@@ -114,14 +122,14 @@ export function Hero({
               whileHover={{ rotate: 0, scale: 1.03, zIndex: 10 }}
               className="absolute rounded-2xl border-4 border-white shadow-[0_20px_40px_-18px_rgba(32,33,36,0.55)] overflow-hidden bg-[var(--color-surface-2)]"
               style={{
-                width: '44%',
+                width: '42%',
                 aspectRatio: '4 / 5',
-                top: `${[0, 18, 6][i]}%`,
-                left: `${[12, 48, 30][i]}%`,
+                top: `${[9, 24, 13][i]}%`,
+                left: `${[9, 49, 29][i]}%`,
                 zIndex: [1, 2, 3][i],
               }}
             >
-              <Image src={item.src} alt="" fill sizes="(max-width: 1024px) 50vw, 400px" className="object-cover" priority={i === 2} />
+              <Image src={item.src} alt="" fill sizes="(max-width: 1024px) 50vw, 400px" className="object-cover" />
             </motion.div>
           ))
         ) : (

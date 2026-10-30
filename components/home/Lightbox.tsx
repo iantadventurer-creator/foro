@@ -193,12 +193,7 @@ export function Lightbox({
                     href={item.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-button block text-center text-xs font-bold uppercase tracking-wider py-3 rounded-full hover:brightness-110 transition"
-                    style={{
-                      color: modalTheme?.ink ?? 'var(--color-accent-ink)',
-                      background: modalTheme?.accent ?? 'var(--color-accent)',
-                      boxShadow: `0 8px 24px -8px ${modalTheme?.accent ?? 'var(--shadow-accent)'}`,
-                    }}
+                    className="font-button block text-center text-xs font-bold uppercase tracking-wider py-3 rounded-full lego-bevel [--bevel-glow:var(--shadow-accent)] bg-[var(--color-accent)] text-[var(--color-accent-ink)] hover:brightness-110 transition"
                   >
                     {t.modal.viewOnIg} ↗
                   </a>

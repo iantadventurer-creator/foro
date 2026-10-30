@@ -106,7 +106,7 @@ export function GallerySection({
         <EmptyState className="py-20">{showOnlyFavorites ? t.gallery.noResults : t.gallery.empty}</EmptyState>
       ) : (
         <>
-          <div className="columns-1 sm:columns-2 lg:columns-3 gap-6">
+          <div className="columns-2 lg:columns-3 gap-3 sm:gap-6">
             {items.map((item) => {
               const isVideo = item.mediaType === 'VIDEO';
               const cardTheme = getCategoryTheme(item.category);
@@ -129,7 +129,7 @@ export function GallerySection({
                     }
                   }}
                   style={{ '--card-accent': cardTheme?.accent ?? 'var(--color-accent)' } as React.CSSProperties}
-                  className="card-depth card-depth-hover mb-6 break-inside-avoid group cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--card-accent)]/60 transition-colors relative focus-visible:border-[var(--card-accent)]"
+                  className="card-depth card-depth-hover mb-3 sm:mb-6 break-inside-avoid group cursor-pointer rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--card-accent)]/60 transition-colors relative focus-visible:border-[var(--card-accent)]"
                 >
                   <div className="relative overflow-hidden bg-black">
                     <Image
