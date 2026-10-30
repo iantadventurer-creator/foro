@@ -14,7 +14,7 @@ export function Hero({ t, previewShots }: { t: HomeContent; previewShots: FeedIt
       <div className="absolute bottom-0 right-0 w-56 h-56 md:w-[24rem] md:h-[24rem] bg-[var(--color-accent)]/10 rounded-full blur-[130px] pointer-events-none -z-10" />
 
       <div>
-        <motion.div variants={fadeUp} initial="hidden" animate="visible" className="inline-flex items-center gap-2 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-accent-text)] text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" className="lego-studs lego-bevel [--stud-color:var(--color-lego-yellow)] inline-flex items-center gap-2 bg-[var(--color-lego-yellow)] text-[var(--color-lego-yellow-ink)] text-xs font-bold px-4 py-2 rounded-md mt-2 mb-6 uppercase tracking-widest">
           {t.hero.badge}
         </motion.div>
 
@@ -29,12 +29,12 @@ export function Hero({ t, previewShots }: { t: HomeContent; previewShots: FeedIt
             whileHover={{ y: -3 }}
             whileTap={{ y: 2 }}
             href="#gallery"
-            className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-7 py-3.5 rounded-full shadow-[0_8px_24px_-8px_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
+            className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-7 py-3.5 rounded-full lego-bevel [--bevel-glow:var(--shadow-accent)] hover:brightness-110 transition-[filter]"
           >
             {t.hero.btnExplore} ↓
           </motion.a>
           <motion.div whileHover={{ y: -3 }} whileTap={{ y: 2 }}>
-            <Link href="/comunidad" className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white bg-[var(--color-accent-3)] px-7 py-3.5 rounded-full shadow-[0_8px_24px_-8px_var(--shadow-accent-3)] hover:brightness-110 transition-[filter]">
+            <Link href="/comunidad" className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-white bg-[var(--color-accent-3)] px-7 py-3.5 rounded-full lego-bevel [--bevel-glow:var(--shadow-accent-3)] hover:brightness-110 transition-[filter]">
               {t.nav.community}
             </Link>
           </motion.div>

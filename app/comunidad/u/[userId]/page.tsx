@@ -54,7 +54,7 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
                 {loading ? (
                     <PostGridSkeleton count={6} />
                 ) : posts.length === 0 ? (
-                    <EmptyState className="mx-4 sm:mx-0">
+                    <EmptyState>
                         <p>{isOwnProfile ? t.noPostsOwn : t.noPosts}</p>
                         {isOwnProfile && (
                             <Button href="/comunidad?publish=1" className="mt-5">
@@ -63,7 +63,7 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
                         )}
                     </EmptyState>
                 ) : (
-                    <div className="grid grid-cols-3 gap-0.5 sm:gap-1 -mx-4 sm:mx-0">
+                    <div className="grid grid-cols-3 gap-1.5 sm:gap-3">
                         {posts.map((post) => (
                             <PostCard key={post.id} post={post} onClick={() => router.push(`/comunidad?post=${post.id}`)} />
                         ))}

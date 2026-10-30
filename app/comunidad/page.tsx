@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { useToasts, ToastViewport } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { CommunityHeader } from '@/components/community/CommunityHeader';
+import { CommunityWelcome } from '@/components/community/CommunityWelcome';
+import { LegoBrick } from '@/components/ui/LegoBrick';
 import { FeedSection, type FeedSort } from '@/components/community/FeedSection';
 import { PostModal } from '@/components/community/PostModal';
 import { UploadModal } from '@/components/community/UploadModal';
@@ -99,46 +100,35 @@ export default function ComunidadPage() {
                 onPublish={() => setShowUploadModal(true)}
             />
 
-            <div className="max-w-2xl mx-auto px-4 pt-12">
-                <div className="mb-10 text-center">
-                    <h1 className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-[var(--color-text)]">{t.pageTitle}</h1>
-                    <p className="text-sm text-[var(--color-text-muted)] mt-2">{t.pageSubtitle}</p>
-                    <ol className="mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-xs font-semibold text-[var(--color-text-muted)]">
-                        {t.steps.map((step, i) => (
-                            <li key={step} className="flex items-center gap-2">
-                                {i > 0 && <span aria-hidden="true" className="text-[var(--color-text-faint)] mr-1">→</span>}
-                                <span className="w-5 h-5 rounded-full bg-[var(--color-accent-3)]/20 text-[var(--color-accent-3-text)] text-[11px] flex items-center justify-center">{i + 1}</span>
-                                {step}
-                            </li>
-                        ))}
-                    </ol>
+            <div className="max-w-3xl mx-auto px-4 pt-12">
+                <div className="mb-12 text-center">
+                    <div className="flex justify-center items-end gap-1 mb-4" aria-hidden="true">
+                        <LegoBrick color="var(--color-accent)" studs={2} className="h-4 w-auto" />
+                        <LegoBrick color="var(--color-lego-yellow)" studs={1} className="h-4 w-auto" />
+                        <LegoBrick color="var(--color-accent-3)" studs={2} className="h-4 w-auto" />
+                    </div>
+                    <h1 className="font-display text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-text)]">{t.pageTitle}</h1>
+                    <p className="text-sm md:text-base text-[var(--color-text-muted)] mt-2">{t.pageSubtitle}</p>
                 </div>
 
-                {!user ? (
-                    <motion.div
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 mb-8"
-                    >
-                        <h2 className="font-display text-lg font-semibold tracking-tight text-[var(--color-text)] mb-2">
-                            {t.auth.joinTitle}
-                        </h2>
-                        <p className="text-sm text-[var(--color-text-muted)] mb-6">
-                            {t.auth.joinDesc}
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                            <Button href="/comunidad/registro" className="flex-1">
-                                {t.auth.signUpBtn}
-                            </Button>
-                            <Button href="/comunidad/entrar" variant="secondary" className="flex-1">
-                                {t.auth.loginBtn}
-                            </Button>
-                        </div>
-                    </motion.div>
-                ) : null}
+                <CommunityWelcome
+                    t={t}
+                    user={user}
+                    avatarUrl={user ? avatarByUserId[user.id] : undefined}
+                    onPublish={() => setShowUploadModal(true)}
+                />
             </div>
 
             <FeedSection
+                emptyAction={
+                    user ? (
+                        <Button variant="blue" onClick={() => setShowUploadModal(true)}>
+                            {t.emptyCtaIn}
+                        </Button>
+                    ) : (
+                        <Button href="/comunidad/registro">{t.emptyCtaOut}</Button>
+                    )
+                }
                 t={t}
                 posts={displayedPosts}
                 hasAnyPosts={posts.length > 0}

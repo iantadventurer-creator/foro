@@ -5,6 +5,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
 import { MotionProvider } from "@/components/ui/MotionProvider";
+import { LangProvider } from "@/lib/hooks/useLang";
 import { FilmGrainOverlay } from "@/components/ui/FilmGrainOverlay";
 
 const geistSans = Geist({
@@ -81,7 +82,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         <AmbientBackground />
-        <MotionProvider>{children}</MotionProvider>
+        <LangProvider>
+          <MotionProvider>{children}</MotionProvider>
+        </LangProvider>
         <FilmGrainOverlay />
         <Analytics />
       </body>

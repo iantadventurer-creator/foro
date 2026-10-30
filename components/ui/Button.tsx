@@ -7,12 +7,12 @@ type Size = 'sm' | 'md' | 'lg';
 const BASE =
   'inline-flex items-center justify-center gap-2 rounded-full font-bold transition disabled:opacity-50 disabled:pointer-events-none';
 
+// `lego-bevel` (globals.css) da el relieve de plástico; --bevel-glow, el resplandor de color.
 const VARIANTS: Record<Variant, string> = {
-  primary:
-    'bg-[var(--color-accent)] text-[var(--color-accent-ink)] shadow-[0_8px_24px_-8px_var(--shadow-accent)] hover:brightness-110',
-  blue: 'bg-[var(--color-accent-3)] text-white shadow-[0_8px_24px_-8px_var(--shadow-accent-3)] hover:brightness-110',
+  primary: 'lego-bevel [--bevel-glow:var(--shadow-accent)] bg-[var(--color-accent)] text-[var(--color-accent-ink)] hover:brightness-110',
+  blue: 'lego-bevel [--bevel-glow:var(--shadow-accent-3)] bg-[var(--color-accent-3)] text-white hover:brightness-110',
   secondary:
-    'bg-[var(--color-surface-2)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-[var(--color-text-faint)]',
+    'lego-bevel bg-[var(--color-surface-2)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-[var(--color-text-faint)]',
 };
 
 const SIZES: Record<Size, string> = {

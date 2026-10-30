@@ -6,7 +6,7 @@ import { useSessionUserId } from '@/lib/hooks/useSessionUserId';
 import type { CommunityNav } from '@/lib/content/nav';
 
 const publishClass =
-    'font-button uppercase tracking-wider bg-[var(--color-accent-3)] text-white text-xs px-5 py-2 rounded-full shadow-[0_8px_24px_-8px_var(--shadow-accent-3)] hover:brightness-110 transition-[filter] inline-block';
+    'font-button uppercase tracking-wider bg-[var(--color-accent-3)] text-white text-xs px-5 py-2 rounded-full lego-bevel [--bevel-glow:var(--shadow-accent-3)] hover:brightness-110 transition-[filter] inline-block';
 
 /** Links de "Actividad" / "Publicar" / "Mi perfil" para el header — mismo
  * trío y mismo espaciado en las tres páginas de la comunidad. "Publicar"

@@ -1,20 +1,25 @@
+import { LegoBrick } from '@/components/ui/LegoBrick';
+
+const BRICKS = [
+  { color: 'var(--color-accent)', studs: 2 },
+  { color: 'var(--color-lego-yellow)', studs: 1 },
+  { color: 'var(--color-accent-3)', studs: 2 },
+  { color: 'var(--color-accent-4)', studs: 1 },
+];
+
 /**
  * Separador decorativo entre secciones: una línea que se desvanece en los
- * bordes con un pequeño ladrillo LEGO centrado (mismo lenguaje visual que el
- * logo del header) — lectura clara de simple adorno, no de control
- * interactivo (a diferencia de una fila de puntos, que se confunde con un
- * indicador de carrusel).
+ * bordes con una hilera de piezas de los cuatro colores clásicos encima —
+ * mismo lenguaje visual que el logo. Es solo adorno (aria-hidden).
  */
 export function StudDivider() {
-    return (
-        <div aria-hidden="true" className="relative h-px my-3 bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent">
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-3.5">
-                <div className="absolute inset-x-0 -top-1 flex justify-center gap-1.5">
-                    <span className="w-1 h-1 rounded-full bg-[var(--color-accent)]" />
-                    <span className="w-1 h-1 rounded-full bg-[var(--color-accent)]" />
-                </div>
-                <div className="w-full h-full rounded-[2px] bg-[var(--color-accent)] shadow-[0_8px_24px_-8px_var(--shadow-accent)]" />
-            </div>
-        </div>
-    );
+  return (
+    <div aria-hidden="true" className="relative h-px my-6 bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent">
+      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 flex items-end gap-1 bg-[var(--color-ink)] px-3">
+        {BRICKS.map((brick, i) => (
+          <LegoBrick key={i} color={brick.color} studs={brick.studs} className="h-3.5 w-auto" />
+        ))}
+      </div>
+    </div>
+  );
 }

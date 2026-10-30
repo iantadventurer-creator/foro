@@ -10,6 +10,7 @@ import { useModal } from '@/lib/hooks/useModal';
 import { safeExternalUrl } from '@/lib/validation';
 import type { CommunityContent } from '@/lib/content/communityContent';
 import { Avatar } from '@/components/ui/Avatar';
+import { HeartIcon } from '@/components/ui/HeartIcon';
 import { inputClass } from '@/components/ui/inputStyles';
 
 const TITLE_MAX_LENGTH = 280;
@@ -42,6 +43,8 @@ export function PostModal({
   const [editText, setEditText] = useState('');
   const { closeButtonRef, dialogRef, handleBackdropClick } = useModal(!!post, onClose);
   const modalTheme = getCategoryTheme(post?.category ?? null);
+  const likeCount = post?.post_likes?.length ?? 0;
+  const liked = !!user && !!post?.post_likes?.some((l) => l.user_id === user.id);
 
   const handleEdit = async (postId: string) => {
     if (!editText.trim()) return;
@@ -190,25 +193,19 @@ export function PostModal({
                         >
                             <div className="flex items-center justify-between gap-2">
                                 <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 1.3 }}
-                                    transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                                    whileTap={{ scale: 0.92 }}
                                     onClick={() => onToggleLike(post.id, post.post_likes || [])}
-                                    aria-pressed={user ? (post.post_likes || []).some((l) => l.user_id === user.id) : false}
-                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold transition-all ${user && (post.post_likes || []).some((l) => l.user_id === user.id)
-                                        ? 'bg-[var(--color-accent-2)]/10 text-[var(--color-accent-2)] border-[var(--color-accent-2)]/30'
+                                    aria-pressed={liked}
+                                    aria-label={`${liked ? t.unlike : t.like} · ${t.likesCount(likeCount)}`}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-bold transition-colors ${liked
+                                        ? 'lego-bevel bg-[#ff4d6d]/15 text-[#ff8099] border-[#ff4d6d]/40'
                                         : 'bg-[var(--color-surface-2)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'
                                         }`}
                                 >
-                                    <motion.span
-                                        key={user && (post.post_likes || []).some((l) => l.user_id === user.id) ? 'liked' : 'unliked'}
-                                        initial={{ scale: 0.6 }}
-                                        animate={{ scale: 1 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        {user && (post.post_likes || []).some((l) => l.user_id === user.id) ? '❤️' : '🤍'}
+                                    <motion.span key={liked ? 'liked' : 'unliked'} initial={{ scale: 0.5 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 15 }}>
+                                        <HeartIcon filled={liked} className="w-5 h-5" />
                                     </motion.span>
-                                    <span>{(post.post_likes || []).length}</span>
+                                    <span className="tabular-nums">{likeCount}</span>
                                 </motion.button>
 
                                 {user?.id === post.user_id && editingPostId !== post.id && (

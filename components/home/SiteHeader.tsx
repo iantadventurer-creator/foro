@@ -41,7 +41,7 @@ export function SiteHeader({
     <header className="sticky top-0 z-40 bg-[var(--color-ink)]/85 backdrop-blur-md border-b border-[var(--color-border)]">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
         <a href="#top" className="flex items-center gap-3 group">
-          <BrandMark className="w-9 h-9 rounded-md shadow-[0_8px_24px_-8px_var(--shadow-accent)] group-hover:-translate-y-0.5 transition-all" />
+          <BrandMark className="w-9 h-9 rounded-md lego-bevel [--bevel-glow:var(--shadow-accent)] group-hover:-translate-y-0.5 transition-all" />
           <div className="leading-none">
             <span className="font-display font-semibold text-base tracking-tight text-[var(--color-text)] block">IanTBuild</span>
             <span className="text-[10px] text-[var(--color-accent-text)] font-semibold tracking-[0.2em] uppercase">Studio</span>
@@ -81,7 +81,7 @@ export function SiteHeader({
             href="https://instagram.com/iantadventurer"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-button hidden sm:inline-flex items-center text-xs font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-5 py-2.5 rounded-full shadow-[0_8px_24px_-8px_var(--shadow-accent)] hover:brightness-110 transition-[filter]"
+            className="font-button hidden sm:inline-flex items-center text-xs font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-5 py-2.5 rounded-full lego-bevel [--bevel-glow:var(--shadow-accent)] hover:brightness-110 transition-[filter]"
           >
             {t.nav.cta}
           </motion.a>

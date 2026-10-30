@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 import { CATEGORY_KEYS, formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
+import { ImageDropzone } from '@/components/community/ImageDropzone';
+import { Button } from '@/components/ui/Button';
+import { FilterPill } from '@/components/ui/FilterPill';
 import { inputClass } from '@/components/ui/inputStyles';
 import { useModal } from '@/lib/hooks/useModal';
 import { ALLOWED_IMAGE_TYPES, extensionForMime, safeExternalUrl } from '@/lib/validation';
@@ -14,6 +17,7 @@ import type { ToastVariant } from '@/components/ui/Toast';
 const TITLE_MAX_LENGTH = 280;
 const URL_MAX_LENGTH = 200;
 const MAX_FILE_SIZE_MB = 8;
+const labelClass = 'text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]';
 
 function buildUploadFileName(ext: string): string {
   return `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
@@ -131,7 +135,7 @@ export function UploadModal({
                     animate={{ scale: 1, y: 0, opacity: 1 }}
                     exit={{ scale: 0.95, y: 16, opacity: 0 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6"
+                    className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 [scrollbar-width:thin]"
                 >
                     <div className="flex justify-between items-center mb-5">
                         <h2 className="font-display text-lg font-semibold tracking-tight text-[var(--color-text)]">{t.newPostTitle}</h2>
@@ -144,71 +148,66 @@ export function UploadModal({
                             ✕
                         </button>
                     </div>
-                    <form onSubmit={handleUpload} className="flex flex-col gap-4">
-                        <textarea
-                            required
-                            rows={3}
-                            maxLength={TITLE_MAX_LENGTH}
-                            aria-label={t.placeholder}
-                            placeholder={t.placeholder}
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className={`${inputClass} resize-none`}
-                        />
-                        <div className="text-right text-[10px] text-[var(--color-text-faint)] -mt-2">
-                            {title.length}/{TITLE_MAX_LENGTH}
-                        </div>
-                        <input
-                            type="url"
-                            maxLength={URL_MAX_LENGTH}
-                            aria-label={t.instagramUrlPlaceholder}
-                            placeholder={t.instagramUrlPlaceholder}
-                            value={instagramUrlInput}
-                            onChange={(e) => setInstagramUrlInput(e.target.value)}
-                            className={inputClass}
+                    <form onSubmit={handleUpload} className="flex flex-col gap-5">
+                        <ImageDropzone
+                            file={file}
+                            onChange={setFile}
+                            maxSizeMb={MAX_FILE_SIZE_MB}
+                            labels={{ title: t.dropTitle, hint: t.dropHint(MAX_FILE_SIZE_MB), change: t.changePhoto, remove: t.removePhoto, input: t.fileLabel }}
+                            onInvalid={(reason) => notify(reason === 'format' ? t.badFormat : t.tooLarge(MAX_FILE_SIZE_MB), 'error')}
                         />
 
                         <div>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-faint)] block mb-2">{t.categoryLabel}</span>
-                            <div className="flex flex-wrap gap-2">
-                                {CATEGORY_KEYS.map((key) => (
-                                    <button
-                                        key={key}
-                                        type="button"
-                                        onClick={() => setCategory((prev) => (prev === key ? null : key))}
-                                        style={
-                                            category === key
-                                                ? { background: getCategoryTheme(key)!.accent, color: getCategoryTheme(key)!.ink, borderColor: getCategoryTheme(key)!.accent }
-                                                : undefined
-                                        }
-                                        className={`px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wide border transition-colors ${category === key
-                                            ? ''
-                                            : 'bg-transparent text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'
-                                            }`}
-                                    >
-                                        {formatCategoryLabel(key)}
-                                    </button>
-                                ))}
+                            <div className="flex items-baseline justify-between mb-2">
+                                <label htmlFor="post-description" className={labelClass}>{t.descriptionLabel}</label>
+                                <span className="text-[10px] text-[var(--color-text-faint)] tabular-nums" aria-hidden="true">
+                                    {title.length}/{TITLE_MAX_LENGTH}
+                                </span>
                             </div>
+                            <textarea
+                                id="post-description"
+                                required
+                                rows={3}
+                                maxLength={TITLE_MAX_LENGTH}
+                                placeholder={t.placeholder}
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className={`${inputClass} resize-none`}
+                            />
                         </div>
 
-                        <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/gif"
-                            aria-label={t.fileLabel}
-                            required
-                            onChange={(e) => e.target.files && setFile(e.target.files[0])}
-                            className="w-full text-[var(--color-text-muted)] border border-[var(--color-border)] rounded-xl px-4 py-2 text-xs font-medium file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[var(--color-accent)] file:text-[var(--color-accent-ink)] hover:file:cursor-pointer hover:file:brightness-110"
-                        />
-                        <motion.button
-                            whileHover={{ y: -2 }}
-                            whileTap={{ y: 1 }}
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-[var(--color-accent-3)] text-white font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider hover:brightness-110 transition disabled:opacity-50"
-                        >
+                        <div>
+                            <label htmlFor="post-instagram" className={`${labelClass} block mb-2`}>{t.instagramLabel}</label>
+                            <input
+                                id="post-instagram"
+                                type="url"
+                                maxLength={URL_MAX_LENGTH}
+                                placeholder="https://instagram.com/…"
+                                value={instagramUrlInput}
+                                onChange={(e) => setInstagramUrlInput(e.target.value)}
+                                className={inputClass}
+                            />
+                        </div>
+
+                        <fieldset>
+                            <legend className={`${labelClass} mb-2`}>{t.categoryLabel}</legend>
+                            <div className="flex flex-wrap gap-2">
+                                {CATEGORY_KEYS.map((key) => (
+                                    <FilterPill
+                                        key={key}
+                                        onClick={() => setCategory((prev) => (prev === key ? null : key))}
+                                        active={category === key}
+                                        theme={getCategoryTheme(key)}
+                                    >
+                                        {formatCategoryLabel(key)}
+                                    </FilterPill>
+                                ))}
+                            </div>
+                        </fieldset>
+
+                        <Button type="submit" variant="blue" fullWidth disabled={loading || !file || !title.trim()}>
                             {loading ? t.publishingBtn : t.publishBtn}
-                        </motion.button>
+                        </Button>
                     </form>
                 </motion.div>
             </motion.div>

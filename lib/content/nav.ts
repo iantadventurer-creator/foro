@@ -9,6 +9,9 @@ export const communityNav = {
     publish: 'Publicar',
     profile: 'Mi perfil',
     logout: 'Cerrar sesión',
+    feed: 'Feed',
+    profileShort: 'Perfil',
+    navLabel: 'Navegación de la comunidad',
   },
   en: {
     backToHome: '← Back to home',
@@ -17,6 +20,9 @@ export const communityNav = {
     publish: 'Post',
     profile: 'My profile',
     logout: 'Log out',
+    feed: 'Feed',
+    profileShort: 'Profile',
+    navLabel: 'Community navigation',
   },
 };
 

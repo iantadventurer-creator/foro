@@ -1,9 +1,9 @@
 /** Cuadrícula de miniaturas "cargando" (feed y perfil). */
 export function PostGridSkeleton({ count = 9 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-3 gap-0.5 sm:gap-1 -mx-4 sm:mx-0" aria-hidden="true">
+    <div className="grid grid-cols-3 gap-1.5 sm:gap-3" aria-hidden="true">
       {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="aspect-square animate-shimmer" />
+        <div key={i} className="aspect-square rounded-lg animate-shimmer" />
       ))}
     </div>
   );
