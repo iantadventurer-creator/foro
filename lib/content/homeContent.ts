@@ -14,6 +14,10 @@ export const homeContent = {
       display: ['Pieza a', 'pieza'],
       meta: 'Portafolio',
       scroll: 'Desplázate',
+      viewPhoto: 'Ver foto',
+      slide: 'Foto',
+      pause: 'Pausar el pase de fotos',
+      play: 'Reanudar el pase de fotos',
     },
     universes: {
       eyebrow: 'Índice',
@@ -79,6 +83,10 @@ export const homeContent = {
       display: ['Brick by', 'brick'],
       meta: 'Portfolio',
       scroll: 'Scroll',
+      viewPhoto: 'View photo',
+      slide: 'Photo',
+      pause: 'Pause the slideshow',
+      play: 'Resume the slideshow',
     },
     universes: {
       eyebrow: 'Index',

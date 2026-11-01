@@ -143,6 +143,16 @@ button {
   animation: shimmer 1.6s linear infinite;
 }
 
+/* Barra de progreso del pase de fotos de la portada */
+@keyframes hero-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.hero-progress {
+  animation: hero-progress 6.5s linear forwards;
+}
+
 .mask-fade-b {
   mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from 'react';
 
-type Variant = 'primary' | 'accent' | 'secondary';
+type Variant = 'primary' | 'accent' | 'secondary' | 'onPhoto' | 'glass';
 type Size = 'sm' | 'md' | 'lg';
 
 const BASE =
@@ -9,11 +9,14 @@ const BASE =
 
 // Botones: píldoras sobrias que se elevan un poco al pasar el ratón (utilidad
 // lift de globals.css). "primary" es el acento pizarra; "accent", el salvia
-// de la comunidad; "secondary", neutro con filete.
+// de la comunidad; "secondary", neutro con filete. "onPhoto" y "glass" son
+// para ir encima de una foto (blanco sólido y cristal translúcido).
 const VARIANTS: Record<Variant, string> = {
   primary: 'border-transparent bg-[var(--color-accent)] text-[var(--color-accent-ink)]',
   accent: 'border-transparent bg-[var(--color-accent-3)] text-[var(--color-accent-3-ink)]',
   secondary: 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)]',
+  onPhoto: 'border-transparent bg-white text-[#1d1d1f]',
+  glass: 'border-white/35 bg-white/10 text-white backdrop-blur-md hover:bg-white/20',
 };
 
 const SIZES: Record<Size, string> = {
