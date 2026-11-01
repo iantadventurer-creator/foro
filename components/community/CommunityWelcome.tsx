@@ -42,7 +42,7 @@ export function CommunityWelcome({
                         <Avatar handle={handle} imageUrl={avatarUrl} size={56} />
                     </span>
                     <div className="min-w-0">
-                        <h2 className="font-display text-2xl font-black truncate">{t.welcomeGreeting(handle)}</h2>
+                        <h2 className="font-display text-2xl font-extrabold truncate">{t.welcomeGreeting(handle)}</h2>
                         <p className="text-sm text-[var(--color-text-muted)]">{t.welcomeDesc}</p>
                     </div>
                 </div>
@@ -61,7 +61,7 @@ export function CommunityWelcome({
     return (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className={`${cardClass} grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center`}>
             <div>
-                <h2 className="font-display text-3xl font-black uppercase leading-[0.95] text-[var(--color-text)] mb-2">{t.auth.joinTitle}</h2>
+                <h2 className="font-display text-3xl font-extrabold leading-[0.95] text-[var(--color-text)] mb-2">{t.auth.joinTitle}</h2>
                 <p className="text-sm text-[var(--color-text-muted)] mb-5">{t.auth.joinDesc}</p>
                 <ol className="grid gap-3 sm:grid-cols-3 [--color-border:#13204a] [--toy-shadow:#13204a]">
                     {t.steps.map((step, i) => (
@@ -70,7 +70,7 @@ export function CommunityWelcome({
                             style={{ background: STEP_COLORS[i].bg, color: STEP_COLORS[i].ink }}
                             className={`toy-sm flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-extrabold ${i === 1 ? 'sm:rotate-1' : 'sm:-rotate-1'}`}
                         >
-                            <span className="w-8 h-8 shrink-0 rounded-full border-2 border-[#13204a] bg-white text-[#13204a] flex items-center justify-center font-black">
+                            <span className="w-8 h-8 shrink-0 rounded-full border-2 border-[#13204a] bg-white text-[#13204a] flex items-center justify-center font-extrabold">
                                 {i + 1}
                             </span>
                             {step}

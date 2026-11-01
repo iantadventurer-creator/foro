@@ -35,7 +35,7 @@ export function ProfileHeader({
     onPickAvatar: (file: File) => void;
 }) {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-    const nameClass = 'font-display font-black leading-[0.95] tracking-[-0.02em] text-[clamp(2.2rem,7vw,5.5rem)] break-all';
+    const nameClass = 'font-display font-extrabold leading-[0.95] tracking-[-0.04em] text-[clamp(2.2rem,7vw,5.5rem)] break-all';
 
     return (
         <motion.div
@@ -61,7 +61,7 @@ export function ProfileHeader({
                                 disabled={uploading}
                                 aria-label={editAvatarLabel}
                                 title={editAvatarLabel}
-                                className="toy-sm toy-press absolute -bottom-1 -right-1 w-10 h-10 rounded-full bg-[var(--color-highlight)] text-[#13204a] flex items-center justify-center text-base font-black disabled:opacity-60"
+                                className="toy-sm toy-press absolute -bottom-1 -right-1 w-10 h-10 rounded-full bg-[var(--color-highlight)] text-[#13204a] flex items-center justify-center text-base font-extrabold disabled:opacity-60"
                             >
                                 {uploading ? '…' : '✎'}
                             </button>

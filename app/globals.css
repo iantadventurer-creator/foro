@@ -7,9 +7,9 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  /* Redonda y gruesa, de caja de juguete */
-  --font-display: var(--font-rubik);
-  --font-button: var(--font-rubik);
+  /* Grotesca expresiva con tamaños ópticos */
+  --font-display: var(--font-bricolage);
+  --font-button: var(--font-bricolage);
 
   /* Esquinas generosas de pieza de plástico */
   --radius-sm: 6px;

@@ -13,7 +13,7 @@ import { fadeUp } from '@/lib/motion';
 import type { HomeContent } from '@/lib/content/homeContent';
 import type { FeedItem } from '@/lib/gallery';
 
-const FAVORITE_THEME = { accent: '#ff4d8d', shadow: '#8a1638', ink: '#13204a' };
+const FAVORITE_THEME = { accent: '#e0245e', shadow: '#8a1638', ink: '#ffffff' };
 
 export function GallerySection({
   t,
@@ -176,7 +176,7 @@ export function GallerySection({
                       document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
                     }}
                     aria-current={safePage === pageNum ? 'page' : undefined}
-                    className={`toy-sm toy-press w-11 h-11 rounded-full font-black text-sm ${safePage === pageNum
+                    className={`toy-sm toy-press w-11 h-11 rounded-full font-extrabold text-sm ${safePage === pageNum
                       ? 'bg-[var(--color-highlight)] text-[var(--color-highlight-ink)]'
                       : 'bg-[var(--color-surface)] text-[var(--color-text)]'
                       }`}

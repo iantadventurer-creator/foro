@@ -34,7 +34,7 @@ export function PageTitle({
         <span className="sticker bg-[var(--color-highlight)] text-[#13204a]">{meta}</span>
         {aside && <span className="sticker bg-white text-[#13204a] rotate-[2deg]">{aside}</span>}
       </div>
-      <h1 className="mt-5 font-display font-black uppercase leading-[0.88] tracking-[-0.02em] text-[clamp(2rem,10.5vw,7.5rem)] break-words">
+      <h1 className="mt-5 font-display font-extrabold leading-[0.9] tracking-[-0.045em] text-[clamp(2.6rem,11vw,7.5rem)] break-words">
         {title}
       </h1>
       {subtitle && <p className="mt-4 max-w-xl text-base md:text-lg font-medium leading-relaxed opacity-90">{subtitle}</p>}

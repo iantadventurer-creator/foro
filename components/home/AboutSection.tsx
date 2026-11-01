@@ -24,7 +24,7 @@ export function AboutSection({ t, sectionRef }: { t: HomeContent; sectionRef: Re
           <LegoBrick color="var(--color-accent-3)" studs={1} className="h-8 w-auto" />
         </div>
         <span className="sticker bg-[var(--color-accent)] text-white">#04 {t.aboutSection.eyebrow}</span>
-        <h2 className="mt-5 max-w-2xl font-display text-3xl md:text-5xl font-black uppercase leading-[0.95]">{t.aboutSection.title}</h2>
+        <h2 className="mt-5 max-w-2xl font-display text-3xl md:text-5xl font-extrabold leading-[0.95]">{t.aboutSection.title}</h2>
         <p className="mt-6 max-w-3xl font-display text-xl md:text-3xl font-bold leading-snug">{t.aboutSection.desc}</p>
         <a
           href="https://instagram.com/iantadventurer"

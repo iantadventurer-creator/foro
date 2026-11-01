@@ -45,19 +45,12 @@ export function Hero({
         transition={POP}
         className="toy relative overflow-hidden rounded-[2.5rem] [--color-border:#13204a] [--toy-shadow:#13204a] bg-[var(--color-accent)] text-white px-6 py-10 sm:px-10 md:px-14 md:py-16 grid grid-cols-1 gap-12 md:grid-cols-[1.05fr_0.95fr] md:items-center"
       >
-        {/* Studs decorativos del bloque */}
-        <div className="pointer-events-none absolute -right-10 -bottom-10 grid grid-cols-4 gap-4 opacity-20" aria-hidden="true">
-          {Array.from({ length: 8 }, (_, i) => (
-            <span key={i} className="w-12 h-12 rounded-full border-4 border-white" />
-          ))}
-        </div>
-
         <div className="relative min-w-0">
           <span className="sticker bg-[var(--color-highlight)] text-[#13204a]">
             ✦ {t.hero.badge}
           </span>
 
-          <h1 className="mt-6 font-display font-black uppercase leading-[0.86] tracking-[-0.02em] text-[clamp(3.4rem,10vw,8rem)]">
+          <h1 className="mt-6 font-display font-extrabold leading-[0.86] tracking-[-0.04em] text-[clamp(3.4rem,10vw,8rem)]">
             <motion.span className="block" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ ...POP, delay: 0.1 }}>
               {t.hero.display[0]}
             </motion.span>
@@ -98,7 +91,7 @@ export function Hero({
                 key={stat.label}
                 className={`inline-flex items-center gap-2 rounded-2xl border-2 border-white/80 px-4 py-2 ${i === 0 ? 'rotate-[-2deg]' : 'rotate-[2deg]'}`}
               >
-                <span className="font-display text-3xl font-black tabular-nums">{loading ? '–' : stat.value}</span>
+                <span className="font-display text-3xl font-extrabold tabular-nums">{loading ? '–' : stat.value}</span>
                 <span className="label-caps text-white/90 max-w-[6rem]">{stat.label}</span>
               </li>
             ))}

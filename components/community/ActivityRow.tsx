@@ -42,7 +42,7 @@ export function ActivityRow({
         >
             <Avatar handle={who} size={36} />
             <p className="flex-1 min-w-0 text-sm text-[var(--color-text)]">
-                <span className="font-black text-[var(--color-accent-text)]">{who}</span>
+                <span className="font-extrabold text-[var(--color-accent-text)]">{who}</span>
                 {' '}{t.likedYourPost}{' '}
                 <span className="text-[var(--color-text-muted)]">&quot;{title.slice(0, 40)}{title.length > 40 ? '…' : ''}&quot;</span>
                 <span className="label-caps block text-[10px] text-[var(--color-text-faint)] mt-1">{timeAgo(item.likedAt, t)}</span>

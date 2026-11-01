@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
-import { Rubik } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
@@ -13,11 +13,12 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-// Redonda y muy gruesa, de caja de juguete: titulares, botones y etiquetas.
-const rubik = Rubik({
-  variable: "--font-rubik",
+// Grotesca con tamaños ópticos (más compacta y con más carácter cuanto más
+// grande): titulares, botones y etiquetas.
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  weight: ["500", "700", "800", "900"],
+  axes: ["opsz"],
 });
 
 export const metadata: Metadata = {
@@ -71,7 +72,7 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${rubik.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${bricolage.variable} h-full antialiased`}
       // El script de <head> pone data-theme antes de que React hidrate.
       suppressHydrationWarning
     >

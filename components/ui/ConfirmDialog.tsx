@@ -44,7 +44,7 @@ export function ConfirmDialog({
                         onClick={(e) => e.stopPropagation()}
                         className="toy w-full max-w-sm rounded-3xl bg-[var(--color-surface)] p-6"
                     >
-                        <h2 className="font-display text-2xl font-black uppercase tracking-[-0.01em] text-[var(--color-text)] mb-2">{title}</h2>
+                        <h2 className="font-display text-2xl font-extrabold tracking-[-0.04em] text-[var(--color-text)] mb-2">{title}</h2>
                         {description && (
                             <p className="text-sm text-[var(--color-text-muted)] mb-6 leading-relaxed">{description}</p>
                         )}

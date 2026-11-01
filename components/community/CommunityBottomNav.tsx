@@ -56,7 +56,7 @@ export function CommunityBottomNav() {
         <Link
           href={userId ? '/comunidad?publish=1' : '/comunidad/entrar'}
           aria-label={nav.publish}
-          className="toy-sm toy-press flex items-center justify-center w-12 h-12 -mt-6 rounded-2xl bg-[var(--color-accent)] text-white text-3xl font-black leading-none"
+          className="toy-sm toy-press flex items-center justify-center w-12 h-12 -mt-6 rounded-2xl bg-[var(--color-accent)] text-white text-3xl font-extrabold leading-none"
         >
           +
         </Link>

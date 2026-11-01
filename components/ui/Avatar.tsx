@@ -16,7 +16,7 @@ export function Avatar({
 }) {
   return (
     <span
-      className={`relative shrink-0 rounded-full overflow-hidden inline-flex items-center justify-center font-black text-white ${className}`.trim()}
+      className={`relative shrink-0 rounded-full overflow-hidden inline-flex items-center justify-center font-extrabold text-white ${className}`.trim()}
       style={{ width: size, height: size, fontSize: Math.round(size * 0.33), background: imageUrl ? undefined : avatarColorFor(handle) }}
       aria-hidden="true"
     >

@@ -54,7 +54,7 @@ export function AuthShell({
                 >
                     <div className="relative bg-[var(--color-accent)] text-white px-7 py-7 border-b-[3px] border-[var(--color-border)]">
                         <BrandMark className="w-12 h-12 rounded-2xl border-2 border-[#13204a] mb-4 hover-wiggle" />
-                        <p className="font-display text-4xl font-black tracking-[-0.02em]">IanTBuild</p>
+                        <p className="font-display text-4xl font-extrabold tracking-[-0.04em]">IanTBuild</p>
                         <p className="text-sm font-medium text-white/90 mt-2 leading-relaxed">{tagline}</p>
                     </div>
                     <div className="px-7 py-7">{children}</div>
@@ -67,7 +67,7 @@ export function AuthShell({
                     className="toy-sm rounded-3xl bg-[var(--color-highlight)] text-[#13204a] px-7 py-4 text-center text-sm font-semibold"
                 >
                     {switchText}{' '}
-                    <Link href={switchHref} className="font-black underline underline-offset-4 decoration-2">
+                    <Link href={switchHref} className="font-extrabold underline underline-offset-4 decoration-2">
                         {switchLabel}
                     </Link>
                 </motion.div>

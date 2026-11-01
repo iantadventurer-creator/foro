@@ -36,7 +36,7 @@ export function SectionHeading({
         {eyebrow}
       </span>
       <div className="grid gap-5 md:grid-cols-[1fr_minmax(0,22rem)] md:items-end">
-        <h2 className="font-display text-[clamp(2.4rem,6.5vw,5rem)] font-black uppercase leading-[0.92] tracking-[-0.02em] text-[var(--color-text)]">
+        <h2 className="font-display text-[clamp(2.4rem,6.5vw,5rem)] font-extrabold leading-[0.92] tracking-[-0.04em] text-[var(--color-text)]">
           {title}
         </h2>
         {(subtitle || children) && (

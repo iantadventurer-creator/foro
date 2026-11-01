@@ -132,9 +132,9 @@ export function PostModal({
                         <div className="flex flex-col gap-4">
                             {modalTheme && post.category && (
                                 <span
-                                    className="self-start text-[10px] font-bold px-2.5 py-1 uppercase tracking-wide"
-                                    style={{ background: `${modalTheme.accent}22`, color: categoryTextColor(modalTheme) }}
+                                    className="label-caps self-start flex items-center gap-1.5 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] pl-1.5 pr-2.5 py-1"
                                 >
+                                    <span className="w-2.5 h-2.5 rounded-full" style={{ background: modalTheme.accent }} aria-hidden="true" />
                                     {formatCategoryLabel(post.category)}
                                 </span>
                             )}
@@ -179,7 +179,7 @@ export function PostModal({
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="font-display text-2xl md:text-3xl font-bold uppercase tracking-[-0.03em] text-[var(--color-text)] leading-[1.05] whitespace-pre-line"
+                                        className="font-display text-2xl md:text-3xl font-bold tracking-[-0.04em] text-[var(--color-text)] leading-[1.05] whitespace-pre-line"
                                     >
                                         {post.title}
                                     </motion.p>
@@ -198,12 +198,12 @@ export function PostModal({
                                     aria-pressed={liked}
                                     aria-label={`${liked ? t.unlike : t.like} · ${t.likesCount(likeCount)}`}
                                     className={`toy-sm toy-press flex items-center gap-2 px-4 py-2 rounded-full text-sm font-extrabold ${liked
-                                        ? 'bg-[#ff7aa8] text-[#13204a]'
+                                        ? 'bg-[var(--color-highlight)] text-[var(--color-highlight-ink)]'
                                         : 'bg-[var(--color-surface)] text-[var(--color-text)]'
                                         }`}
                                 >
                                     <motion.span key={liked ? 'liked' : 'unliked'} initial={{ scale: 0.5 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 15 }}>
-                                        <HeartIcon filled={liked} className="w-5 h-5" />
+                                        <HeartIcon filled={liked} className={`w-5 h-5 ${liked ? 'text-[#e0245e]' : ''}`} />
                                     </motion.span>
                                     <span className="tabular-nums">{likeCount}</span>
                                 </motion.button>

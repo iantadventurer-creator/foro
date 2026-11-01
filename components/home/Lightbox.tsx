@@ -184,7 +184,7 @@ export function Lightbox({
                 </div>
               </div>
               <div className="flex-1 flex flex-col items-center justify-center text-center py-6">
-                <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-[var(--color-text)] mb-3">{item.title}</h3>
+                <h3 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-[var(--color-text)] mb-3">{item.title}</h3>
                 <div
                   className="w-full pt-4 mt-3 flex flex-col gap-2.5"
                   style={{ borderTop: `1px solid ${modalTheme ? `${modalTheme.accent}40` : 'var(--color-border)'}` }}

@@ -8,10 +8,17 @@ import type { HomeContent } from '@/lib/content/homeContent';
 
 export type Universe = { name: string; count: number; cover?: string };
 
-const FALLBACK = { accent: '#c9b8ff', ink: '#13204a' };
+// Las fichas alternan los tres colores de la paleta, para que la sección
+// combine con el resto de la web; el color propio de cada franquicia queda
+// como un punto junto al nombre.
+const TILE_TONES = [
+  { bg: 'var(--color-accent)', ink: '#ffffff' },
+  { bg: 'var(--color-accent-3)', ink: '#13204a' },
+  { bg: 'var(--color-highlight)', ink: '#13204a' },
+];
 
-/** Universos (Star Wars, Ninjago...) como fichas de juguete, cada una del
- * color de su universo, con su foto más reciente y una pegatina con el
+/** Universos (Star Wars, Ninjago...) como fichas de juguete con su foto más
+ * reciente y una pegatina con el
  * número de fotos. Al tocar una, la galería se filtra por ese universo. */
 export function UniverseTiles({
   t,
@@ -30,7 +37,8 @@ export function UniverseTiles({
 
       <ul className="mt-10 grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {universes.map((universe, i) => {
-          const theme = getCategoryTheme(universe.name) ?? FALLBACK;
+          const theme = getCategoryTheme(universe.name);
+          const tone = TILE_TONES[i % TILE_TONES.length];
           return (
             <motion.li
               key={universe.name}
@@ -43,7 +51,7 @@ export function UniverseTiles({
                 type="button"
                 onClick={() => onSelect(universe.name)}
                 aria-label={`${formatCategoryLabel(universe.name)} — ${t.universes.photos(universe.count)}`}
-                style={{ background: theme.accent, color: theme.ink }}
+                style={{ background: tone.bg, color: tone.ink }}
                 className="toy toy-press group relative w-full h-full flex flex-col gap-3 sm:gap-4 rounded-3xl p-2.5 sm:p-3.5 text-left [--color-border:#13204a] [--toy-shadow:#13204a]"
               >
                 <span className="relative block aspect-[4/3] overflow-hidden rounded-2xl border-2 border-[#13204a] bg-black/20">
@@ -61,11 +69,16 @@ export function UniverseTiles({
                   </span>
                 </span>
                 <span className="flex items-end justify-between gap-2 px-1.5 pb-1">
-                  <span className="font-display text-xl sm:text-3xl font-black uppercase leading-[0.95] tracking-[-0.01em]">
+                  <span className="flex items-center gap-2 font-display text-xl sm:text-3xl font-extrabold leading-[0.95] tracking-[-0.04em]">
+                    <span
+                      className="w-3 h-3 sm:w-4 sm:h-4 shrink-0 rounded-full border-2 border-[#13204a]"
+                      style={{ background: theme?.accent ?? '#ffffff' }}
+                      aria-hidden="true"
+                    />
                     {formatCategoryLabel(universe.name)}
                   </span>
                   <span
-                    className="shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#13204a] bg-white text-[#13204a] flex items-center justify-center font-black transition-transform group-hover:rotate-[-45deg]"
+                    className="shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#13204a] bg-white text-[#13204a] flex items-center justify-center font-extrabold transition-transform group-hover:rotate-[-45deg]"
                     aria-hidden="true"
                   >
                     →

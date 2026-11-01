@@ -14,7 +14,7 @@ export function SiteFooter({ t, onOpenQr }: { t: HomeContent; onOpenQr: () => vo
           <div className="col-span-2">
             <span className="flex items-center gap-3 mb-4">
               <BrandMark className="w-10 h-10 rounded-xl border-2 border-[#13204a]" />
-              <span className="font-display text-lg font-black">@iantadventurer</span>
+              <span className="font-display text-lg font-extrabold">@iantadventurer</span>
             </span>
             <p className="max-w-xs font-display text-xl font-bold leading-snug">{t.footer.tagline}</p>
           </div>
@@ -36,7 +36,7 @@ export function SiteFooter({ t, onOpenQr }: { t: HomeContent; onOpenQr: () => vo
         </div>
 
         <p
-          className="max-w-7xl mx-auto px-6 sm:px-10 mt-10 font-display font-black leading-[0.8] tracking-[-0.03em] text-[clamp(3.2rem,15vw,12.5rem)] whitespace-nowrap select-none text-[var(--color-accent-3)] [text-shadow:5px_5px_0_rgba(0,0,0,0.35)]"
+          className="max-w-7xl mx-auto px-6 sm:px-10 mt-10 font-display font-extrabold leading-[0.8] tracking-[-0.04em] text-[clamp(3.2rem,15vw,12.5rem)] whitespace-nowrap select-none text-[var(--color-accent-3)] [text-shadow:5px_5px_0_rgba(0,0,0,0.35)]"
           aria-hidden="true"
         >
           IanTBuild

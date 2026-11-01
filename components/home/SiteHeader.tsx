@@ -43,7 +43,7 @@ export function SiteHeader({
       <div className="max-w-7xl mx-auto flex justify-between items-center gap-4 px-4 sm:px-6 py-3">
         <a href="#top" className="group flex items-center gap-2.5">
           <BrandMark className="w-9 h-9 rounded-xl border-2 border-[var(--color-border)] group-hover:rotate-[-8deg] transition-transform" />
-          <span className="font-display font-black text-xl tracking-[-0.02em] text-[var(--color-text)]">IanTBuild</span>
+          <span className="font-display font-extrabold text-xl tracking-[-0.02em] text-[var(--color-text)]">IanTBuild</span>
         </a>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-extrabold text-[var(--color-text)]">
@@ -97,13 +97,13 @@ export function SiteHeader({
             className="md:hidden overflow-hidden border-t-2 border-[var(--color-border)]"
           >
             <div className="px-4 sm:px-6 py-3 flex flex-col">
-              <a href="#gallery" onClick={(e) => { e.preventDefault(); scrollToSection('gallery'); }} className="block py-3 font-display text-3xl font-black uppercase text-[var(--color-text)] hover:text-[var(--color-accent-text)]">{t.nav.gallery}</a>
-              <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="block py-3 font-display text-3xl font-black uppercase text-[var(--color-text)] hover:text-[var(--color-accent-text)]">{t.nav.community}</Link>
-              <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="block py-3 font-display text-3xl font-black uppercase text-[var(--color-text)] hover:text-[var(--color-accent-text)]">{t.nav.about}</a>
+              <a href="#gallery" onClick={(e) => { e.preventDefault(); scrollToSection('gallery'); }} className="block py-3 font-display text-3xl font-extrabold text-[var(--color-text)] hover:text-[var(--color-accent-text)]">{t.nav.gallery}</a>
+              <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="block py-3 font-display text-3xl font-extrabold text-[var(--color-text)] hover:text-[var(--color-accent-text)]">{t.nav.community}</Link>
+              <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="block py-3 font-display text-3xl font-extrabold text-[var(--color-text)] hover:text-[var(--color-accent-text)]">{t.nav.about}</a>
               <button
                 onClick={() => { setMobileMenuOpen(false); onOpenQr(); }}
                 aria-label={t.footer.qrLabel}
-                className="block w-full text-left py-3 font-display text-3xl font-black uppercase text-[var(--color-text)] hover:text-[var(--color-accent-text)]"
+                className="block w-full text-left py-3 font-display text-3xl font-extrabold text-[var(--color-text)] hover:text-[var(--color-accent-text)]"
               >
                 {t.footer.qrLabel}
               </button>

@@ -104,7 +104,7 @@ export function ImageDropzone({
                 }`}
         >
             {input}
-            <span className="toy-sm w-12 h-12 rounded-2xl bg-[var(--color-highlight)] text-[var(--color-highlight-ink)] flex items-center justify-center text-3xl font-black leading-none" aria-hidden="true">+</span>
+            <span className="toy-sm w-12 h-12 rounded-2xl bg-[var(--color-highlight)] text-[var(--color-highlight-ink)] flex items-center justify-center text-3xl font-extrabold leading-none" aria-hidden="true">+</span>
             <span className="text-sm font-extrabold text-[var(--color-text)]">{labels.title}</span>
             <span className="text-xs text-[var(--color-text-faint)]">{labels.hint}</span>
         </label>

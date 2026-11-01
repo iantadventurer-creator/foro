@@ -22,10 +22,10 @@ export function IntroSection({ t }: { t: HomeContent }) {
           const style = { background: block.bg, color: block.ink };
           const inner = (
             <>
-              <span className="w-12 h-12 rounded-full border-2 border-[#13204a] bg-white text-[#13204a] flex items-center justify-center font-display text-xl font-black">
+              <span className="w-12 h-12 rounded-full border-2 border-[#13204a] bg-white text-[#13204a] flex items-center justify-center font-display text-xl font-extrabold">
                 {i + 1}
               </span>
-              <h3 className="font-display text-3xl md:text-4xl font-black uppercase leading-[0.95]">{card.title}</h3>
+              <h3 className="font-display text-3xl md:text-4xl font-extrabold leading-[0.95]">{card.title}</h3>
               <p className="text-sm md:text-base font-medium leading-relaxed opacity-90">{card.desc}</p>
               <span className="mt-auto pt-2 inline-flex items-center gap-2 font-display text-sm font-extrabold uppercase">
                 {card.cta}
