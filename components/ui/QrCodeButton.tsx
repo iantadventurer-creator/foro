@@ -11,10 +11,10 @@ const SITE_URL = 'https://iantbuild.vercel.app';
 // tokens que ya se usan en el resto del sitio (acentos base + un par de
 // temas de categoría), nada inventado para esta pieza.
 export const QR_BRICK_COLORS = [
-  { name: 'Rojo', accent: '#e3000b', shadow: '#8c0007' },
-  { name: 'Amarillo', accent: '#ffd500', shadow: '#a88c00' },
-  { name: 'Azul', accent: '#0055bf', shadow: '#003270' },
-  { name: 'Verde', accent: '#00852b', shadow: '#004d19' },
+  { name: 'Cobalto', accent: '#2b4fd6', shadow: '#172d85' },
+  { name: 'Marino', accent: '#13204a', shadow: '#060a18' },
+  { name: 'Violeta', accent: '#6d4fd1', shadow: '#3f2b8c' },
+  { name: 'Turquesa', accent: '#0b7c74', shadow: '#064a45' },
 ] as const;
 
 const MODULE = 10;
@@ -120,11 +120,11 @@ export function QrCodeModal({
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 300, damping: 28 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-xs bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[28px] p-7 shadow-2xl"
+            className="toy relative w-full max-w-xs rounded-[2rem] bg-[var(--color-surface)] p-7"
           >
-            <span className="absolute top-3.5 left-3.5 w-3.5 h-3.5 rounded-full bg-[var(--color-accent)] shadow-[0_3px_0_0_rgba(0,0,0,0.35)]" aria-hidden="true" />
-            <span className="absolute bottom-3.5 left-3.5 w-3.5 h-3.5 rounded-full bg-[var(--color-accent-3)] shadow-[0_3px_0_0_rgba(0,0,0,0.35)]" aria-hidden="true" />
-            <span className="absolute bottom-3.5 right-3.5 w-3.5 h-3.5 rounded-full bg-[var(--color-accent-4)] shadow-[0_3px_0_0_rgba(0,0,0,0.35)]" aria-hidden="true" />
+            <span className="absolute top-3.5 left-3.5 w-3.5 h-3.5 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-accent)]" aria-hidden="true" />
+            <span className="absolute bottom-3.5 left-3.5 w-3.5 h-3.5 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-accent-3)]" aria-hidden="true" />
+            <span className="absolute bottom-3.5 right-3.5 w-3.5 h-3.5 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-accent-4)]" aria-hidden="true" />
 
             <div className="flex justify-end mb-3">
               <button

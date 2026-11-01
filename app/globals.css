@@ -7,58 +7,68 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-display: var(--font-space-grotesk);
-  --font-button: var(--font-space-grotesk);
-  --font-mono: var(--font-space-mono);
+  /* Redonda y gruesa, de caja de juguete */
+  --font-display: var(--font-rubik);
+  --font-button: var(--font-rubik);
 
-  /* Paleta "cinemática" inspirada en Lego Classic Space (Awwwards): azul
-     marino #193261 y amarillo #FFCA20 como pareja principal, rojo LEGO para la
-     acción, azul y verde como complementos.
-     Todos los valores viven en :root (claro) y [data-theme='dark'] (oscuro). */
+  /* Esquinas generosas de pieza de plástico */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
 }
 
+/* Paleta "marca de juguete" (inspirada en webs de Awwwards como Ring Pop® o
+   Gallery Play®): bloques de color a sangre, contornos gruesos y sombras
+   sólidas desplazadas, como una pegatina.
+   Los colores forman una armonía fría y cada uno tiene un papel:
+   - Cobalto  (--color-accent):    la marca y las acciones principales.
+   - Turquesa (--color-accent-3):  la comunidad y las acciones secundarias.
+   - Lavanda  (--color-highlight): destacados (pegatinas, activo, selección).
+   - Marino   (--color-border):    la "tinta" de contornos, sombras y texto.
+   El calor lo ponen las fotos; el rojo queda solo para errores y borrar.
+   Los valores viven en :root (claro) y [data-theme='dark'] (oscuro). */
 :root {
   color-scheme: light;
 
-  --color-ink: #f6f4ee;          /* fondo de página (crema) */
-  --color-surface: #ffffff;      /* tarjetas, modales, cabecera */
-  --color-surface-2: #efece3;    /* campos, botones secundarios, zonas hundidas */
-  --color-border: #e2ddcf;
-  --color-text: #193261;         /* azul marino Classic Space */
-  --color-text-muted: #4f5b75;
-  --color-text-faint: #5d6884;
+  --color-ink: #f4f6fb;          /* fondo de página (papel frío) */
+  --color-surface: #ffffff;      /* tarjetas, modales */
+  --color-surface-2: #e8ecf7;    /* campos, zonas hundidas */
+  --color-border: #13204a;       /* contorno grueso de las piezas */
+  --color-text: #13204a;
+  --color-text-muted: #47527a;
+  --color-text-faint: #5d6890;
 
-  /* Rellenos (botones, chips): llevan texto blanco con contraste AA en ambos temas */
-  --color-accent: #d01012;       /* Rojo LEGO — acción principal */
-  --color-accent-2: #9a5600;     /* Ámbar — avisos */
-  --color-accent-3: #1e5aa8;     /* Azul LEGO — interacción, comunidad */
-  --color-accent-4: #237841;     /* Verde LEGO — éxito */
+  /* Bloques de color: el texto que llevan encima viene en su pareja -ink */
+  --color-accent: #2b4fd6;       /* Cobalto — marca, acción principal */
   --color-accent-ink: #ffffff;
+  --color-accent-3: #2fd0c0;     /* Turquesa — comunidad, acción secundaria */
+  --color-accent-3-ink: #13204a;
+  --color-highlight: #c9b8ff;    /* Lavanda — destacados */
+  --color-highlight-ink: #13204a;
+  --color-accent-4: #00852b;     /* Verde — éxito */
+  --color-accent-2: #9a5600;     /* Ámbar — avisos */
+  --color-danger: #d4183d;       /* Rojo — solo errores y borrar */
 
   /* Variantes para usar COMO TEXTO sobre el fondo del tema (contraste AA) */
-  --color-accent-text: #b50d0f;
-  --color-accent-3-text: #1e5aa8;
-  --color-accent-4-text: #237841;
+  --color-accent-text: #2442c4;
+  --color-accent-3-text: #0b7c74;
+  --color-accent-4-text: #00752a;
+  --color-danger-text: #c0122f;
 
-  /* Amarillo LEGO: solo como fondo, siempre con texto oscuro */
-  --color-lego-yellow: #ffca20;
-  --color-lego-yellow-ink: #193261;
-
-  /* Banda oscura (pie de página) */
-  --color-dark: #193261;
+  /* Banda del pie */
+  --color-dark: #13204a;
   --color-on-dark: #ffffff;
-  --color-on-dark-muted: #c3cad8;
+  --color-on-dark-muted: #c7cff0;
+
+  /* Sombra sólida de las piezas */
+  --toy-shadow: #13204a;
 
   /* Texto de categorías: su color de marca oscurecido (claro) o aclarado (oscuro) */
   --category-mix: black;
   --category-mix-amount: 55%;
-
-  --shadow-card: 0 1px 2px rgba(27, 36, 54, 0.06), 0 10px 28px -14px rgba(27, 36, 54, 0.22);
-  --shadow-card-hover: 0 2px 4px rgba(27, 36, 54, 0.06), 0 18px 36px -16px rgba(27, 36, 54, 0.3);
-  --shadow-accent: rgba(208, 16, 18, 0.35);
-  --shadow-accent-2: rgba(154, 86, 0, 0.3);
-  --shadow-accent-3: rgba(30, 90, 168, 0.32);
-  --shadow-accent-4: rgba(35, 120, 65, 0.3);
 
   --background: var(--color-ink);
   --foreground: var(--color-text);
@@ -67,31 +77,31 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --color-ink: #0a1428;
-  --color-surface: #111f3d;
-  --color-surface-2: #172a52;
-  --color-border: #24396a;
-  --color-text: #f2f0e8;
-  --color-text-muted: #a7b3cf;
-  --color-text-faint: #93a0c0;
+  --color-ink: #0b1020;
+  --color-surface: #141b33;
+  --color-surface-2: #1c2442;
+  --color-border: #e6eaff;
+  --color-text: #eef1ff;
+  --color-text-muted: #b3bbdb;
+  --color-text-faint: #969fc4;
 
   --color-accent-2: #f0a640;
 
-  --color-accent-text: #ff7a6e;
-  --color-accent-3-text: #8db8ff;
+  --color-accent-text: #9fb2ff;
+  --color-accent-3-text: #5ee6d8;
   --color-accent-4-text: #5fd08a;
+  --color-danger-text: #ff7b8f;
 
-  --color-dark: #060d1c;
+  --color-dark: #060a18;
+
+  --toy-shadow: #000000;
 
   --category-mix: white;
   --category-mix-amount: 65%;
-
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 30px -14px rgba(0, 0, 0, 0.6);
-  --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.3), 0 20px 40px -16px rgba(0, 0, 0, 0.7);
 }
 
 * {
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: var(--color-text-faint) transparent;
 }
 
 html {
@@ -104,8 +114,8 @@ body {
 }
 
 ::selection {
-  background: var(--color-accent);
-  color: var(--color-accent-ink);
+  background: var(--color-highlight);
+  color: var(--color-highlight-ink);
 }
 
 /* Tipografía "de bloque" reservada para los botones (ver nota en layout.tsx). */
@@ -119,9 +129,8 @@ button {
 
 /* Enfoque visible consistente para navegación por teclado */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 3px solid var(--color-accent);
   outline-offset: 3px;
-  border-radius: 4px;
 }
 
 @keyframes shimmer {
@@ -130,7 +139,7 @@ button {
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, var(--color-surface) 0%, var(--color-surface-2) 50%, var(--color-surface) 100%);
+  background: linear-gradient(90deg, var(--color-surface-2) 0%, var(--color-surface) 50%, var(--color-surface-2) 100%);
   background-size: 800px 100%;
   animation: shimmer 1.6s linear infinite;
 }
@@ -155,39 +164,91 @@ button {
 }
 
 /* Utilidades propias en la capa "components": las utilidades de Tailwind
-   (absolute, shadow-*, transition-*) siguen teniendo prioridad sobre ellas. */
+   siguen teniendo prioridad sobre ellas. */
 @layer components {
-  /* ---------------------------------------------------------------------------
-     Lenguaje visual LEGO
-     --------------------------------------------------------------------------- */
-
-  /* Relieve de plástico: brillo arriba y canto oscuro abajo, como una pieza
-     moldeada. Se suma al resplandor de color de cada botón. */
-  .lego-bevel {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.28),
-      inset 0 -3px 0 rgba(0, 0, 0, 0.22),
-      0 8px 24px -8px var(--bevel-glow, transparent);
+  /* Pieza de juguete: contorno grueso y sombra sólida desplazada */
+  .toy {
+    border: 3px solid var(--color-border);
+    box-shadow: 5px 5px 0 var(--toy-shadow);
   }
 
-  .lego-bevel:active {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-      0 4px 14px -8px var(--bevel-glow, transparent);
-    transform: translateY(1px);
+  .toy-sm {
+    border: 2px solid var(--color-border);
+    box-shadow: 3px 3px 0 var(--toy-shadow);
   }
 
-  /* Tarjeta con profundidad: sombra suave que crece al pasar el ratón */
-  .card-depth {
-    box-shadow: var(--shadow-card);
-    transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  /* Al pasar el ratón la pieza "salta" y al pulsar se encaja */
+  .toy-press {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease, color 0.2s ease;
   }
 
-  .card-depth-hover:hover {
-    box-shadow: var(--shadow-card-hover);
-    transform: translateY(-3px);
+  .toy-press:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--toy-shadow);
   }
+
+  .toy-sm.toy-press:hover {
+    box-shadow: 5px 5px 0 var(--toy-shadow);
+  }
+
+  .toy-press:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 var(--toy-shadow);
+  }
+
+  /* Etiqueta pequeña en mayúsculas: contadores, categorías, datos */
+  .label-caps {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Pegatina: etiqueta con contorno, ligeramente girada */
+  .sticker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 2px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.3rem 0.85rem;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    box-shadow: 2px 2px 0 var(--toy-shadow);
+    rotate: -3deg;
+  }
+
+  /* Enlace con subrayado grueso lavanda que crece al pasar el ratón */
+  .link-underline {
+    background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
+    background-size: 0% 0.35em;
+    background-position: 0 88%;
+    background-repeat: no-repeat;
+    transition: background-size 0.25s ease, color 0.2s ease;
+  }
+
+  .link-underline:hover,
+  .link-underline:focus-visible,
+  .link-underline[aria-current],
+  .link-underline[aria-pressed='true'] {
+    background-size: 100% 0.35em;
+  }
+}
+
+/* Meneo de juguete al pasar el ratón */
+@keyframes wiggle {
+  0%, 100% { rotate: 0deg; }
+  25% { rotate: -4deg; }
+  75% { rotate: 4deg; }
+}
+
+.hover-wiggle:hover {
+  animation: wiggle 0.4s ease-in-out;
 }
 
 /* Piezas del fondo: vaivén lento (solo transform, para que sea fluido) */

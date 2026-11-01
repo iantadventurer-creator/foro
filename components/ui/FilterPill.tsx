@@ -1,39 +1,42 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
-import { categoryTextColor, type CategoryTheme } from '@/lib/categoryThemes';
+import { type CategoryTheme } from '@/lib/categoryThemes';
 
+/** Filtro con forma de ficha de juguete: contorno grueso y, al activarse, se
+ * rellena con el color de su categoría (o en tinta si no tiene). `count` se
+ * muestra en una burbuja. */
 export function FilterPill({
   children,
   onClick,
   active,
   theme,
+  count,
 }: {
   children: ReactNode;
   onClick: () => void;
   active: boolean;
   theme?: CategoryTheme | null;
+  count?: number;
 }) {
   return (
-    <motion.button
+    <button
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      whileTap={{ scale: 0.96 }}
-      style={
-        active && theme
-          ? { background: `${theme.accent}26`, color: categoryTextColor(theme), borderColor: `${theme.accent}99`, boxShadow: `inset 0 1px 0 rgba(255,255,255,0.16), inset 0 -2px 0 rgba(0,0,0,0.28), 0 6px 20px -10px ${theme.accent}` }
-          : undefined
-      }
-      className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition-colors duration-200 whitespace-nowrap border ${active
-          ? theme
-            ? ''
-            : 'bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-[var(--color-accent)] lego-bevel [--bevel-glow:var(--shadow-accent)]'
-          : 'bg-[var(--color-surface)]/60 text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)] hover:border-[var(--color-text-faint)]'
+      style={active && theme ? { background: theme.accent, color: theme.ink } : undefined}
+      className={`toy-sm toy-press shrink-0 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-extrabold uppercase tracking-[0.03em] whitespace-nowrap ${active
+        ? theme
+          ? ''
+          : 'bg-[var(--color-text)] text-[var(--color-ink)]'
+        : 'bg-[var(--color-surface)] text-[var(--color-text)]'
         }`}
     >
+      {!active && theme && <span className="w-2.5 h-2.5 rounded-full border border-[var(--color-border)]" style={{ background: theme.accent }} aria-hidden="true" />}
       {children}
-    </motion.button>
+      {count !== undefined && (
+        <span className={`min-w-5 h-5 px-1 rounded-full text-[10px] leading-5 text-center ${active ? 'bg-black/15' : 'bg-[var(--color-surface-2)]'}`}>{count}</span>
+      )}
+    </button>
   );
 }

@@ -61,7 +61,7 @@ export default function RegistroPage() {
         invalid: { text: s.usernameInvalid, tone: 'text-[var(--color-accent-2)]' },
         checking: { text: s.usernameChecking, tone: 'text-[var(--color-text-faint)]' },
         available: { text: s.usernameAvailable, tone: 'text-[var(--color-accent-4-text)]' },
-        taken: { text: s.usernameTaken, tone: 'text-[var(--color-accent-text)]' },
+        taken: { text: s.usernameTaken, tone: 'text-[var(--color-danger-text)]' },
     };
     const status = statusMessage[usernameStatus];
 
@@ -78,8 +78,8 @@ export default function RegistroPage() {
             >
                 {done ? (
                     <div className="text-center">
-                        <div className="w-12 h-12 mx-auto mb-5 rounded-full bg-[var(--color-accent-4)]/20 text-[var(--color-accent-4-text)] flex items-center justify-center text-xl" aria-hidden="true">✓</div>
-                        <h1 className="font-display text-xl font-semibold tracking-tight mb-2">{s.doneTitle}</h1>
+                        <div className="toy-sm w-14 h-14 mx-auto mb-5 rounded-full bg-[var(--color-accent-4)] text-white flex items-center justify-center text-2xl font-black" aria-hidden="true">✓</div>
+                        <h1 className="font-display text-3xl font-black uppercase mb-2">{s.doneTitle}</h1>
                         <p className="text-sm text-[var(--color-text-muted)] mb-6">{s.doneDesc}</p>
                         <Button href="/comunidad/entrar" fullWidth>
                             {s.goLogin}

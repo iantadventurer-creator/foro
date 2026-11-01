@@ -135,7 +135,7 @@ export function UploadModal({
                     animate={{ scale: 1, y: 0, opacity: 1 }}
                     exit={{ scale: 0.95, y: 16, opacity: 0 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 [scrollbar-width:thin]"
+                    className="toy rounded-[2rem] bg-[var(--color-surface)] max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 [scrollbar-width:thin]"
                 >
                     <div className="flex justify-between items-center mb-5">
                         <h2 className="font-display text-lg font-semibold tracking-tight text-[var(--color-text)]">{t.newPostTitle}</h2>
@@ -205,7 +205,7 @@ export function UploadModal({
                             </div>
                         </fieldset>
 
-                        <Button type="submit" variant="blue" fullWidth disabled={loading || !file || !title.trim()}>
+                        <Button type="submit" variant="accent" fullWidth disabled={loading || !file || !title.trim()}>
                             {loading ? t.publishingBtn : t.publishBtn}
                         </Button>
                     </form>

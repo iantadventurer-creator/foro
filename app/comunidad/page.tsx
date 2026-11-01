@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { CommunityHeader } from '@/components/community/CommunityHeader';
 import { CommunityWelcome } from '@/components/community/CommunityWelcome';
-import { LegoBrick } from '@/components/ui/LegoBrick';
+import { PageTitle } from '@/components/ui/PageTitle';
 import { FeedSection, type FeedSort } from '@/components/community/FeedSection';
 import { PostModal } from '@/components/community/PostModal';
 import { UploadModal } from '@/components/community/UploadModal';
@@ -100,16 +100,13 @@ export default function ComunidadPage() {
                 onPublish={() => setShowUploadModal(true)}
             />
 
-            <div className="max-w-3xl mx-auto px-4 pt-12">
-                <div className="mb-12 text-center">
-                    <div className="flex justify-center items-end gap-1 mb-4" aria-hidden="true">
-                        <LegoBrick color="var(--color-accent)" studs={2} className="h-4 w-auto" />
-                        <LegoBrick color="var(--color-lego-yellow)" studs={1} className="h-4 w-auto" />
-                        <LegoBrick color="var(--color-accent-3)" studs={2} className="h-4 w-auto" />
-                    </div>
-                    <h1 className="font-display text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-text)]">{t.pageTitle}</h1>
-                    <p className="text-sm md:text-base text-[var(--color-text-muted)] mt-2">{t.pageSubtitle}</p>
-                </div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                <PageTitle
+                    meta={<>✦ IanTBuild</>}
+                    aside={loading ? '—' : t.postsCount(posts.length)}
+                    title={t.pageTitle}
+                    subtitle={t.pageSubtitle}
+                />
 
                 <CommunityWelcome
                     t={t}
@@ -122,7 +119,7 @@ export default function ComunidadPage() {
             <FeedSection
                 emptyAction={
                     user ? (
-                        <Button variant="blue" onClick={() => setShowUploadModal(true)}>
+                        <Button variant="accent" onClick={() => setShowUploadModal(true)}>
                             {t.emptyCtaIn}
                         </Button>
                     ) : (

@@ -5,7 +5,7 @@ import { QrCodeModal, pickRandomQrColor } from '@/components/ui/QrCodeButton';
 import { SiteHeader, type ActiveSection } from '@/components/home/SiteHeader';
 import { Hero } from '@/components/home/Hero';
 import { IntroSection } from '@/components/home/IntroSection';
-import { UniverseRail } from '@/components/home/UniverseRail';
+import { UniverseTiles } from '@/components/home/UniverseTiles';
 import { GallerySection } from '@/components/home/GallerySection';
 import { Lightbox } from '@/components/home/Lightbox';
 import { AboutSection } from '@/components/home/AboutSection';
@@ -136,6 +136,11 @@ export default function Home() {
     [categories, feedItems]
   );
 
+  const categoryCounts = useMemo(() => Object.fromEntries(universes.map((u) => [u.name, u.count])), [universes]);
+
+  // Las tres fotos más recientes (sin reels) para el collage de la portada.
+  const heroPhotos = useMemo(() => feedItems.filter((item) => item.mediaType === 'IMAGE').slice(0, 3), [feedItems]);
+
   const exploreUniverse = (name: string) => {
     selectCategory(name);
     galleryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -153,8 +158,8 @@ export default function Home() {
   return (
     <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0 overflow-x-hidden focus:outline-none">
       <SiteHeader t={t} lang={lang} onLangChange={setLang} activeSection={activeSection} onOpenQr={openQr} />
-      <Hero t={t} featured={feedItems[0]} photoCount={feedItems.length} universeCount={categories.length} loading={loading} />
-      <UniverseRail t={t} universes={universes} onSelect={exploreUniverse} />
+      <Hero t={t} photos={heroPhotos} photoCount={feedItems.length} universeCount={categories.length} loading={loading} />
+      <UniverseTiles t={t} universes={universes} onSelect={exploreUniverse} />
       <GallerySection
         t={t}
         sectionRef={galleryRef}
@@ -163,6 +168,8 @@ export default function Home() {
         loading={loading}
         feedError={feedError}
         categories={categories}
+        categoryCounts={categoryCounts}
+        allCount={feedItems.length}
         filterCategory={filterCategory}
         showOnlyFavorites={showOnlyFavorites}
         favorites={favorites}

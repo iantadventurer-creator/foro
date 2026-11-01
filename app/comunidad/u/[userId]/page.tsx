@@ -37,8 +37,9 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
         <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
             <CommunityHeader back="community" lang={lang} onLangChange={setLang} />
 
-            <div className="max-w-4xl mx-auto px-4 py-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-24">
                 <ProfileHeader
+                    metaLabel={t.meta}
                     handle={handle}
                     fullName={profile?.full_name}
                     avatarUrl={avatarUrl}
@@ -63,7 +64,7 @@ export default function CommunityProfilePage({ params }: { params: Promise<{ use
                         )}
                     </EmptyState>
                 ) : (
-                    <div className="grid grid-cols-3 gap-1.5 sm:gap-3">
+                    <div className="grid grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                         {posts.map((post) => (
                             <PostCard key={post.id} post={post} onClick={() => router.push(`/comunidad?post=${post.id}`)} />
                         ))}

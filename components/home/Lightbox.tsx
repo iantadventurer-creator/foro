@@ -92,11 +92,11 @@ export function Lightbox({
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.95, y: 16, opacity: 0 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl"
+            className="toy rounded-[2rem] bg-[var(--color-surface)] max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row"
           >
             <div className={`w-full md:w-3/5 bg-black relative min-h-[320px] md:min-h-[480px] flex items-center justify-center ${zoomed ? 'overflow-auto' : 'overflow-hidden'}`}>
               {items.length > 1 && !zoomed && (
-                <span className="absolute top-3 left-3 z-20 px-2.5 py-1 rounded-full bg-black/50 text-white text-[11px] font-bold tracking-wide border border-white/20 backdrop-blur-sm tabular-nums">
+                <span className="absolute top-3 left-3 z-20 px-2.5 py-1 bg-black/50 text-white text-[11px] font-bold tracking-wide border border-white/20 backdrop-blur-sm tabular-nums">
                   {selectedIndex + 1} / {items.length}
                 </span>
               )}
@@ -193,13 +193,13 @@ export function Lightbox({
                     href={item.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-button block text-center text-xs font-bold uppercase tracking-wider py-3 rounded-full lego-bevel [--bevel-glow:var(--shadow-accent)] bg-[var(--color-accent)] text-[var(--color-accent-ink)] hover:brightness-110 transition"
+                    className="toy-sm toy-press font-button block text-center text-sm font-extrabold uppercase py-3 rounded-full bg-[var(--color-accent)] text-[var(--color-accent-ink)]"
                   >
                     {t.modal.viewOnIg} ↗
                   </a>
                   <button
                     onClick={() => handleCopyLink(item.permalink)}
-                    className="block w-full text-center text-xs font-bold uppercase tracking-wider text-[var(--color-text)] bg-[var(--color-surface-2)] hover:bg-[var(--color-border)] py-3 rounded-full border border-[var(--color-border)] transition-all"
+                    className="toy-sm toy-press block w-full text-center text-sm font-extrabold uppercase py-3 rounded-full bg-[var(--color-highlight)] text-[var(--color-highlight-ink)]"
                   >
                     {copied ? t.modal.copied + ' ✨' : t.modal.copyLink}
                   </button>

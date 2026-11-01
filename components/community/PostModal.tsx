@@ -73,7 +73,7 @@ export function PostModal({
                     animate={{ scale: 1, y: 0, opacity: 1 }}
                     exit={{ scale: 0.95, y: 16, opacity: 0 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl"
+                    className="toy rounded-[2rem] bg-[var(--color-surface)] max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row"
                 >
                     <div className="w-full md:w-3/5 bg-black relative min-h-[320px] md:min-h-[480px] flex items-center justify-center overflow-hidden">
                         <div
@@ -132,7 +132,7 @@ export function PostModal({
                         <div className="flex flex-col gap-4">
                             {modalTheme && post.category && (
                                 <span
-                                    className="self-start text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide"
+                                    className="self-start text-[10px] font-bold px-2.5 py-1 uppercase tracking-wide"
                                     style={{ background: `${modalTheme.accent}22`, color: categoryTextColor(modalTheme) }}
                                 >
                                     {formatCategoryLabel(post.category)}
@@ -158,7 +158,7 @@ export function PostModal({
                                         <div className="flex gap-2 justify-end">
                                             <button
                                                 onClick={() => handleEdit(post.id)}
-                                                className="bg-[var(--color-accent-4)] hover:brightness-110 text-white font-bold px-3 py-1.5 rounded-full text-[10px] uppercase transition-all"
+                                                className="toy-sm toy-press rounded-full bg-[var(--color-accent-4)] text-white font-extrabold px-3 py-1.5 text-[11px] uppercase"
                                             >
                                                 {t.save}
                                             </button>
@@ -167,7 +167,7 @@ export function PostModal({
                                                     setEditingPostId(null);
                                                     setEditText('');
                                                 }}
-                                                className="bg-[var(--color-surface-2)] hover:bg-[var(--color-border)] text-[var(--color-text)] font-bold px-3 py-1.5 rounded-full text-[10px] uppercase border border-[var(--color-border)] transition-colors"
+                                                className="toy-sm toy-press rounded-full bg-[var(--color-surface)] text-[var(--color-text)] font-extrabold px-3 py-1.5 text-[11px] uppercase"
                                             >
                                                 {t.cancel}
                                             </button>
@@ -179,7 +179,7 @@ export function PostModal({
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="font-display text-lg md:text-xl font-semibold text-[var(--color-text)] leading-snug whitespace-pre-line"
+                                        className="font-display text-2xl md:text-3xl font-bold uppercase tracking-[-0.03em] text-[var(--color-text)] leading-[1.05] whitespace-pre-line"
                                     >
                                         {post.title}
                                     </motion.p>
@@ -197,9 +197,9 @@ export function PostModal({
                                     onClick={() => onToggleLike(post.id, post.post_likes || [])}
                                     aria-pressed={liked}
                                     aria-label={`${liked ? t.unlike : t.like} · ${t.likesCount(likeCount)}`}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-bold transition-colors ${liked
-                                        ? 'lego-bevel bg-[#d6204a]/10 text-[#d6204a] border-[#d6204a]/40'
-                                        : 'bg-[var(--color-surface-2)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:text-[var(--color-text)]'
+                                    className={`toy-sm toy-press flex items-center gap-2 px-4 py-2 rounded-full text-sm font-extrabold ${liked
+                                        ? 'bg-[#ff7aa8] text-[#13204a]'
+                                        : 'bg-[var(--color-surface)] text-[var(--color-text)]'
                                         }`}
                                 >
                                     <motion.span key={liked ? 'liked' : 'unliked'} initial={{ scale: 0.5 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 15 }}>
@@ -215,13 +215,13 @@ export function PostModal({
                                                 setEditingPostId(post.id);
                                                 setEditText(post.title);
                                             }}
-                                            className="text-[10px] bg-[var(--color-surface-2)] text-[var(--color-accent-text)] hover:brightness-110 px-2.5 py-1 rounded-full font-bold uppercase border border-[var(--color-border)] tracking-wider transition-colors"
+                                            className="rounded-full text-[11px] bg-[var(--color-surface-2)] text-[var(--color-accent-text)] px-3 py-1 font-extrabold uppercase border-2 border-[var(--color-border)] transition-colors hover:bg-[var(--color-highlight)] hover:text-[var(--color-highlight-ink)]"
                                         >
                                             {t.edit}
                                         </button>
                                         <button
                                             onClick={() => onRequestDelete(post.id, post.image_url)}
-                                            className="text-[10px] bg-[var(--color-accent-2)]/10 text-[var(--color-accent-2)] hover:bg-[var(--color-accent-2)]/20 px-2.5 py-1 rounded-full font-bold uppercase border border-[var(--color-accent-2)]/30 tracking-wider transition-colors"
+                                            className="rounded-full text-[11px] bg-[var(--color-surface-2)] text-[var(--color-danger-text)] px-3 py-1 font-extrabold uppercase border-2 border-[var(--color-border)] transition-colors hover:bg-[var(--color-danger)] hover:text-white"
                                         >
                                             {t.delete}
                                         </button>

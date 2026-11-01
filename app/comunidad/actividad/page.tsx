@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { ActivityRow } from '@/components/community/ActivityRow';
 import { CommunityHeader } from '@/components/community/CommunityHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { PageTitle } from '@/components/ui/PageTitle';
 import { ListSkeleton } from '@/components/ui/Skeletons';
 import { activityContent } from '@/lib/content/activityContent';
 import { useActivity } from '@/lib/hooks/useActivity';
@@ -21,8 +22,13 @@ export default function CommunityActivityPage() {
         <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
             <CommunityHeader back="community" lang={lang} onLangChange={setLang} />
 
-            <div className="max-w-2xl mx-auto px-4 py-10">
-                <h1 className="font-display text-2xl md:text-3xl font-semibold tracking-tight text-center mb-10">{t.title}</h1>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-24">
+                <PageTitle
+                    meta={<>♥ IanTBuild</>}
+                    tone="secondary"
+                    aside={userId && !loading ? String(items.length).padStart(2, '0') : undefined}
+                    title={t.title}
+                />
 
                 {userId === undefined || loading ? (
                     <ListSkeleton />
@@ -31,7 +37,7 @@ export default function CommunityActivityPage() {
                 ) : items.length === 0 ? (
                     <EmptyState>{t.empty}</EmptyState>
                 ) : (
-                    <div className="flex flex-col gap-2">
+                    <div className="max-w-3xl flex flex-col gap-3">
                         {items.map((item, index) => (
                             <ActivityRow
                                 key={item.likeId}

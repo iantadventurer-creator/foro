@@ -28,7 +28,7 @@ export function CommunityLogoutButton({
     return (
         <button
             onClick={handleClick}
-            className="hidden md:inline text-[10px] font-bold uppercase tracking-wider text-[var(--color-accent-2)] bg-[var(--color-accent-2)]/10 hover:bg-[var(--color-accent-2)]/20 border border-[var(--color-accent-2)]/30 rounded-full px-3 py-1.5 transition-colors"
+            className="link-underline hidden md:inline py-2 text-xs font-extrabold text-[var(--color-text-muted)] hover:text-[var(--color-danger-text)]"
         >
             {label}
         </button>

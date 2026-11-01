@@ -1,24 +1,25 @@
 import Link from 'next/link';
 import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from 'react';
 
-type Variant = 'primary' | 'blue' | 'secondary';
+type Variant = 'primary' | 'accent' | 'secondary';
 type Size = 'sm' | 'md' | 'lg';
 
 const BASE =
-  'inline-flex items-center justify-center gap-2 rounded-full font-bold transition disabled:opacity-50 disabled:pointer-events-none';
+  'toy-sm toy-press font-button inline-flex items-center justify-center gap-2 rounded-full font-extrabold uppercase tracking-[0.04em] disabled:opacity-50 disabled:pointer-events-none';
 
-// `lego-bevel` (globals.css) da el relieve de plástico; --bevel-glow, el resplandor de color.
+// Botones de juguete: contorno grueso, sombra sólida y "salto" al pasar el
+// ratón (utilidades toy-* de globals.css). "primary" es el cobalto de la
+// marca; "accent", el turquesa de la comunidad; "secondary", blanco.
 const VARIANTS: Record<Variant, string> = {
-  primary: 'lego-bevel [--bevel-glow:var(--shadow-accent)] bg-[var(--color-accent)] text-[var(--color-accent-ink)] hover:brightness-110',
-  blue: 'lego-bevel [--bevel-glow:var(--shadow-accent-3)] bg-[var(--color-accent-3)] text-white hover:brightness-110',
-  secondary:
-    'lego-bevel bg-[var(--color-surface-2)] text-[var(--color-text)] border border-[var(--color-border)] hover:border-[var(--color-text-faint)]',
+  primary: 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]',
+  accent: 'bg-[var(--color-accent-3)] text-[var(--color-accent-3-ink)]',
+  secondary: 'bg-[var(--color-surface)] text-[var(--color-text)]',
 };
 
 const SIZES: Record<Size, string> = {
-  sm: 'px-5 py-2.5 text-xs uppercase tracking-wide',
-  md: 'px-6 py-3 text-sm',
-  lg: 'px-7 py-3.5 text-sm uppercase tracking-wide font-button',
+  sm: 'px-4 py-2 text-xs',
+  md: 'px-5 py-2.5 text-sm',
+  lg: 'px-7 py-3.5 text-base',
 };
 
 type Common = { variant?: Variant; size?: Size; fullWidth?: boolean; className?: string; children: ReactNode };

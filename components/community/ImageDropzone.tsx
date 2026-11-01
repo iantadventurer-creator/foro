@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
-import { LegoBrick } from '@/components/ui/LegoBrick';
 import { ALLOWED_IMAGE_TYPES } from '@/lib/validation';
 
 /** Zona para elegir la foto: se arrastra o se hace clic, se valida al momento
@@ -77,7 +76,7 @@ export function ImageDropzone({
                         <button type="button" onClick={() => inputRef.current?.click()} className="font-bold text-[var(--color-accent-3-text)] hover:underline py-1">
                             {labels.change}
                         </button>
-                        <button type="button" onClick={() => onChange(null)} className="font-bold text-[var(--color-accent-text)] hover:underline py-1">
+                        <button type="button" onClick={() => onChange(null)} className="font-bold text-[var(--color-danger-text)] hover:underline py-1">
                             {labels.remove}
                         </button>
                     </div>
@@ -99,18 +98,14 @@ export function ImageDropzone({
                 setDragging(false);
                 pick(e.dataTransfer.files?.[0]);
             }}
-            className={`flex flex-col items-center justify-center gap-3 text-center rounded-xl border-2 border-dashed px-4 py-10 cursor-pointer transition-colors focus-within:border-[var(--color-accent-3)] ${dragging
-                ? 'border-[var(--color-accent-3)] bg-[var(--color-accent-3)]/10'
-                : 'border-[var(--color-border)] hover:border-[var(--color-text-faint)] bg-[var(--color-ink)]'
+            className={`flex flex-col items-center justify-center gap-3 text-center rounded-3xl border-[3px] border-dashed border-[var(--color-border)] px-4 py-10 cursor-pointer transition-colors focus-within:bg-[var(--color-surface-2)] ${dragging
+                ? 'bg-[var(--color-highlight)]/30'
+                : 'hover:bg-[var(--color-surface-2)] bg-[var(--color-surface)]'
                 }`}
         >
             {input}
-            <span className="flex items-end gap-1" aria-hidden="true">
-                <LegoBrick color="var(--color-accent)" studs={1} className="h-4 w-auto" />
-                <LegoBrick color="var(--color-lego-yellow)" studs={2} className="h-5 w-auto" />
-                <LegoBrick color="var(--color-accent-3)" studs={1} className="h-4 w-auto" />
-            </span>
-            <span className="text-sm font-semibold text-[var(--color-text)]">{labels.title}</span>
+            <span className="toy-sm w-12 h-12 rounded-2xl bg-[var(--color-highlight)] text-[var(--color-highlight-ink)] flex items-center justify-center text-3xl font-black leading-none" aria-hidden="true">+</span>
+            <span className="text-sm font-extrabold text-[var(--color-text)]">{labels.title}</span>
             <span className="text-xs text-[var(--color-text-faint)]">{labels.hint}</span>
         </label>
     );

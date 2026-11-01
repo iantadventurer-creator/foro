@@ -2,7 +2,7 @@
  * sección, separadores y distintivos. `studs` es el ancho de la pieza (1x1,
  * 2x1, 4x1...). Puramente decorativa. */
 export function LegoBrick({
-  color = 'var(--color-lego-yellow)',
+  color = 'var(--color-highlight)',
   studs = 2,
   className = 'h-3.5 w-auto',
 }: {

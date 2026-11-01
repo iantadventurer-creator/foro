@@ -27,9 +27,9 @@ export function useToasts() {
 }
 
 const variantStyles: Record<ToastVariant, string> = {
-    error: 'bg-[color-mix(in_srgb,var(--color-accent)_10%,var(--color-surface))] border-[var(--color-accent)]/40 text-[var(--color-accent-text)]',
-    success: 'bg-[color-mix(in_srgb,var(--color-accent-4)_10%,var(--color-surface))] border-[var(--color-accent-4)]/40 text-[var(--color-accent-4-text)]',
-    info: 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text)]',
+    error: 'bg-[color-mix(in_srgb,var(--color-danger)_10%,var(--color-surface))] text-[var(--color-danger-text)]',
+    success: 'bg-[color-mix(in_srgb,var(--color-accent-4)_10%,var(--color-surface))] text-[var(--color-accent-4-text)]',
+    info: 'bg-[var(--color-surface)] text-[var(--color-text)]',
 };
 
 export function ToastViewport({ toasts, onDismiss }: { toasts: ToastItem[]; onDismiss: (id: number) => void }) {
@@ -47,7 +47,7 @@ export function ToastViewport({ toasts, onDismiss }: { toasts: ToastItem[]; onDi
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, x: 24 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                        className={`rounded-xl border px-4 py-3 text-sm font-semibold shadow-2xl backdrop-blur-md flex items-start justify-between gap-3 ${variantStyles[toast.variant]}`}
+                        className={`toy-sm rounded-2xl px-4 py-3 text-sm font-semibold flex items-start justify-between gap-3 ${variantStyles[toast.variant]}`}
                     >
                         <span className="leading-snug">{toast.message}</span>
                         <button

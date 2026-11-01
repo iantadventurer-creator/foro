@@ -2,43 +2,41 @@ import Link from 'next/link';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import type { HomeContent } from '@/lib/content/homeContent';
 
+// Cada espacio lleva el color de su papel en la paleta (cobalto = la obra,
+// turquesa = la comunidad, lavanda = el autor), con su texto en la pareja legible.
+const BLOCKS = [
+  { href: '#gallery', bg: 'var(--color-accent)', ink: '#ffffff', rotate: 'md:-rotate-1' },
+  { href: '/comunidad', bg: 'var(--color-accent-3)', ink: '#13204a', rotate: 'md:rotate-1' },
+  { href: '#about', bg: 'var(--color-highlight)', ink: '#13204a', rotate: 'md:-rotate-1' },
+];
+
+/** Los tres espacios de la web como bloques de color. */
 export function IntroSection({ t }: { t: HomeContent }) {
   return (
-    <section id="intro" className="max-w-7xl mx-auto px-6 pb-20 relative z-10">
-      <SectionHeading eyebrow={t.intro.eyebrow} title={t.intro.title} className="mb-10" />
-      <div className="grid md:grid-cols-3 gap-5">
+    <section id="intro" className="max-w-7xl mx-auto px-4 sm:px-6 pb-20 md:pb-28">
+      <SectionHeading index="03" eyebrow={t.intro.eyebrow} title={t.intro.title} />
+      <div className="mt-10 grid md:grid-cols-3 gap-5 md:gap-6">
         {t.intro.cards.map((card, i) => {
-          const tone = ['var(--color-accent)', 'var(--color-accent-3)', 'var(--color-accent-4)'][i];
-          // El relleno usa el color de marca; el texto, su variante legible en cada tema.
-          const toneText = ['var(--color-accent-text)', 'var(--color-accent-3-text)', 'var(--color-accent-4-text)'][i];
-          const href = ['#gallery', '/comunidad', '#about'][i];
-          const icon = [
-            <path key="g" d="M4 7a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Zm8 9.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />,
-            <path key="c" d="M16 11a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm-8 0a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm0 2c-2.3 0-7 1.2-7 3.5V19h8v-2.5c0-1 .4-1.9 1.1-2.7C9.4 13.3 8.6 13 8 13Zm8 0c-2.3 0-7 1.2-7 3.5V19h14v-2.5c0-2.3-4.7-3.5-7-3.5Z" />,
-            <path key="a" d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2c-3 0-8 1.5-8 4.5V21h16v-2.5c0-3-5-4.5-8-4.5Z" />,
-          ][i];
-          const cardClass = 'group relative flex flex-col h-full rounded-2xl border border-[var(--color-border)] border-t-4 border-t-[var(--card-tone)] bg-[var(--color-surface)] p-6 card-depth card-depth-hover hover:border-[var(--card-tone)]/60';
+          const block = BLOCKS[i];
+          const className = `toy toy-press group flex flex-col gap-4 rounded-3xl p-6 md:p-7 ${block.rotate} hover:rotate-0 [--color-border:#13204a] [--toy-shadow:#13204a]`;
+          const style = { background: block.bg, color: block.ink };
           const inner = (
             <>
-              <span
-                className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
-                style={{ background: `color-mix(in srgb, ${tone} 16%, transparent)`, color: toneText }}
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5" aria-hidden="true">{icon}</svg>
+              <span className="w-12 h-12 rounded-full border-2 border-[#13204a] bg-white text-[#13204a] flex items-center justify-center font-display text-xl font-black">
+                {i + 1}
               </span>
-              <h3 className="font-display text-lg font-semibold mb-2">{card.title}</h3>
-              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed mb-6">{card.desc}</p>
-              <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold" style={{ color: toneText }}>
+              <h3 className="font-display text-3xl md:text-4xl font-black uppercase leading-[0.95]">{card.title}</h3>
+              <p className="text-sm md:text-base font-medium leading-relaxed opacity-90">{card.desc}</p>
+              <span className="mt-auto pt-2 inline-flex items-center gap-2 font-display text-sm font-extrabold uppercase">
                 {card.cta}
-                <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1.5">→</span>
               </span>
             </>
           );
-          const style = { '--card-tone': tone } as React.CSSProperties;
-          return href.startsWith('/') ? (
-            <Link key={card.title} href={href} className={cardClass} style={style}>{inner}</Link>
+          return block.href.startsWith('/') ? (
+            <Link key={card.title} href={block.href} className={className} style={style}>{inner}</Link>
           ) : (
-            <a key={card.title} href={href} className={cardClass} style={style}>{inner}</a>
+            <a key={card.title} href={block.href} className={className} style={style}>{inner}</a>
           );
         })}
       </div>

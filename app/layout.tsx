@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
-import { Space_Grotesk, Space_Mono } from "next/font/google";
+import { Rubik } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
@@ -13,17 +13,11 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-// Mono retro para los detalles tipo "ticket" del estilo cinemático.
-const spaceMono = Space_Mono({
-  variable: "--font-space-mono",
+// Redonda y muy gruesa, de caja de juguete: titulares, botones y etiquetas.
+const rubik = Rubik({
+  variable: "--font-rubik",
   subsets: ["latin"],
-  weight: ["400", "700"],
-});
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["500", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -63,8 +57,8 @@ const structuredData = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f6f4ee" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a1428" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f6fb" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1020" },
   ],
 };
 
@@ -77,7 +71,7 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${spaceGrotesk.variable} ${spaceMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${rubik.variable} h-full antialiased`}
       // El script de <head> pone data-theme antes de que React hidrate.
       suppressHydrationWarning
     >
