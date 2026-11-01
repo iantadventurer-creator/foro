@@ -135,7 +135,7 @@ export function UploadModal({
                     animate={{ scale: 1, y: 0, opacity: 1 }}
                     exit={{ scale: 0.95, y: 16, opacity: 0 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="toy rounded-[2rem] bg-[var(--color-surface)] max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 [scrollbar-width:thin]"
+                    className="panel rounded-[2rem] bg-[var(--color-surface)] max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 [scrollbar-width:thin]"
                 >
                     <div className="flex justify-between items-center mb-5">
                         <h2 className="font-display text-lg font-semibold tracking-tight text-[var(--color-text)]">{t.newPostTitle}</h2>

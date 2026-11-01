@@ -7,7 +7,7 @@ import type { CommunityNav } from '@/lib/content/nav';
 
 const linkClass = 'link-underline py-1';
 const publishClass =
-    'toy-sm toy-press font-button inline-block rounded-full bg-[var(--color-accent-3)] text-[var(--color-accent-3-ink)] px-4 py-2 text-xs font-extrabold uppercase';
+    'panel-sm lift border-transparent font-button inline-block rounded-full bg-[var(--color-accent-3)] text-[var(--color-accent-3-ink)] px-4 py-2 text-xs font-bold uppercase';
 
 /** Links de "Actividad" / "Publicar" / "Mi perfil" para el header — mismo
  * trío y mismo espaciado en las tres páginas de la comunidad. "Publicar"
@@ -18,7 +18,7 @@ export function CommunityHeaderNav({ nav, onPublish }: { nav: CommunityNav; onPu
     const pathname = usePathname();
 
     return (
-        <nav aria-label="Comunidad" className="hidden md:flex items-center gap-6 text-sm font-extrabold text-[var(--color-text)]">
+        <nav aria-label="Comunidad" className="hidden md:flex items-center gap-6 text-sm font-bold text-[var(--color-text)]">
             <Link href="/comunidad/actividad" aria-current={pathname.startsWith('/comunidad/actividad') ? 'page' : undefined} className={linkClass}>
                 {nav.activity}
             </Link>

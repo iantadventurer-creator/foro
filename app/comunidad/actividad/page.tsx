@@ -25,7 +25,7 @@ export default function CommunityActivityPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-24">
                 <PageTitle
                     meta={<>♥ IanTBuild</>}
-                    tone="secondary"
+                   
                     aside={userId && !loading ? String(items.length).padStart(2, '0') : undefined}
                     title={t.title}
                 />

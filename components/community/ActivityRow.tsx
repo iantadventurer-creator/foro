@@ -38,16 +38,16 @@ export function ActivityRow({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: Math.min(index, 10) * 0.03 }}
             onClick={() => onOpen(item.postId)}
-            className="toy-sm toy-press w-full flex items-center gap-3 rounded-2xl bg-[var(--color-surface)] p-3 text-left"
+            className="panel-sm lift w-full flex items-center gap-3 rounded-2xl bg-[var(--color-surface)] p-3 text-left"
         >
             <Avatar handle={who} size={36} />
             <p className="flex-1 min-w-0 text-sm text-[var(--color-text)]">
-                <span className="font-extrabold text-[var(--color-accent-text)]">{who}</span>
+                <span className="font-bold text-[var(--color-accent-text)]">{who}</span>
                 {' '}{t.likedYourPost}{' '}
                 <span className="text-[var(--color-text-muted)]">&quot;{title.slice(0, 40)}{title.length > 40 ? '…' : ''}&quot;</span>
                 <span className="label-caps block text-[10px] text-[var(--color-text-faint)] mt-1">{timeAgo(item.likedAt, t)}</span>
             </p>
-            <div className="w-12 h-12 shrink-0 overflow-hidden rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] relative">
+            <div className="w-12 h-12 shrink-0 overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] relative">
                 <Image src={item.postImageUrl} alt="" fill sizes="48px" className="object-cover" />
             </div>
         </motion.button>

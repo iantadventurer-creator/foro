@@ -92,7 +92,7 @@ export function Lightbox({
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.95, y: 16, opacity: 0 }}
             onClick={(e) => e.stopPropagation()}
-            className="toy rounded-[2rem] bg-[var(--color-surface)] max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row"
+            className="panel rounded-[2rem] bg-[var(--color-surface)] max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row"
           >
             <div className={`w-full md:w-3/5 bg-black relative min-h-[320px] md:min-h-[480px] flex items-center justify-center ${zoomed ? 'overflow-auto' : 'overflow-hidden'}`}>
               {items.length > 1 && !zoomed && (
@@ -193,13 +193,13 @@ export function Lightbox({
                     href={item.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="toy-sm toy-press font-button block text-center text-sm font-extrabold uppercase py-3 rounded-full bg-[var(--color-accent)] text-[var(--color-accent-ink)]"
+                    className="panel-sm lift border-transparent font-button block text-center text-sm font-bold uppercase py-3 rounded-full bg-[var(--color-accent)] text-[var(--color-accent-ink)]"
                   >
                     {t.modal.viewOnIg} ↗
                   </a>
                   <button
                     onClick={() => handleCopyLink(item.permalink)}
-                    className="toy-sm toy-press block w-full text-center text-sm font-extrabold uppercase py-3 rounded-full bg-[var(--color-highlight)] text-[var(--color-highlight-ink)]"
+                    className="panel-sm lift block w-full text-center text-sm font-bold uppercase py-3 rounded-full bg-[var(--color-highlight)] text-[var(--color-highlight-ink)]"
                   >
                     {copied ? t.modal.copied + ' ✨' : t.modal.copyLink}
                   </button>

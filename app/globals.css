@@ -7,64 +7,60 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  /* Grotesca expresiva con tamaños ópticos */
+  /* Grotesca con tamaños ópticos para titulares y botones */
   --font-display: var(--font-bricolage);
   --font-button: var(--font-bricolage);
 
-  /* Esquinas generosas de pieza de plástico */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
-  --radius-2xl: 24px;
-  --radius-3xl: 32px;
+  /* Esquinas suaves, sin exagerar */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --radius-3xl: 24px;
 }
 
-/* Paleta "marca de juguete" (inspirada en webs de Awwwards como Ring Pop® o
-   Gallery Play®): bloques de color a sangre, contornos gruesos y sombras
-   sólidas desplazadas, como una pegatina.
-   Los colores forman una armonía fría y cada uno tiene un papel:
-   - Cobalto  (--color-accent):    la marca y las acciones principales.
-   - Turquesa (--color-accent-3):  la comunidad y las acciones secundarias.
-   - Lavanda  (--color-highlight): destacados (pegatinas, activo, selección).
-   - Marino   (--color-border):    la "tinta" de contornos, sombras y texto.
-   El calor lo ponen las fotos; el rojo queda solo para errores y borrar.
+/* Paleta neutra "de galería": papel cálido, grafito y grises piedra para que
+   las fotos sean lo único llamativo de la página. Un solo acento apagado
+   (azul pizarra) para enlaces, estados activos y la acción principal, y un
+   verde salvia para lo relacionado con la comunidad. El rojo queda solo para
+   errores y borrar.
    Los valores viven en :root (claro) y [data-theme='dark'] (oscuro). */
 :root {
   color-scheme: light;
 
-  --color-ink: #f4f6fb;          /* fondo de página (papel frío) */
+  --color-ink: #f6f5f2;          /* fondo de página (papel) */
   --color-surface: #ffffff;      /* tarjetas, modales */
-  --color-surface-2: #e8ecf7;    /* campos, zonas hundidas */
-  --color-border: #13204a;       /* contorno grueso de las piezas */
-  --color-text: #13204a;
-  --color-text-muted: #47527a;
-  --color-text-faint: #5d6890;
+  --color-surface-2: #eeece7;    /* campos, zonas hundidas */
+  --color-border: #e1ded6;       /* filetes suaves */
+  --color-text: #1d1d1f;         /* grafito */
+  --color-text-muted: #5a5955;
+  --color-text-faint: #6c6a65;
 
-  /* Bloques de color: el texto que llevan encima viene en su pareja -ink */
-  --color-accent: #2b4fd6;       /* Cobalto — marca, acción principal */
+  /* Rellenos: el texto que llevan encima viene en su pareja -ink */
+  --color-accent: #3b5b92;       /* Azul pizarra — acción principal */
   --color-accent-ink: #ffffff;
-  --color-accent-3: #2fd0c0;     /* Turquesa — comunidad, acción secundaria */
-  --color-accent-3-ink: #13204a;
-  --color-highlight: #c9b8ff;    /* Lavanda — destacados */
-  --color-highlight-ink: #13204a;
+  --color-accent-3: #4c7a73;     /* Verde salvia — comunidad */
+  --color-accent-3-ink: #ffffff;
+  --color-highlight: #e7ebf3;    /* Fondo suave de lo activo / seleccionado */
+  --color-highlight-ink: #1d1d1f;
   --color-accent-4: #00852b;     /* Verde — éxito */
   --color-accent-2: #9a5600;     /* Ámbar — avisos */
-  --color-danger: #d4183d;       /* Rojo — solo errores y borrar */
+  --color-danger: #c4314b;       /* Rojo — solo errores y borrar */
 
   /* Variantes para usar COMO TEXTO sobre el fondo del tema (contraste AA) */
-  --color-accent-text: #2442c4;
-  --color-accent-3-text: #0b7c74;
+  --color-accent-text: #33507f;
+  --color-accent-3-text: #3f6b64;
   --color-accent-4-text: #00752a;
-  --color-danger-text: #c0122f;
+  --color-danger-text: #b02a42;
 
   /* Banda del pie */
-  --color-dark: #13204a;
-  --color-on-dark: #ffffff;
-  --color-on-dark-muted: #c7cff0;
+  --color-dark: #1d1d1f;
+  --color-on-dark: #f6f5f2;
+  --color-on-dark-muted: #b5b3ae;
 
-  /* Sombra sólida de las piezas */
-  --toy-shadow: #13204a;
+  --shadow-card: 0 1px 2px rgba(29, 29, 31, 0.05), 0 8px 24px -12px rgba(29, 29, 31, 0.18);
+  --shadow-card-hover: 0 2px 4px rgba(29, 29, 31, 0.06), 0 16px 32px -14px rgba(29, 29, 31, 0.26);
 
   /* Texto de categorías: su color de marca oscurecido (claro) o aclarado (oscuro) */
   --category-mix: black;
@@ -77,24 +73,27 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --color-ink: #0b1020;
-  --color-surface: #141b33;
-  --color-surface-2: #1c2442;
-  --color-border: #e6eaff;
-  --color-text: #eef1ff;
-  --color-text-muted: #b3bbdb;
-  --color-text-faint: #969fc4;
+  --color-ink: #121213;
+  --color-surface: #1b1b1d;
+  --color-surface-2: #242426;
+  --color-border: #303033;
+  --color-text: #ececea;
+  --color-text-muted: #a9a8a4;
+  --color-text-faint: #8f8e8a;
 
+  --color-highlight: #2a2f3a;
+  --color-highlight-ink: #ececea;
   --color-accent-2: #f0a640;
 
-  --color-accent-text: #9fb2ff;
-  --color-accent-3-text: #5ee6d8;
+  --color-accent-text: #a9bde6;
+  --color-accent-3-text: #8cc2b9;
   --color-accent-4-text: #5fd08a;
-  --color-danger-text: #ff7b8f;
+  --color-danger-text: #ff8a9c;
 
-  --color-dark: #060a18;
+  --color-dark: #0b0b0c;
 
-  --toy-shadow: #000000;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px -14px rgba(0, 0, 0, 0.6);
+  --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.3), 0 18px 36px -16px rgba(0, 0, 0, 0.7);
 
   --category-mix: white;
   --category-mix-amount: 65%;
@@ -114,8 +113,8 @@ body {
 }
 
 ::selection {
-  background: var(--color-highlight);
-  color: var(--color-highlight-ink);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
 }
 
 /* Tipografía "de bloque" reservada para los botones (ver nota en layout.tsx). */
@@ -129,7 +128,7 @@ button {
 
 /* Enfoque visible consistente para navegación por teclado */
 :focus-visible {
-  outline: 3px solid var(--color-accent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
 
@@ -166,89 +165,70 @@ button {
 /* Utilidades propias en la capa "components": las utilidades de Tailwind
    siguen teniendo prioridad sobre ellas. */
 @layer components {
-  /* Pieza de juguete: contorno grueso y sombra sólida desplazada */
-  .toy {
-    border: 3px solid var(--color-border);
-    box-shadow: 5px 5px 0 var(--toy-shadow);
+  /* Panel: tarjeta con filete fino y sombra suave */
+  .panel {
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
   }
 
-  .toy-sm {
-    border: 2px solid var(--color-border);
-    box-shadow: 3px 3px 0 var(--toy-shadow);
+  .panel-sm {
+    border: 1px solid var(--color-border);
   }
 
-  /* Al pasar el ratón la pieza "salta" y al pulsar se encaja */
-  .toy-press {
-    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease, color 0.2s ease;
+  /* Al pasar el ratón la pieza se eleva un poco */
+  .lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
 
-  .toy-press:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 7px 7px 0 var(--toy-shadow);
+  .lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
   }
 
-  .toy-sm.toy-press:hover {
-    box-shadow: 5px 5px 0 var(--toy-shadow);
-  }
-
-  .toy-press:active {
-    transform: translate(3px, 3px);
-    box-shadow: 0 0 0 var(--toy-shadow);
+  .lift:active {
+    transform: translateY(0);
   }
 
   /* Etiqueta pequeña en mayúsculas: contadores, categorías, datos */
   .label-caps {
     font-family: var(--font-display);
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.3;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  /* Pegatina: etiqueta con contorno, ligeramente girada */
+  /* Chip: etiqueta discreta con filete (secciones, contadores) */
   .sticker {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    border: 2px solid var(--color-border);
+    border: 1px solid var(--color-border);
     border-radius: 999px;
-    padding: 0.3rem 0.85rem;
+    padding: 0.3rem 0.8rem;
     font-family: var(--font-display);
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.04em;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    box-shadow: 2px 2px 0 var(--toy-shadow);
-    rotate: -3deg;
   }
 
-  /* Enlace con subrayado grueso lavanda que crece al pasar el ratón */
+  /* Enlace con subrayado fino que crece al pasar el ratón */
   .link-underline {
-    background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
-    background-size: 0% 0.35em;
-    background-position: 0 88%;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
     background-repeat: no-repeat;
-    transition: background-size 0.25s ease, color 0.2s ease;
+    transition: background-size 0.3s ease, color 0.2s ease;
   }
 
   .link-underline:hover,
   .link-underline:focus-visible,
   .link-underline[aria-current],
   .link-underline[aria-pressed='true'] {
-    background-size: 100% 0.35em;
+    background-size: 100% 1px;
   }
-}
-
-/* Meneo de juguete al pasar el ratón */
-@keyframes wiggle {
-  0%, 100% { rotate: 0deg; }
-  25% { rotate: -4deg; }
-  75% { rotate: 4deg; }
-}
-
-.hover-wiggle:hover {
-  animation: wiggle 0.4s ease-in-out;
 }
 
 /* Piezas del fondo: vaivén lento (solo transform, para que sea fluido) */

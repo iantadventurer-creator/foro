@@ -120,11 +120,11 @@ export function QrCodeModal({
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 300, damping: 28 }}
             onClick={(e) => e.stopPropagation()}
-            className="toy relative w-full max-w-xs rounded-[2rem] bg-[var(--color-surface)] p-7"
+            className="panel relative w-full max-w-xs rounded-[2rem] bg-[var(--color-surface)] p-7"
           >
-            <span className="absolute top-3.5 left-3.5 w-3.5 h-3.5 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-accent)]" aria-hidden="true" />
-            <span className="absolute bottom-3.5 left-3.5 w-3.5 h-3.5 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-accent-3)]" aria-hidden="true" />
-            <span className="absolute bottom-3.5 right-3.5 w-3.5 h-3.5 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-accent-4)]" aria-hidden="true" />
+            <span className="absolute top-3.5 left-3.5 w-3.5 h-3.5 rounded-full border border-[var(--color-border)] bg-[var(--color-accent)]" aria-hidden="true" />
+            <span className="absolute bottom-3.5 left-3.5 w-3.5 h-3.5 rounded-full border border-[var(--color-border)] bg-[var(--color-accent-3)]" aria-hidden="true" />
+            <span className="absolute bottom-3.5 right-3.5 w-3.5 h-3.5 rounded-full border border-[var(--color-border)] bg-[var(--color-accent-4)]" aria-hidden="true" />
 
             <div className="flex justify-end mb-3">
               <button

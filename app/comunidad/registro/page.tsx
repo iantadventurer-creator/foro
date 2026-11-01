@@ -78,8 +78,8 @@ export default function RegistroPage() {
             >
                 {done ? (
                     <div className="text-center">
-                        <div className="toy-sm w-14 h-14 mx-auto mb-5 rounded-full bg-[var(--color-accent-4)] text-white flex items-center justify-center text-2xl font-extrabold" aria-hidden="true">✓</div>
-                        <h1 className="font-display text-3xl font-extrabold mb-2">{s.doneTitle}</h1>
+                        <div className="panel-sm w-14 h-14 mx-auto mb-5 rounded-full bg-[var(--color-accent-4)] text-white flex items-center justify-center text-2xl font-bold" aria-hidden="true">✓</div>
+                        <h1 className="font-display text-3xl font-bold mb-2">{s.doneTitle}</h1>
                         <p className="text-sm text-[var(--color-text-muted)] mb-6">{s.doneDesc}</p>
                         <Button href="/comunidad/entrar" fullWidth>
                             {s.goLogin}

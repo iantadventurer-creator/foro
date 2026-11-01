@@ -20,7 +20,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
       onClick={toggle}
       aria-label={label}
       title={label}
-      className={`w-9 h-9 shrink-0 inline-flex items-center justify-center rounded-full border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-highlight)] hover:text-[var(--color-highlight-ink)] transition-colors ${className}`.trim()}
+      className={`w-9 h-9 shrink-0 inline-flex items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-highlight)] hover:text-[var(--color-highlight-ink)] transition-colors ${className}`.trim()}
     >
       {theme === 'dark' ? (
         // Sol: se muestra en modo oscuro (pasar a claro)

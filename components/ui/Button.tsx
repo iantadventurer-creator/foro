@@ -5,15 +5,15 @@ type Variant = 'primary' | 'accent' | 'secondary';
 type Size = 'sm' | 'md' | 'lg';
 
 const BASE =
-  'toy-sm toy-press font-button inline-flex items-center justify-center gap-2 rounded-full font-extrabold uppercase tracking-[0.04em] disabled:opacity-50 disabled:pointer-events-none';
+  'lift font-button inline-flex items-center justify-center gap-2 rounded-full border font-semibold disabled:opacity-50 disabled:pointer-events-none';
 
-// Botones de juguete: contorno grueso, sombra sólida y "salto" al pasar el
-// ratón (utilidades toy-* de globals.css). "primary" es el cobalto de la
-// marca; "accent", el turquesa de la comunidad; "secondary", blanco.
+// Botones: píldoras sobrias que se elevan un poco al pasar el ratón (utilidad
+// lift de globals.css). "primary" es el acento pizarra; "accent", el salvia
+// de la comunidad; "secondary", neutro con filete.
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]',
-  accent: 'bg-[var(--color-accent-3)] text-[var(--color-accent-3-ink)]',
-  secondary: 'bg-[var(--color-surface)] text-[var(--color-text)]',
+  primary: 'border-transparent bg-[var(--color-accent)] text-[var(--color-accent-ink)]',
+  accent: 'border-transparent bg-[var(--color-accent-3)] text-[var(--color-accent-3-ink)]',
+  secondary: 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)]',
 };
 
 const SIZES: Record<Size, string> = {

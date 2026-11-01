@@ -73,7 +73,7 @@ export function PostModal({
                     animate={{ scale: 1, y: 0, opacity: 1 }}
                     exit={{ scale: 0.95, y: 16, opacity: 0 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="toy rounded-[2rem] bg-[var(--color-surface)] max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row"
+                    className="panel rounded-[2rem] bg-[var(--color-surface)] max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row"
                 >
                     <div className="w-full md:w-3/5 bg-black relative min-h-[320px] md:min-h-[480px] flex items-center justify-center overflow-hidden">
                         <div
@@ -132,7 +132,7 @@ export function PostModal({
                         <div className="flex flex-col gap-4">
                             {modalTheme && post.category && (
                                 <span
-                                    className="label-caps self-start flex items-center gap-1.5 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] pl-1.5 pr-2.5 py-1"
+                                    className="label-caps self-start flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] pl-1.5 pr-2.5 py-1"
                                 >
                                     <span className="w-2.5 h-2.5 rounded-full" style={{ background: modalTheme.accent }} aria-hidden="true" />
                                     {formatCategoryLabel(post.category)}
@@ -158,7 +158,7 @@ export function PostModal({
                                         <div className="flex gap-2 justify-end">
                                             <button
                                                 onClick={() => handleEdit(post.id)}
-                                                className="toy-sm toy-press rounded-full bg-[var(--color-accent-4)] text-white font-extrabold px-3 py-1.5 text-[11px] uppercase"
+                                                className="panel-sm lift rounded-full bg-[var(--color-accent-4)] text-white font-bold px-3 py-1.5 text-[11px] uppercase"
                                             >
                                                 {t.save}
                                             </button>
@@ -167,7 +167,7 @@ export function PostModal({
                                                     setEditingPostId(null);
                                                     setEditText('');
                                                 }}
-                                                className="toy-sm toy-press rounded-full bg-[var(--color-surface)] text-[var(--color-text)] font-extrabold px-3 py-1.5 text-[11px] uppercase"
+                                                className="panel-sm lift rounded-full bg-[var(--color-surface)] text-[var(--color-text)] font-bold px-3 py-1.5 text-[11px] uppercase"
                                             >
                                                 {t.cancel}
                                             </button>
@@ -197,7 +197,7 @@ export function PostModal({
                                     onClick={() => onToggleLike(post.id, post.post_likes || [])}
                                     aria-pressed={liked}
                                     aria-label={`${liked ? t.unlike : t.like} · ${t.likesCount(likeCount)}`}
-                                    className={`toy-sm toy-press flex items-center gap-2 px-4 py-2 rounded-full text-sm font-extrabold ${liked
+                                    className={`panel-sm lift flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold ${liked
                                         ? 'bg-[var(--color-highlight)] text-[var(--color-highlight-ink)]'
                                         : 'bg-[var(--color-surface)] text-[var(--color-text)]'
                                         }`}
@@ -215,13 +215,13 @@ export function PostModal({
                                                 setEditingPostId(post.id);
                                                 setEditText(post.title);
                                             }}
-                                            className="rounded-full text-[11px] bg-[var(--color-surface-2)] text-[var(--color-accent-text)] px-3 py-1 font-extrabold uppercase border-2 border-[var(--color-border)] transition-colors hover:bg-[var(--color-highlight)] hover:text-[var(--color-highlight-ink)]"
+                                            className="rounded-full text-[11px] bg-[var(--color-surface-2)] text-[var(--color-accent-text)] px-3 py-1 font-bold uppercase border border-[var(--color-border)] transition-colors hover:bg-[var(--color-highlight)] hover:text-[var(--color-highlight-ink)]"
                                         >
                                             {t.edit}
                                         </button>
                                         <button
                                             onClick={() => onRequestDelete(post.id, post.image_url)}
-                                            className="rounded-full text-[11px] bg-[var(--color-surface-2)] text-[var(--color-danger-text)] px-3 py-1 font-extrabold uppercase border-2 border-[var(--color-border)] transition-colors hover:bg-[var(--color-danger)] hover:text-white"
+                                            className="rounded-full text-[11px] bg-[var(--color-surface-2)] text-[var(--color-danger-text)] px-3 py-1 font-bold uppercase border border-[var(--color-border)] transition-colors hover:bg-[var(--color-danger)] hover:text-white"
                                         >
                                             {t.delete}
                                         </button>

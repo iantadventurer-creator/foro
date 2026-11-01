@@ -47,7 +47,7 @@ export function ToastViewport({ toasts, onDismiss }: { toasts: ToastItem[]; onDi
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, x: 24 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                        className={`toy-sm rounded-2xl px-4 py-3 text-sm font-semibold flex items-start justify-between gap-3 ${variantStyles[toast.variant]}`}
+                        className={`panel-sm rounded-2xl px-4 py-3 text-sm font-semibold flex items-start justify-between gap-3 ${variantStyles[toast.variant]}`}
                     >
                         <span className="leading-snug">{toast.message}</span>
                         <button

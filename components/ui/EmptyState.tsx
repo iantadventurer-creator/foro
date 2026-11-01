@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 export function EmptyState({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <div
-      className={`text-center py-16 px-4 rounded-3xl border-[3px] border-dashed border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] font-semibold text-sm ${className}`.trim()}
+      className={`text-center py-16 px-4 rounded-3xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] font-semibold text-sm ${className}`.trim()}
     >
       {children}
     </div>

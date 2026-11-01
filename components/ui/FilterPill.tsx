@@ -24,7 +24,7 @@ export function FilterPill({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`toy-sm toy-press shrink-0 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-extrabold uppercase tracking-[0.03em] whitespace-nowrap ${active ? 'bg-[var(--color-text)] text-[var(--color-ink)]' : 'bg-[var(--color-surface)] text-[var(--color-text)]'}`}
+      className={`panel-sm lift shrink-0 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-bold uppercase tracking-[0.03em] whitespace-nowrap ${active ? 'bg-[var(--color-text)] text-[var(--color-ink)]' : 'bg-[var(--color-surface)] text-[var(--color-text)]'}`}
     >
       {theme && <span className="w-2.5 h-2.5 rounded-full ring-2 ring-[var(--color-surface)]" style={{ background: theme.accent }} aria-hidden="true" />}
       {children}

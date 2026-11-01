@@ -98,14 +98,14 @@ export function ImageDropzone({
                 setDragging(false);
                 pick(e.dataTransfer.files?.[0]);
             }}
-            className={`flex flex-col items-center justify-center gap-3 text-center rounded-3xl border-[3px] border-dashed border-[var(--color-border)] px-4 py-10 cursor-pointer transition-colors focus-within:bg-[var(--color-surface-2)] ${dragging
+            className={`flex flex-col items-center justify-center gap-3 text-center rounded-3xl border border-dashed border-[var(--color-border)] px-4 py-10 cursor-pointer transition-colors focus-within:bg-[var(--color-surface-2)] ${dragging
                 ? 'bg-[var(--color-highlight)]/30'
                 : 'hover:bg-[var(--color-surface-2)] bg-[var(--color-surface)]'
                 }`}
         >
             {input}
-            <span className="toy-sm w-12 h-12 rounded-2xl bg-[var(--color-highlight)] text-[var(--color-highlight-ink)] flex items-center justify-center text-3xl font-extrabold leading-none" aria-hidden="true">+</span>
-            <span className="text-sm font-extrabold text-[var(--color-text)]">{labels.title}</span>
+            <span className="panel-sm w-12 h-12 rounded-2xl bg-[var(--color-highlight)] text-[var(--color-highlight-ink)] flex items-center justify-center text-3xl font-bold leading-none" aria-hidden="true">+</span>
+            <span className="text-sm font-bold text-[var(--color-text)]">{labels.title}</span>
             <span className="text-xs text-[var(--color-text-faint)]">{labels.hint}</span>
         </label>
     );

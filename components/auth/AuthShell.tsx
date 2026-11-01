@@ -9,9 +9,8 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import type { Lang } from '@/lib/lang';
 
 /** Marco común de las pantallas de acceso (entrar / registrarse), con el
- * mismo esquema que Instagram —una tarjeta central con la marca arriba y,
- * debajo, otra para pasar a la otra pantalla— hecho con piezas de juguete:
- * la cabecera de la tarjeta es un bloque cobalto. */
+ * mismo esquema que Instagram: una tarjeta central con la marca arriba y,
+ * debajo, otra para pasar a la otra pantalla. */
 export function AuthShell({
     lang,
     onLangChange,
@@ -35,7 +34,7 @@ export function AuthShell({
         <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
             <header className="px-4 sm:px-6 py-3">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <Link href="/comunidad" className="link-underline py-2 text-sm font-extrabold text-[var(--color-text)]">
+                    <Link href="/comunidad" className="link-underline py-2 text-sm font-bold text-[var(--color-text)]">
                         {backLabel}
                     </Link>
                     <div className="flex items-center gap-2">
@@ -47,27 +46,26 @@ export function AuthShell({
 
             <div className="max-w-md mx-auto px-4 pt-6 md:pt-10 pb-16 flex flex-col gap-5">
                 <motion.div
-                    initial={{ opacity: 0, y: 20, rotate: -1 }}
-                    animate={{ opacity: 1, y: 0, rotate: 0 }}
-                    transition={{ type: 'spring', stiffness: 240, damping: 20 }}
-                    className="toy overflow-hidden rounded-[2rem] bg-[var(--color-surface)]"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="panel overflow-hidden rounded-[2rem] bg-[var(--color-surface)]"
                 >
-                    <div className="relative bg-[var(--color-accent)] text-white px-7 py-7 border-b-[3px] border-[var(--color-border)]">
-                        <BrandMark className="w-12 h-12 rounded-2xl border-2 border-[#13204a] mb-4 hover-wiggle" />
-                        <p className="font-display text-4xl font-extrabold tracking-[-0.04em]">IanTBuild</p>
-                        <p className="text-sm font-medium text-white/90 mt-2 leading-relaxed">{tagline}</p>
+                    <div className="px-7 pt-9 pb-2 text-center">
+                        <BrandMark className="w-11 h-11 rounded-xl mx-auto mb-4" />
+                        <p className="font-display text-3xl font-bold tracking-[-0.04em]">IanTBuild</p>
+                        <p className="text-sm text-[var(--color-text-muted)] mt-2 leading-relaxed">{tagline}</p>
                     </div>
-                    <div className="px-7 py-7">{children}</div>
+                    <div className="px-7 pt-6 pb-8">{children}</div>
                 </motion.div>
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.08, type: 'spring', stiffness: 240, damping: 20 }}
-                    className="toy-sm rounded-3xl bg-[var(--color-highlight)] text-[#13204a] px-7 py-4 text-center text-sm font-semibold"
+                    transition={{ delay: 0.05 }}
+                    className="panel-sm rounded-3xl bg-[var(--color-surface)] px-7 py-4 text-center text-sm text-[var(--color-text-muted)]"
                 >
                     {switchText}{' '}
-                    <Link href={switchHref} className="font-extrabold underline underline-offset-4 decoration-2">
+                    <Link href={switchHref} className="font-semibold text-[var(--color-accent-text)] hover:underline">
                         {switchLabel}
                     </Link>
                 </motion.div>

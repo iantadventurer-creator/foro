@@ -6,15 +6,9 @@ import { Button } from '@/components/ui/Button';
 import type { AppUser } from '@/lib/community';
 import type { CommunityContent } from '@/lib/content/communityContent';
 
-const STEP_COLORS = [
-  { bg: 'var(--color-accent)', ink: '#ffffff' },
-  { bg: 'var(--color-accent-3)', ink: '#13204a' },
-  { bg: 'var(--color-highlight)', ink: '#13204a' },
-];
-
-/** Tarjeta de juguete de la parte superior del feed. Con sesión: saludo,
- * publicar y perfil. Sin sesión: los tres pasos para participar, como
- * piezas de colores, y los botones de registro / acceso. */
+/** Tarjeta de la parte superior del feed. Con sesión: saludo, publicar y
+ * perfil. Sin sesión: los tres pasos para participar y los botones de
+ * registro / acceso. */
 export function CommunityWelcome({
     t,
     user,
@@ -26,7 +20,7 @@ export function CommunityWelcome({
     avatarUrl?: string;
     onPublish: () => void;
 }) {
-    const cardClass = 'toy rounded-3xl bg-[var(--color-surface)] p-5 sm:p-7 mb-10';
+    const cardClass = 'panel rounded-3xl bg-[var(--color-surface)] p-5 sm:p-7 mb-10';
 
     if (user) {
         const rawHandle = user.user_metadata?.instagram_handle || user.email?.split('@')[0] || 'anon';
@@ -38,11 +32,11 @@ export function CommunityWelcome({
                 className={`${cardClass} flex flex-col sm:flex-row sm:items-center gap-5`}
             >
                 <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <span className="rounded-full border-[3px] border-[var(--color-border)]">
+                    <span className="rounded-full border border-[var(--color-border)]">
                         <Avatar handle={handle} imageUrl={avatarUrl} size={56} />
                     </span>
                     <div className="min-w-0">
-                        <h2 className="font-display text-2xl font-extrabold truncate">{t.welcomeGreeting(handle)}</h2>
+                        <h2 className="font-display text-2xl font-bold truncate">{t.welcomeGreeting(handle)}</h2>
                         <p className="text-sm text-[var(--color-text-muted)]">{t.welcomeDesc}</p>
                     </div>
                 </div>
@@ -61,16 +55,15 @@ export function CommunityWelcome({
     return (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className={`${cardClass} grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center`}>
             <div>
-                <h2 className="font-display text-3xl font-extrabold leading-[0.95] text-[var(--color-text)] mb-2">{t.auth.joinTitle}</h2>
+                <h2 className="font-display text-3xl font-bold leading-[0.95] text-[var(--color-text)] mb-2">{t.auth.joinTitle}</h2>
                 <p className="text-sm text-[var(--color-text-muted)] mb-5">{t.auth.joinDesc}</p>
-                <ol className="grid gap-3 sm:grid-cols-3 [--color-border:#13204a] [--toy-shadow:#13204a]">
+                <ol className="grid gap-3 sm:grid-cols-3">
                     {t.steps.map((step, i) => (
                         <li
                             key={step}
-                            style={{ background: STEP_COLORS[i].bg, color: STEP_COLORS[i].ink }}
-                            className={`toy-sm flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-extrabold ${i === 1 ? 'sm:rotate-1' : 'sm:-rotate-1'}`}
+                            className="flex items-center gap-3 rounded-2xl bg-[var(--color-surface-2)] px-3 py-3 text-sm font-semibold text-[var(--color-text)]"
                         >
-                            <span className="w-8 h-8 shrink-0 rounded-full border-2 border-[#13204a] bg-white text-[#13204a] flex items-center justify-center font-extrabold">
+                            <span className="w-7 h-7 shrink-0 rounded-full bg-[var(--color-accent)] text-[var(--color-accent-ink)] flex items-center justify-center text-xs font-bold">
                                 {i + 1}
                             </span>
                             {step}

@@ -32,15 +32,15 @@ export function CommunityHeader({
     const nav = communityNav[lang];
 
     return (
-        <header className="sticky top-0 z-40 bg-[var(--color-ink)]/90 backdrop-blur-md border-b-[3px] border-[var(--color-border)] px-4 sm:px-6 py-3">
+        <header className="sticky top-0 z-40 bg-[var(--color-ink)]/90 backdrop-blur-md border-b border-[var(--color-border)] px-4 sm:px-6 py-3">
             <div className="max-w-7xl mx-auto flex md:grid md:grid-cols-3 items-center justify-between gap-3">
                 <div className="justify-self-start flex items-center gap-3 min-w-0">
                     <Link href="/" aria-label="IanTBuild" className="group shrink-0">
-                        <BrandMark className="w-9 h-9 rounded-xl border-2 border-[var(--color-border)] group-hover:rotate-[-8deg] transition-transform" />
+                        <BrandMark className="w-9 h-9 rounded-xl border border-[var(--color-border)] group-hover:rotate-[-8deg] transition-transform" />
                     </Link>
                     <Link
                         href={back === 'home' ? '/' : '/comunidad'}
-                        className="link-underline py-2 text-xs sm:text-sm font-extrabold text-[var(--color-text)] truncate"
+                        className="link-underline py-2 text-xs sm:text-sm font-bold text-[var(--color-text)] truncate"
                     >
                         {back === 'home' ? nav.backToHome : nav.backToCommunity}
                     </Link>

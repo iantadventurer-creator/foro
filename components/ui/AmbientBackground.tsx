@@ -19,19 +19,19 @@ type Brick = {
   desktopOnly?: boolean;
 };
 
-const COBALT = '#2b4fd6';
-const TURQUOISE = '#2fd0c0';
-const LAVENDER = '#c9b8ff';
-const NAVY = '#13204a';
+const STONE = '#b9b4a9';
+const SLATE = '#97a3b8';
+const SAGE = '#a3b8b2';
+const SAND = '#cbbfa8';
 
 const BRICKS: Brick[] = [
-  { top: '8%', left: '-1.5%', cols: 4, rows: 2, unit: 22, color: COBALT, dx: 18, dy: 26, r0: -14, r1: -4, duration: 22, delay: 0 },
-  { top: '14%', left: '95%', cols: 2, rows: 2, unit: 22, color: TURQUOISE, dx: -20, dy: 22, r0: 12, r1: 24, duration: 19, delay: -4 },
-  { top: '38%', left: '92%', cols: 2, rows: 1, unit: 20, color: LAVENDER, dx: -14, dy: -24, r0: -8, r1: 6, duration: 24, delay: -9, desktopOnly: true },
-  { top: '46%', left: '-1.5%', cols: 2, rows: 2, unit: 20, color: NAVY, dx: 16, dy: -20, r0: 18, r1: 4, duration: 26, delay: -3, desktopOnly: true },
-  { top: '64%', left: '94%', cols: 4, rows: 2, unit: 20, color: TURQUOISE, dx: -22, dy: -18, r0: 6, r1: -10, duration: 28, delay: -12 },
-  { top: '76%', left: '-1%', cols: 2, rows: 1, unit: 22, color: COBALT, dx: 20, dy: -16, r0: -20, r1: -6, duration: 21, delay: -7, desktopOnly: true },
-  { top: '90%', left: '90%', cols: 1, rows: 1, unit: 22, color: COBALT, dx: -12, dy: -14, r0: -6, r1: 10, duration: 17, delay: -2 },
+  { top: '8%', left: '-1.5%', cols: 4, rows: 2, unit: 22, color: STONE, dx: 18, dy: 26, r0: -14, r1: -4, duration: 22, delay: 0 },
+  { top: '14%', left: '95%', cols: 2, rows: 2, unit: 22, color: SLATE, dx: -20, dy: 22, r0: 12, r1: 24, duration: 19, delay: -4 },
+  { top: '38%', left: '92%', cols: 2, rows: 1, unit: 20, color: SAGE, dx: -14, dy: -24, r0: -8, r1: 6, duration: 24, delay: -9, desktopOnly: true },
+  { top: '46%', left: '-1.5%', cols: 2, rows: 2, unit: 20, color: SAND, dx: 16, dy: -20, r0: 18, r1: 4, duration: 26, delay: -3, desktopOnly: true },
+  { top: '64%', left: '94%', cols: 4, rows: 2, unit: 20, color: SLATE, dx: -22, dy: -18, r0: 6, r1: -10, duration: 28, delay: -12 },
+  { top: '76%', left: '-1%', cols: 2, rows: 1, unit: 22, color: STONE, dx: 20, dy: -16, r0: -20, r1: -6, duration: 21, delay: -7, desktopOnly: true },
+  { top: '90%', left: '90%', cols: 1, rows: 1, unit: 22, color: STONE, dx: -12, dy: -14, r0: -6, r1: 10, duration: 17, delay: -2 },
 ];
 
 /** Pieza LEGO vista desde arriba: cuerpo con canto y una cuadrícula de studs. */
@@ -58,24 +58,18 @@ function BrickTop({ cols, rows, unit, color }: Pick<Brick, 'cols' | 'rows' | 'un
   );
 }
 
-// Fondo fijo: halos muy suaves de turquesa y cobalto y piezas LEGO que flotan
-// despacio. Solo se animan transformaciones (fluido y barato para el
-// navegador); con "reducir movimiento" activado se quedan quietas
-// (ver globals.css). Queda detrás de todo el contenido.
+// Fondo fijo: piezas LEGO en tonos piedra, muy tenues, que flotan despacio
+// en los márgenes sin competir con las fotos. Solo se animan
+// transformaciones (fluido y barato para el navegador); con "reducir
+// movimiento" activado se quedan quietas (ver globals.css). Queda detrás de
+// todo el contenido.
 export function AmbientBackground() {
   return (
     <div aria-hidden="true" className="fixed inset-0 -z-20 overflow-hidden pointer-events-none">
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(56rem 36rem at 8% -12%, rgba(47,208,192,0.16), transparent 62%), radial-gradient(48rem 34rem at 100% 110%, rgba(43,79,214,0.1), transparent 60%)',
-        }}
-      />
       {BRICKS.map((brick, i) => (
         <div
           key={i}
-          className={`brick-drift absolute opacity-[0.3] md:opacity-[0.45] dark:opacity-[0.22] md:dark:opacity-[0.3] ${brick.desktopOnly ? 'hidden md:block' : ''}`}
+          className={`brick-drift absolute opacity-[0.22] md:opacity-[0.3] dark:opacity-[0.08] md:dark:opacity-[0.12] ${brick.desktopOnly ? 'hidden md:block' : ''}`}
           style={
             {
               top: brick.top,

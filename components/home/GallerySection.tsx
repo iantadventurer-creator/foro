@@ -63,7 +63,7 @@ export function GallerySection({
 }) {
   return (
     <section id="gallery" ref={sectionRef} className="max-w-7xl mx-auto px-4 sm:px-6 pb-20 md:pb-28 scroll-mt-20">
-      <SectionHeading index="02" tone="secondary" eyebrow={t.gallery.eyebrow} title={t.gallery.title} subtitle={t.gallery.subtitle} />
+      <SectionHeading eyebrow={t.gallery.eyebrow} title={t.gallery.title} subtitle={t.gallery.subtitle} />
 
       {categories.length > 0 && (
         <div className="mt-8 mb-10 -mx-4 px-4 sm:mx-0 sm:px-0 flex items-center gap-2.5 overflow-x-auto sm:flex-wrap pt-1 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -123,19 +123,19 @@ export function GallerySection({
                       onOpenItem(item);
                     }
                   }}
-                  className="toy-sm toy-press group mb-3 sm:mb-6 break-inside-avoid cursor-pointer overflow-hidden rounded-2xl sm:rounded-3xl bg-[var(--color-surface)]"
+                  className="group mb-5 sm:mb-8 break-inside-avoid cursor-zoom-in"
                 >
-                  <div className="relative overflow-hidden bg-[var(--color-surface-2)]">
+                  <div className="relative overflow-hidden rounded-2xl bg-[var(--color-surface-2)]">
                     <Image
                       src={item.src}
                       alt={item.title}
                       width={0}
                       height={0}
                       sizes="(max-width: 1024px) 50vw, 33vw"
-                      className="w-full h-auto object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                      className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                     />
                     {isVideo && (
-                      <span className="sticker absolute top-2.5 right-2.5 bg-[var(--color-highlight)] text-[#13204a] border-[#13204a] text-[10px] rotate-[4deg]">Reel</span>
+                      <span className="label-caps absolute top-2.5 right-2.5 rounded-full bg-black/55 px-2.5 py-1 text-white backdrop-blur-sm">Reel</span>
                     )}
                     <motion.button
                       whileTap={{ scale: 1.3 }}
@@ -143,16 +143,16 @@ export function GallerySection({
                       onClick={(e) => onToggleFavorite(item.id, e)}
                       aria-label={isFavorite ? t.modal.removeFavorite : t.modal.addFavorite}
                       aria-pressed={isFavorite}
-                      className="absolute top-2.5 left-2.5 w-9 h-9 flex items-center justify-center rounded-full border-2 border-[#13204a] bg-white text-lg"
+                      className={`absolute top-2.5 left-2.5 w-9 h-9 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm text-lg shadow-sm transition-opacity ${isFavorite ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-90'}`}
                     >
-                      <span style={{ color: isFavorite ? '#e0245e' : '#13204a' }}>{isFavorite ? '♥' : '♡'}</span>
+                      <span style={{ color: isFavorite ? '#e0245e' : '#1d1d1f' }}>{isFavorite ? '♥' : '♡'}</span>
                     </motion.button>
                   </div>
-                  <figcaption className="flex items-center justify-between gap-2 border-t-2 border-[var(--color-border)] px-3 py-2.5">
-                    <span className="min-w-0 text-sm font-bold leading-snug text-[var(--color-text)] line-clamp-1">{item.title}</span>
+                  <figcaption className="mt-2 flex items-center justify-between gap-2 px-0.5">
+                    <span className="min-w-0 text-sm font-medium leading-snug text-[var(--color-text)] line-clamp-1">{item.title}</span>
                     {item.category && (
                       <span
-                        className="hidden sm:block w-3 h-3 shrink-0 rounded-full border-2 border-[var(--color-border)]"
+                        className="hidden sm:block w-2.5 h-2.5 shrink-0 rounded-full"
                         style={{ background: theme?.accent ?? 'var(--color-accent)' }}
                         title={formatCategoryLabel(item.category)}
                         aria-hidden="true"
@@ -176,7 +176,7 @@ export function GallerySection({
                       document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
                     }}
                     aria-current={safePage === pageNum ? 'page' : undefined}
-                    className={`toy-sm toy-press w-11 h-11 rounded-full font-extrabold text-sm ${safePage === pageNum
+                    className={`panel-sm lift w-11 h-11 rounded-full font-bold text-sm ${safePage === pageNum
                       ? 'bg-[var(--color-highlight)] text-[var(--color-highlight-ink)]'
                       : 'bg-[var(--color-surface)] text-[var(--color-text)]'
                       }`}

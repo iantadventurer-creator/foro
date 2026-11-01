@@ -13,7 +13,7 @@ import type { CommunityContent } from '@/lib/content/communityContent';
 export type FeedSort = 'recent' | 'popular';
 
 const segmentClass = (active: boolean) =>
-  `px-3 py-1.5 rounded-full text-xs font-extrabold uppercase transition-colors ${active ? 'bg-[var(--color-highlight)] text-[var(--color-highlight-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`;
+  `px-3 py-1.5 rounded-full text-xs font-bold uppercase transition-colors ${active ? 'bg-[var(--color-highlight)] text-[var(--color-highlight-ink)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`;
 
 /** Filtros por categoría, barra de herramientas (cuántas hay, orden, "mis
  * publicaciones") y cuadrícula de publicaciones de la comunidad. */
@@ -72,7 +72,7 @@ export function FeedSection({
           {loading ? '…' : t.postsCount(posts.length)}
         </p>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex gap-1 p-1 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-surface)]" role="group" aria-label={`${t.sortRecent} / ${t.sortPopular}`}>
+          <div className="flex gap-1 p-1 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)]" role="group" aria-label={`${t.sortRecent} / ${t.sortPopular}`}>
             <button type="button" aria-pressed={sortBy === 'recent'} onClick={() => onSortBy('recent')} className={segmentClass(sortBy === 'recent')}>
               {t.sortRecent}
             </button>
@@ -85,7 +85,7 @@ export function FeedSection({
               type="button"
               aria-pressed={filterMyPosts}
               onClick={onToggleMine}
-              className={`toy-sm toy-press px-4 py-2 rounded-full text-xs font-extrabold uppercase ${filterMyPosts
+              className={`panel-sm lift px-4 py-2 rounded-full text-xs font-bold uppercase ${filterMyPosts
                 ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]'
                 : 'bg-[var(--color-surface)] text-[var(--color-text)]'
                 }`}

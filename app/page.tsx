@@ -138,8 +138,8 @@ export default function Home() {
 
   const categoryCounts = useMemo(() => Object.fromEntries(universes.map((u) => [u.name, u.count])), [universes]);
 
-  // Las tres fotos más recientes (sin reels) para el collage de la portada.
-  const heroPhotos = useMemo(() => feedItems.filter((item) => item.mediaType === 'IMAGE').slice(0, 3), [feedItems]);
+  // Las cinco fotos más recientes (sin reels) para el mosaico de la portada.
+  const heroPhotos = useMemo(() => feedItems.filter((item) => item.mediaType === 'IMAGE').slice(0, 5), [feedItems]);
 
   const exploreUniverse = (name: string) => {
     selectCategory(name);
@@ -158,7 +158,7 @@ export default function Home() {
   return (
     <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0 overflow-x-hidden focus:outline-none">
       <SiteHeader t={t} lang={lang} onLangChange={setLang} activeSection={activeSection} onOpenQr={openQr} />
-      <Hero t={t} photos={heroPhotos} photoCount={feedItems.length} universeCount={categories.length} loading={loading} />
+      <Hero t={t} photos={heroPhotos} photoCount={feedItems.length} universeCount={categories.length} loading={loading} onOpenItem={setSelectedItem} />
       <UniverseTiles t={t} universes={universes} onSelect={exploreUniverse} />
       <GallerySection
         t={t}

@@ -42,9 +42,9 @@ export function ConfirmDialog({
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.95, opacity: 0 }}
                         onClick={(e) => e.stopPropagation()}
-                        className="toy w-full max-w-sm rounded-3xl bg-[var(--color-surface)] p-6"
+                        className="panel w-full max-w-sm rounded-3xl bg-[var(--color-surface)] p-6"
                     >
-                        <h2 className="font-display text-2xl font-extrabold tracking-[-0.04em] text-[var(--color-text)] mb-2">{title}</h2>
+                        <h2 className="font-display text-2xl font-bold tracking-[-0.04em] text-[var(--color-text)] mb-2">{title}</h2>
                         {description && (
                             <p className="text-sm text-[var(--color-text-muted)] mb-6 leading-relaxed">{description}</p>
                         )}
@@ -52,13 +52,13 @@ export function ConfirmDialog({
                             <button
                                 ref={closeButtonRef}
                                 onClick={onCancel}
-                                className="px-4 py-2.5 rounded-full text-xs font-extrabold uppercase text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+                                className="px-4 py-2.5 rounded-full text-xs font-bold uppercase text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
                             >
                                 {cancelLabel}
                             </button>
                             <button
                                 onClick={onConfirm}
-                                className="toy-sm toy-press px-4 py-2.5 rounded-full text-xs font-extrabold uppercase bg-[var(--color-danger)] text-white"
+                                className="panel-sm lift px-4 py-2.5 rounded-full text-xs font-bold uppercase bg-[var(--color-danger)] text-white"
                             >
                                 {confirmLabel}
                             </button>

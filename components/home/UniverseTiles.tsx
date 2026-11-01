@@ -8,18 +8,10 @@ import type { HomeContent } from '@/lib/content/homeContent';
 
 export type Universe = { name: string; count: number; cover?: string };
 
-// Las fichas alternan los tres colores de la paleta, para que la sección
-// combine con el resto de la web; el color propio de cada franquicia queda
-// como un punto junto al nombre.
-const TILE_TONES = [
-  { bg: 'var(--color-accent)', ink: '#ffffff' },
-  { bg: 'var(--color-accent-3)', ink: '#13204a' },
-  { bg: 'var(--color-highlight)', ink: '#13204a' },
-];
-
-/** Universos (Star Wars, Ninjago...) como fichas de juguete con su foto más
- * reciente y una pegatina con el
- * número de fotos. Al tocar una, la galería se filtra por ese universo. */
+/** Universos (Star Wars, Ninjago...) como tarjetas sobrias: la foto de
+ * portada manda y debajo van el nombre, con el punto de color de la
+ * franquicia, y el número de fotos. Al tocar una, la galería se filtra por
+ * ese universo. */
 export function UniverseTiles({
   t,
   universes,
@@ -32,57 +24,45 @@ export function UniverseTiles({
   if (universes.length === 0) return null;
 
   return (
-    <section aria-labelledby="universes-title" className="max-w-7xl mx-auto px-4 sm:px-6 pb-20 md:pb-28">
-      <SectionHeading index="01" tone="primary" eyebrow={t.universes.eyebrow} title={<span id="universes-title">{t.universes.title}</span>} subtitle={t.universes.subtitle} />
+    <section aria-labelledby="universes-title" className="max-w-7xl mx-auto px-4 sm:px-6 pb-16 md:pb-24">
+      <SectionHeading eyebrow={t.universes.eyebrow} title={<span id="universes-title">{t.universes.title}</span>} subtitle={t.universes.subtitle} />
 
-      <ul className="mt-10 grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <ul className="mt-8 grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
         {universes.map((universe, i) => {
           const theme = getCategoryTheme(universe.name);
-          const tone = TILE_TONES[i % TILE_TONES.length];
           return (
             <motion.li
               key={universe.name}
-              initial={{ opacity: 0, y: 30, rotate: i % 2 ? 3 : -3 }}
-              whileInView={{ opacity: 1, y: 0, rotate: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
-              transition={{ type: 'spring', stiffness: 220, damping: 18, delay: Math.min(i, 5) * 0.05 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: Math.min(i, 5) * 0.05 }}
             >
               <button
                 type="button"
                 onClick={() => onSelect(universe.name)}
                 aria-label={`${formatCategoryLabel(universe.name)} — ${t.universes.photos(universe.count)}`}
-                style={{ background: tone.bg, color: tone.ink }}
-                className="toy toy-press group relative w-full h-full flex flex-col gap-3 sm:gap-4 rounded-3xl p-2.5 sm:p-3.5 text-left [--color-border:#13204a] [--toy-shadow:#13204a]"
+                className="panel lift group w-full overflow-hidden rounded-2xl bg-[var(--color-surface)] text-left"
               >
-                <span className="relative block aspect-[4/3] overflow-hidden rounded-2xl border-2 border-[#13204a] bg-black/20">
+                <span className="relative block aspect-[4/3] overflow-hidden bg-[var(--color-surface-2)]">
                   {universe.cover && (
                     <Image
                       src={universe.cover}
                       alt=""
                       fill
                       sizes="(max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                     />
                   )}
-                  <span className="sticker absolute top-2 right-2 bg-white text-[#13204a] text-[10px] sm:text-xs rotate-[4deg]">
-                    {t.universes.photos(universe.count)}
-                  </span>
                 </span>
-                <span className="flex items-end justify-between gap-2 px-1.5 pb-1">
-                  <span className="flex items-center gap-2 font-display text-xl sm:text-3xl font-extrabold leading-[0.95] tracking-[-0.04em]">
-                    <span
-                      className="w-3 h-3 sm:w-4 sm:h-4 shrink-0 rounded-full border-2 border-[#13204a]"
-                      style={{ background: theme?.accent ?? '#ffffff' }}
-                      aria-hidden="true"
-                    />
-                    {formatCategoryLabel(universe.name)}
+                <span className="flex items-center justify-between gap-3 px-3 py-3 sm:px-4">
+                  <span className="flex items-center gap-2 min-w-0">
+                    <span className="w-2.5 h-2.5 shrink-0 rounded-full" style={{ background: theme?.accent ?? 'var(--color-accent)' }} aria-hidden="true" />
+                    <span className="truncate font-display text-base sm:text-lg font-bold tracking-[-0.02em] text-[var(--color-text)]">
+                      {formatCategoryLabel(universe.name)}
+                    </span>
                   </span>
-                  <span
-                    className="shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#13204a] bg-white text-[#13204a] flex items-center justify-center font-extrabold transition-transform group-hover:rotate-[-45deg]"
-                    aria-hidden="true"
-                  >
-                    →
-                  </span>
+                  <span className="label-caps shrink-0 text-[var(--color-text-faint)]">{universe.count}</span>
                 </span>
               </button>
             </motion.li>
