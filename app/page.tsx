@@ -5,6 +5,7 @@ import { QrCodeModal, pickRandomQrColor } from '@/components/ui/QrCodeButton';
 import { SiteHeader, type ActiveSection } from '@/components/home/SiteHeader';
 import { Hero } from '@/components/home/Hero';
 import { IntroSection } from '@/components/home/IntroSection';
+import { UniverseRail } from '@/components/home/UniverseRail';
 import { GallerySection } from '@/components/home/GallerySection';
 import { Lightbox } from '@/components/home/Lightbox';
 import { AboutSection } from '@/components/home/AboutSection';
@@ -125,6 +126,21 @@ export default function Home() {
     setCurrentPage(1);
   };
 
+  // Cada universo con su número de fotos y su foto más reciente como portada.
+  const universes = useMemo(
+    () =>
+      categories.map((name) => {
+        const photos = feedItems.filter((item) => item.category === name && item.mediaType === 'IMAGE');
+        return { name, count: feedItems.filter((item) => item.category === name).length, cover: photos[0]?.src };
+      }),
+    [categories, feedItems]
+  );
+
+  const exploreUniverse = (name: string) => {
+    selectCategory(name);
+    galleryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   // Vuelve a la página 1 al cambiar el filtro de favoritos (si no, se podría
   // quedar en una página que ya no existe para el nuevo filtro).
   const toggleOnlyFavorites = () => {
@@ -137,8 +153,8 @@ export default function Home() {
   return (
     <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0 overflow-x-hidden focus:outline-none">
       <SiteHeader t={t} lang={lang} onLangChange={setLang} activeSection={activeSection} onOpenQr={openQr} />
-      <Hero t={t} previewShots={feedItems.slice(0, 3)} photoCount={feedItems.length} universeCount={categories.length} loading={loading} />
-      <IntroSection t={t} />
+      <Hero t={t} featured={feedItems[0]} photoCount={feedItems.length} universeCount={categories.length} loading={loading} />
+      <UniverseRail t={t} universes={universes} onSelect={exploreUniverse} />
       <GallerySection
         t={t}
         sectionRef={galleryRef}
@@ -169,6 +185,7 @@ export default function Home() {
         onClose={closeLightbox}
       />
       <QrCodeModal isOpen={qrOpen} colorIndex={qrColorIndex} onClose={closeQr} />
+      <IntroSection t={t} />
       <AboutSection t={t} sectionRef={aboutRef} />
       <SiteFooter t={t} onOpenQr={openQr} />
     </main>

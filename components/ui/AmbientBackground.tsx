@@ -31,7 +31,6 @@ const BRICKS: Brick[] = [
   { top: '46%', left: '-1.5%', cols: 2, rows: 2, unit: 20, color: GREEN, dx: 16, dy: -20, r0: 18, r1: 4, duration: 26, delay: -3, desktopOnly: true },
   { top: '64%', left: '94%', cols: 4, rows: 2, unit: 20, color: YELLOW, dx: -22, dy: -18, r0: 6, r1: -10, duration: 28, delay: -12 },
   { top: '76%', left: '-1%', cols: 2, rows: 1, unit: 22, color: RED, dx: 20, dy: -16, r0: -20, r1: -6, duration: 21, delay: -7, desktopOnly: true },
-  { top: '92%', left: '55%', cols: 2, rows: 2, unit: 19, color: BLUE, dx: -16, dy: -22, r0: 10, r1: 26, duration: 25, delay: -15, desktopOnly: true },
   { top: '90%', left: '90%', cols: 1, rows: 1, unit: 22, color: RED, dx: -12, dy: -14, r0: -6, r1: 10, duration: 17, delay: -2 },
 ];
 

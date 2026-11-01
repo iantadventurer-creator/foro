@@ -9,22 +9,24 @@
   --font-sans: var(--font-geist-sans);
   --font-display: var(--font-space-grotesk);
   --font-button: var(--font-space-grotesk);
+  --font-mono: var(--font-space-mono);
 
-  /* Paleta: rojo LEGO y amarillo cálido como protagonistas, azul marino como
-     color de texto y de fondo oscuro, azul y verde LEGO como complementos.
+  /* Paleta "cinemática" inspirada en Lego Classic Space (Awwwards): azul
+     marino #193261 y amarillo #FFCA20 como pareja principal, rojo LEGO para la
+     acción, azul y verde como complementos.
      Todos los valores viven en :root (claro) y [data-theme='dark'] (oscuro). */
 }
 
 :root {
   color-scheme: light;
 
-  --color-ink: #faf7f0;          /* fondo de página (crema cálido) */
+  --color-ink: #f6f4ee;          /* fondo de página (crema) */
   --color-surface: #ffffff;      /* tarjetas, modales, cabecera */
-  --color-surface-2: #f3efe6;    /* campos, botones secundarios, zonas hundidas */
-  --color-border: #e7e1d4;
-  --color-text: #1b2436;         /* azul marino casi negro */
-  --color-text-muted: #596273;
-  --color-text-faint: #636b79;
+  --color-surface-2: #efece3;    /* campos, botones secundarios, zonas hundidas */
+  --color-border: #e2ddcf;
+  --color-text: #193261;         /* azul marino Classic Space */
+  --color-text-muted: #4f5b75;
+  --color-text-faint: #5d6884;
 
   /* Rellenos (botones, chips): llevan texto blanco con contraste AA en ambos temas */
   --color-accent: #d01012;       /* Rojo LEGO — acción principal */
@@ -39,11 +41,11 @@
   --color-accent-4-text: #237841;
 
   /* Amarillo LEGO: solo como fondo, siempre con texto oscuro */
-  --color-lego-yellow: #f5c518;
-  --color-lego-yellow-ink: #1b2436;
+  --color-lego-yellow: #ffca20;
+  --color-lego-yellow-ink: #193261;
 
   /* Banda oscura (pie de página) */
-  --color-dark: #14213d;
+  --color-dark: #193261;
   --color-on-dark: #ffffff;
   --color-on-dark-muted: #c3cad8;
 
@@ -65,13 +67,13 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --color-ink: #0f1626;
-  --color-surface: #172034;
-  --color-surface-2: #1e2940;
-  --color-border: #2b3854;
-  --color-text: #f3f1ea;
-  --color-text-muted: #aab3c4;
-  --color-text-faint: #97a1b4;
+  --color-ink: #0a1428;
+  --color-surface: #111f3d;
+  --color-surface-2: #172a52;
+  --color-border: #24396a;
+  --color-text: #f2f0e8;
+  --color-text-muted: #a7b3cf;
+  --color-text-faint: #93a0c0;
 
   --color-accent-2: #f0a640;
 
@@ -79,7 +81,7 @@
   --color-accent-3-text: #8db8ff;
   --color-accent-4-text: #5fd08a;
 
-  --color-dark: #0a0f1c;
+  --color-dark: #060d1c;
 
   --category-mix: white;
   --category-mix-amount: 65%;

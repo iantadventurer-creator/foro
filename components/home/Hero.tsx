@@ -8,148 +8,170 @@ import { fadeUp } from '@/lib/motion';
 import type { HomeContent } from '@/lib/content/homeContent';
 import type { FeedItem } from '@/lib/gallery';
 
+/** Hero cinemático (inspirado en "Lego Classic Space", Awwwards): la foto más
+ * reciente a sangre dentro de un marco de cristal, un bloque tipo ticket en
+ * tipografía mono y el titular gigante con la segunda palabra en amarillo.
+ * Dentro del marco los colores son fijos (texto claro sobre la foto
+ * oscurecida), así que se lee igual en modo claro y oscuro. */
 export function Hero({
   t,
-  previewShots,
+  featured,
   photoCount,
   universeCount,
   loading,
 }: {
   t: HomeContent;
-  previewShots: FeedItem[];
-  /** Cifras reales de la galería (se muestran cuando ya ha cargado). */
+  /** Foto destacada (la más reciente de la galería). */
+  featured?: FeedItem;
   photoCount: number;
   universeCount: number;
   loading: boolean;
 }) {
+  const ticketNumber = loading ? '———' : String(photoCount).padStart(3, '0');
+
   return (
-    <section id="top" className="relative z-0 max-w-7xl mx-auto px-6 pt-14 md:pt-20 pb-20 md:pb-24 grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-      <div>
+    <section id="top" className="max-w-7xl mx-auto px-3 sm:px-6 pt-3 sm:pt-6 pb-12 md:pb-16">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="relative isolate overflow-hidden rounded-[1.75rem] sm:rounded-[2.25rem] bg-[#0a1428] text-white h-[74svh] min-h-[480px] max-h-[820px]"
+      >
+        {featured ? (
+          <motion.div
+            className="absolute inset-0 -z-10"
+            initial={{ scale: 1.14 }}
+            animate={{ scale: 1.04 }}
+            transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Image src={featured.src} alt="" fill priority sizes="(max-width: 1280px) 100vw, 1280px" className="object-cover" />
+          </motion.div>
+        ) : (
+          <div className="absolute inset-0 -z-10 animate-shimmer opacity-20" aria-hidden="true" />
+        )}
+
+        {/* Oscurecido para que el texto se lea siempre sobre la foto */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0a1428] via-[#0a1428]/35 to-[#0a1428]/45" aria-hidden="true" />
+        {/* Marco interior de cristal */}
+        <div className="pointer-events-none absolute inset-3 sm:inset-5 rounded-[1.35rem] sm:rounded-[1.75rem] border border-white/25" aria-hidden="true" />
+
+        {/* Fila superior: firma y pieza */}
+        <div className="absolute top-6 left-6 right-6 sm:top-9 sm:left-10 sm:right-10 flex items-center justify-between">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 px-3 py-1.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.2em]">
+            <LegoBrick color="var(--color-accent)" studs={2} className="h-3 w-auto" />
+            {t.hero.badge}
+          </span>
+          <LegoBrick color="var(--color-lego-yellow)" studs={2} className="h-6 w-auto drop-shadow" />
+        </div>
+
+        {/* Ticket */}
         <motion.div
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="inline-flex items-center gap-2.5 rounded-full bg-[var(--color-lego-yellow)] text-[var(--color-lego-yellow-ink)] text-xs font-bold pl-2.5 pr-4 py-2 mb-6 uppercase tracking-widest shadow-[inset_0_-2px_0_rgba(0,0,0,0.12)]"
+          transition={{ delay: 0.25 }}
+          className="absolute left-6 sm:left-10 top-[22%] font-mono uppercase"
         >
-          <LegoBrick color="var(--color-accent)" studs={2} className="h-3.5 w-auto" />
-          {t.hero.badge}
+          <p className="text-[10px] sm:text-[11px] tracking-[0.25em] text-white/75">{t.hero.ticket}</p>
+          <p className="text-sm sm:text-base tracking-[0.2em] mt-1">
+            Nº <span className="tabular-nums">{ticketNumber}</span> · {universeCount || '—'} {t.hero.stat2}
+          </p>
+          <div className="mt-3 flex items-center gap-3">
+            <span
+              className="block h-7 w-28 sm:w-36 text-[var(--color-lego-yellow)]"
+              style={{
+                background:
+                  'repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 8px, currentColor 8px 11px, transparent 11px 13px)',
+              }}
+              aria-hidden="true"
+            />
+            <a
+              href="#gallery"
+              className="rounded-md border border-[var(--color-lego-yellow)] px-2.5 py-1 text-[10px] sm:text-xs font-bold tracking-[0.2em] text-[var(--color-lego-yellow)] hover:bg-[var(--color-lego-yellow)] hover:text-[var(--color-lego-yellow-ink)] transition-colors"
+            >
+              {t.hero.start}
+            </a>
+          </div>
         </motion.div>
 
-        <motion.h1
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.05 }}
-          className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.04] text-[var(--color-text)]"
-        >
-          {t.hero.title}
-        </motion.h1>
+        {/* Nota lateral en mono (escritorio) */}
         <motion.p
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          transition={{ delay: 0.1 }}
-          className="text-[var(--color-text-muted)] text-base md:text-lg max-w-lg mb-9 leading-relaxed"
+          transition={{ delay: 0.35 }}
+          className="hidden md:block absolute right-10 top-[24%] max-w-[17rem] text-right font-mono text-xs uppercase leading-relaxed tracking-[0.15em] text-white/85"
         >
-          {t.hero.description}
+          {t.hero.tagline}
+          {featured?.category && <span className="mt-3 block text-[var(--color-lego-yellow)]">▸ {featured.title}</span>}
         </motion.p>
-        <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.15 }} className="flex flex-wrap gap-3 sm:gap-4">
-          <motion.a
-            whileHover={{ y: -3 }}
-            whileTap={{ y: 1 }}
-            href="#gallery"
-            className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-accent-ink)] bg-[var(--color-accent)] px-7 py-3.5 rounded-full lego-bevel [--bevel-glow:var(--shadow-accent)] hover:brightness-110 transition-[filter]"
-          >
-            {t.hero.btnExplore} ↓
-          </motion.a>
-          <motion.div whileHover={{ y: -3 }} whileTap={{ y: 1 }}>
-            <Link
-              href="/comunidad"
-              className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-lego-yellow-ink)] bg-[var(--color-lego-yellow)] px-7 py-3.5 rounded-full lego-bevel [--bevel-glow:rgba(255,213,0,0.45)] hover:brightness-105 transition-[filter]"
+
+        {/* Titular gigante */}
+        <div className="absolute left-6 right-6 bottom-7 sm:left-10 sm:right-10 sm:bottom-10">
+          <h1 className="font-display font-bold uppercase leading-[0.86] tracking-[-0.03em] text-[clamp(3.1rem,11.5vw,10rem)]">
+            <motion.span
+              className="block"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             >
-              {t.nav.community}
-            </Link>
-          </motion.div>
-        </motion.div>
-
-        <motion.ul
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.2 }}
-          className="mt-10 flex gap-8 border-t border-[var(--color-border)] pt-6"
-          aria-busy={loading}
-        >
-          {[
-            { value: photoCount, label: t.hero.stat1, color: 'var(--color-accent)' },
-            { value: universeCount, label: t.hero.stat2, color: 'var(--color-accent-3)' },
-          ].map((stat) => (
-            <li key={stat.label} className="flex items-center gap-3">
-              <LegoBrick color={stat.color} studs={1} className="h-6 w-auto" />
-              <p className="flex flex-col">
-                <span className="font-display text-2xl font-bold leading-none tabular-nums">{loading ? '–' : stat.value}</span>
-                <span className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)] mt-1">{stat.label}</span>
-              </p>
-            </li>
-          ))}
-        </motion.ul>
-      </div>
-
-      <div className="relative" aria-hidden="true">
-        {/* Acento: una sola pieza LEGO asomando por detrás del mosaico */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, type: 'spring', stiffness: 180, damping: 20 }}
-          className="absolute -top-5 -right-3 z-10 hidden sm:block rotate-6"
-        >
-          <LegoBrick color="var(--color-lego-yellow)" studs={4} className="h-9 w-auto drop-shadow-md" />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45, type: 'spring', stiffness: 180, damping: 20 }}
-          className="absolute -bottom-4 -left-4 z-10 hidden sm:block -rotate-6"
-        >
-          <LegoBrick color="var(--color-accent)" studs={2} className="h-8 w-auto drop-shadow-md" />
-        </motion.div>
-
-        <div className="grid grid-cols-3 grid-rows-2 gap-3 sm:gap-4 h-72 sm:h-80 md:h-[26rem]">
-          {[0, 1, 2].map((i) => {
-            const item = previewShots[i];
-            const placement = i === 0 ? 'col-span-2 row-span-2' : 'col-span-1 row-span-1';
-            return (
-              <motion.div
-                key={item?.id ?? `placeholder-${i}`}
-                initial={{ opacity: 0, y: 24, scale: 0.97 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 0.08 * i, type: 'spring', stiffness: 200, damping: 22 }}
-                className={`group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-[var(--color-surface-2)] border border-[var(--color-border)] card-depth ${placement}`}
-              >
-                {item ? (
-                  <>
-                    <Image
-                      src={item.src}
-                      alt=""
-                      fill
-                      sizes={i === 0 ? '(max-width: 768px) 66vw, 420px' : '(max-width: 768px) 33vw, 210px'}
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                    />
-                    {item.category && (
-                      <span className="absolute left-2.5 bottom-2.5 sm:left-3 sm:bottom-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-surface)]/90 backdrop-blur-sm px-2.5 py-1 text-[10px] sm:text-xs font-bold text-[var(--color-text)] shadow-sm">
-                        <span className="w-2 h-2 rounded-full" style={{ background: ['var(--color-accent)', 'var(--color-lego-yellow)', 'var(--color-accent-3)'][i] }} />
-                        {item.title}
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <div className="absolute inset-0 animate-shimmer" />
-                )}
-              </motion.div>
-            );
-          })}
+              {t.hero.display[0]}
+            </motion.span>
+            <motion.span
+              className="block text-[var(--color-lego-yellow)]"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {t.hero.display[1]}
+            </motion.span>
+          </h1>
         </div>
-      </div>
+      </motion.div>
+
+      {/* Bajo el marco: descripción, acciones y cifras */}
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        transition={{ delay: 0.3 }}
+        className="mt-6 md:mt-8 grid gap-6 md:grid-cols-[1fr_auto] md:items-end"
+      >
+        <div>
+          <p className="font-display text-xl md:text-2xl font-semibold tracking-tight text-[var(--color-text)]">{t.hero.title}</p>
+          <p className="mt-2 max-w-xl text-[var(--color-text-muted)] leading-relaxed">{t.hero.description}</p>
+        </div>
+        <div className="flex flex-col gap-5 md:items-end">
+          <div className="flex flex-wrap gap-3">
+            <motion.a
+              whileHover={{ y: -2 }}
+              whileTap={{ y: 1 }}
+              href="#gallery"
+              className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-lego-yellow-ink)] bg-[var(--color-lego-yellow)] px-6 py-3.5 rounded-full lego-bevel [--bevel-glow:rgba(255,202,32,0.45)] hover:brightness-105 transition-[filter]"
+            >
+              {t.hero.btnExplore} ↓
+            </motion.a>
+            <motion.div whileHover={{ y: -2 }} whileTap={{ y: 1 }}>
+              <Link
+                href="/comunidad"
+                className="font-button inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-[var(--color-text)] border-2 border-[var(--color-text)] px-6 py-3 rounded-full hover:bg-[var(--color-text)] hover:text-[var(--color-ink)] transition-colors"
+              >
+                {t.nav.community}
+              </Link>
+            </motion.div>
+          </div>
+          <ul className="flex gap-6 font-mono text-xs uppercase tracking-[0.15em] text-[var(--color-text-muted)]" aria-busy={loading}>
+            <li>
+              <span className="font-display text-2xl font-bold text-[var(--color-text)] tabular-nums mr-2">{loading ? '–' : photoCount}</span>
+              {t.hero.stat1}
+            </li>
+            <li>
+              <span className="font-display text-2xl font-bold text-[var(--color-text)] tabular-nums mr-2">{loading ? '–' : universeCount}</span>
+              {t.hero.stat2}
+            </li>
+          </ul>
+        </div>
+      </motion.div>
     </section>
   );
 }

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
-import { Space_Grotesk } from "next/font/google";
+import { Space_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
@@ -11,6 +11,13 @@ import { themeInitScript } from "@/lib/theme";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+
+// Mono retro para los detalles tipo "ticket" del estilo cinemático.
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 const spaceGrotesk = Space_Grotesk({
@@ -56,8 +63,8 @@ const structuredData = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf7f0" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f1626" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f4ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a1428" },
   ],
 };
 
@@ -70,7 +77,7 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${spaceGrotesk.variable} ${spaceMono.variable} h-full antialiased`}
       // El script de <head> pone data-theme antes de que React hidrate.
       suppressHydrationWarning
     >
