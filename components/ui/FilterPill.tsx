@@ -28,7 +28,7 @@ export function FilterPill({
     >
       {theme && <span className="w-2.5 h-2.5 rounded-full" style={{ background: theme.accent }} aria-hidden="true" />}
       {children}
-      {count !== undefined && <span className={`text-xs ${active ? 'opacity-75' : 'text-[var(--color-text-faint)]'}`}>{count}</span>}
+      {count !== undefined && <span className={`text-xs tabular-nums ${active ? 'opacity-75' : 'text-[var(--color-text-faint)]'}`}>{count}</span>}
     </button>
   );
 }

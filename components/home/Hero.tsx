@@ -81,7 +81,7 @@ export function Hero({
             {t.hero.tagline}
             <DoodleCamera className="w-9 h-auto -rotate-6" />
           </p>
-          <p className="mt-5 max-w-md text-base leading-relaxed text-[var(--color-text-muted)]">{t.hero.description}</p>
+          <p className="mt-5 max-w-[34rem] text-[17px] leading-relaxed text-[var(--color-text-muted)]">{t.hero.description}</p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button href="#gallery">{t.hero.btnExplore} ↓</Button>
             <Button href="/comunidad" variant="secondary">

@@ -22,7 +22,7 @@ export function IntroSection({ t }: { t: HomeContent }) {
             <>
               <Doodle className="h-12 w-auto self-start text-[var(--color-line)]" />
               <h3 className="font-display text-2xl font-extrabold leading-tight text-[var(--color-text)]">{card.title}</h3>
-              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{card.desc}</p>
+              <p className="text-[15px] text-[var(--color-text-muted)] leading-relaxed">{card.desc}</p>
               <span className="hand mt-auto pt-2 inline-flex items-center gap-1.5 text-xl text-[var(--color-accent-text)]">
                 <span className="link-underline">{card.cta}</span>
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>

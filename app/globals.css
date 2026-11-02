@@ -6,14 +6,14 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-figtree);
   /* Cuaderno de bocetos: rotulador (Shantell Sans) para titulares, letra
-     manuscrita (Caveat) para notas y números, y una sans limpia para el
-     texto y los controles */
+     manuscrita (Caveat) para notas y números, y una sans cálida (Figtree)
+     para el texto y los controles */
   --font-display: var(--font-shantell);
   --font-hand: var(--font-caveat);
-  --font-mono: var(--font-geist-sans);
-  --font-button: var(--font-geist-sans);
+  --font-mono: var(--font-figtree);
+  --font-button: var(--font-figtree);
 
   /* Esquinas "dibujadas a mano": cada esquina tiene un radio distinto, así
      las cajas parecen trazadas con lápiz en vez de con regla */
@@ -129,6 +129,21 @@ body {
   /* Grano de papel casi imperceptible (ver --paper-grain) */
   background-image: var(--paper-grain);
   color: var(--foreground);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  font-feature-settings: "kern", "liga";
+  text-rendering: optimizeLegibility;
+}
+
+/* Titulares en líneas equilibradas y párrafos sin palabras sueltas al final */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 ::selection {
@@ -138,8 +153,9 @@ body {
 
 /* Titulares a rotulador: algo de informalidad y un leve rebote de las letras */
 .font-display {
-  font-variation-settings: "INFM" 55, "BNCE" 25;
-  letter-spacing: -0.02em;
+  font-variation-settings: "INFM" 45, "BNCE" 15;
+  letter-spacing: -0.025em;
+  font-kerning: normal;
 }
 
 .font-button {
@@ -266,12 +282,13 @@ body {
 
   /* Etiqueta pequeña en mayúsculas: contadores, categorías, datos */
   .label-caps {
-    font-family: var(--font-geist-sans);
-    font-size: 11px;
-    font-weight: 600;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
     line-height: 1.35;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
   }
 
   /* Nota manuscrita */
@@ -279,6 +296,7 @@ body {
     font-family: var(--font-hand);
     font-weight: 600;
     line-height: 1.1;
+    letter-spacing: 0.01em;
   }
 
   /* Etiqueta con trazo a mano */

@@ -38,7 +38,7 @@ export function SectionHeading({
         </div>
         {(subtitle || children) && (
           <div className="md:pb-2">
-            {subtitle && <p className="text-sm leading-relaxed text-[var(--color-text-muted)]">{subtitle}</p>}
+            {subtitle && <p className="text-[15px] leading-relaxed text-[var(--color-text-muted)]">{subtitle}</p>}
             {children}
           </div>
         )}

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Caveat, Geist, Shantell_Sans } from "next/font/google";
+import { Caveat, Figtree, Shantell_Sans } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { DoodleBackground } from "@/components/ui/DoodleBackground";
@@ -7,8 +7,9 @@ import { MotionProvider } from "@/components/ui/MotionProvider";
 import { LangProvider } from "@/lib/hooks/useLang";
 import { themeInitScript } from "@/lib/theme";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Texto y controles: sans cálida y redondeada que combina con los titulares.
+const figtree = Figtree({
+  variable: "--font-figtree",
   subsets: ["latin"],
 });
 
@@ -77,7 +78,7 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${caveat.variable} ${shantell.variable} h-full antialiased`}
+      className={`${figtree.variable} ${caveat.variable} ${shantell.variable} h-full antialiased`}
       // El script de <head> pone data-theme antes de que React hidrate.
       suppressHydrationWarning
     >

@@ -30,7 +30,7 @@ export function PageTitle({
         <h1 className="mt-2 font-display font-extrabold leading-[0.98] text-[clamp(2.5rem,6.5vw,4.25rem)] text-[var(--color-text)] break-words">
           {title}
         </h1>
-        {subtitle && <p className="mt-3 max-w-xl text-base leading-relaxed text-[var(--color-text-muted)]">{subtitle}</p>}
+        {subtitle && <p className="mt-3 max-w-xl text-[17px] leading-relaxed text-[var(--color-text-muted)]">{subtitle}</p>}
         {children}
       </div>
     </div>

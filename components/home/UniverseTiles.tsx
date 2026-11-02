@@ -53,7 +53,7 @@ export function UniverseTiles({
                 <span className="flex items-baseline justify-between gap-2 px-1 pt-2 pb-1">
                   <span className="hand flex min-w-0 items-center gap-1.5 text-2xl text-[var(--color-text)]">
                     <span className="w-2.5 h-2.5 shrink-0 rounded-full" style={{ background: theme?.accent ?? 'var(--color-accent)' }} aria-hidden="true" />
-                    <span className="truncate">{formatCategoryLabel(universe.name)}</span>
+                    <span className="truncate pr-1">{formatCategoryLabel(universe.name)}</span>
                   </span>
                   <span className="hand shrink-0 text-lg text-[var(--color-text-muted)]">{universe.count}</span>
                 </span>

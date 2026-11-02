@@ -195,7 +195,7 @@ export function GallerySection({
                     </div>
                     <figcaption className="hand flex items-center gap-2 px-1 pt-2 pb-1 text-xl sm:text-2xl">
                       <span className="text-[var(--color-accent-text)]">{num(frameNumbers.get(item.id))}</span>
-                      <span className="min-w-0 flex-1 truncate text-[var(--color-text)]">{item.title}</span>
+                      <span className="min-w-0 flex-1 truncate pr-1 text-[var(--color-text)]">{item.title}</span>
                       {theme && (
                         <span
                           className="w-2.5 h-2.5 shrink-0 rounded-full"
