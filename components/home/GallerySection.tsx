@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { FilterPill } from '@/components/ui/FilterPill';
+import { DoodleHeart } from '@/components/ui/Doodles';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { GallerySkeleton } from '@/components/ui/GallerySkeleton';
 import { distinctCategoryLabel, formatCategoryLabel, getCategoryTheme } from '@/lib/categoryThemes';
@@ -21,11 +22,13 @@ const num = (n: number | undefined) => (n === undefined ? '—' : `#${n}`);
 const TILT = ['-rotate-1', 'rotate-[0.6deg]', 'rotate-1', '-rotate-[0.6deg]', 'rotate-[0.4deg]', '-rotate-1', 'rotate-[0.8deg]'];
 
 type View = 'grid' | 'list';
+export type SortOrder = 'newest' | 'oldest';
 
 /** Galería del cuaderno: polaroids numeradas y un poco ladeadas, algunas
  * pegadas con cinta, con el título escrito a mano; o, si se prefiere, una
  * lista con miniatura, número, título y universo. El punto de color de cada
- * foto es el de su universo. */
+ * foto es el de su universo. La barra de filtros se queda fija arriba al
+ * bajar, y las fotos se van mostrando por tandas con "Ver más". */
 export function GallerySection({
   t,
   sectionRef,
@@ -40,20 +43,21 @@ export function GallerySection({
   filterCategory,
   showOnlyFavorites,
   favorites,
-  totalPages,
-  safePage,
+  sortOrder,
   onSelectCategory,
   onToggleOnlyFavorites,
+  onSortChange,
+  onShowAll,
+  onLoadMore,
   onRetry,
   onOpenItem,
   onToggleFavorite,
-  onPageChange,
 }: {
   t: HomeContent;
   sectionRef: Ref<HTMLElement>;
-  /** Fotos de la página actual. */
+  /** Fotos que se están mostrando (las primeras tandas). */
   items: FeedItem[];
-  /** Total de fotos tras aplicar los filtros (todas las páginas). */
+  /** Total de fotos tras aplicar los filtros. */
   totalItems: number;
   /** Número fijo de cada foto en el archivo (la más antigua es la 001). */
   frameNumbers: Map<string, number>;
@@ -66,16 +70,19 @@ export function GallerySection({
   filterCategory: string | null;
   showOnlyFavorites: boolean;
   favorites: Set<string>;
-  totalPages: number;
-  safePage: number;
+  sortOrder: SortOrder;
   onSelectCategory: (category: string | null) => void;
   onToggleOnlyFavorites: () => void;
+  onSortChange: (order: SortOrder) => void;
+  /** Quita filtros y favoritos (desde el aviso de "sin resultados"). */
+  onShowAll: () => void;
+  onLoadMore: () => void;
   onRetry: () => void;
   onOpenItem: (item: FeedItem) => void;
   onToggleFavorite: (id: string, e?: MouseEvent) => void;
-  onPageChange: (page: number) => void;
 }) {
   const [view, setView] = useState<View>('grid');
+  const hasMore = items.length < totalItems;
 
   const openOnKey = (item: FeedItem) => (e: KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -105,7 +112,7 @@ export function GallerySection({
     <section id="gallery" ref={sectionRef} className="max-w-[1320px] mx-auto px-4 sm:px-6 pb-20 md:pb-28 scroll-mt-20">
       <SectionHeading step={2} eyebrow={t.gallery.eyebrow} title={t.gallery.title} subtitle={t.gallery.subtitle} />
 
-      <div className="mt-8 mb-10 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="sticky top-16 z-30 -mx-4 px-4 sm:-mx-6 sm:px-6 mt-6 mb-8 py-3 flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between bg-[var(--color-ink)]/92 backdrop-blur-sm border-b-[1.5px] border-[var(--color-border)]">
         {categories.length > 0 && (
           <div className="-mx-4 px-4 sm:mx-0 sm:px-0 flex items-center gap-2 overflow-x-auto sm:flex-wrap py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <FilterPill onClick={() => onSelectCategory(null)} active={filterCategory === null} count={allCount}>
@@ -128,7 +135,22 @@ export function GallerySection({
           </div>
         )}
 
-        <div role="group" aria-label={t.gallery.view} className="hand flex shrink-0 items-center gap-3 text-xl text-[var(--color-text-muted)] sm:pt-1.5">
+        <div className="hand flex shrink-0 flex-wrap items-center gap-x-5 gap-y-1 text-xl text-[var(--color-text-muted)]">
+          <div role="group" aria-label={t.gallery.sort} className="flex items-center gap-3">
+            <span className="text-[var(--color-text-faint)]">{t.gallery.sort.toLowerCase()}:</span>
+            {(['newest', 'oldest'] as const).map((order) => (
+              <button
+                key={order}
+                type="button"
+                onClick={() => onSortChange(order)}
+                aria-pressed={sortOrder === order}
+                className={`link-underline ${sortOrder === order ? 'text-[var(--color-accent-text)]' : ''}`}
+              >
+                {order === 'newest' ? t.gallery.sortNewest.toLowerCase() : t.gallery.sortOldest.toLowerCase()}
+              </button>
+            ))}
+          </div>
+        <div role="group" aria-label={t.gallery.view} className="flex items-center gap-3">
           <span className="text-[var(--color-text-faint)]">{t.gallery.view.toLowerCase()}:</span>
           {(['grid', 'list'] as const).map((v) => (
             <button
@@ -141,6 +163,7 @@ export function GallerySection({
               {v === 'grid' ? t.gallery.viewGrid.toLowerCase() : t.gallery.viewList.toLowerCase()}
             </button>
           ))}
+        </div>
         </div>
       </div>
 
@@ -155,7 +178,18 @@ export function GallerySection({
           </Button>
         </EmptyState>
       ) : totalItems === 0 ? (
-        <EmptyState className="py-20">{showOnlyFavorites ? t.gallery.noResults : t.gallery.empty}</EmptyState>
+        <EmptyState className="flex flex-col items-center gap-3 py-20">
+          {showOnlyFavorites && <DoodleHeart className="w-12 h-auto -rotate-6 text-[var(--color-accent)]" />}
+          <p className="hand text-2xl text-[var(--color-text)]">{showOnlyFavorites ? t.gallery.noResults : t.gallery.empty}</p>
+          {showOnlyFavorites && (
+            <>
+              <p className="text-sm max-w-xs">{t.gallery.noResultsHint}</p>
+              <Button onClick={onShowAll} variant="secondary" size="sm" className="mt-2">
+                {t.gallery.showAll}
+              </Button>
+            </>
+          )}
+        </EmptyState>
       ) : (
         <>
           {view === 'grid' ? (
@@ -245,29 +279,22 @@ export function GallerySection({
             </ul>
           )}
 
-          {totalPages > 1 && (
-            <nav aria-label={t.gallery.title} className="flex justify-center items-center gap-1.5 mt-12">
-              {Array.from({ length: totalPages }, (_, index) => {
-                const pageNum = index + 1;
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => {
-                      onPageChange(pageNum);
-                      document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    aria-current={safePage === pageNum ? 'page' : undefined}
-                    className={`lift sketch hand w-11 h-11 text-xl ${safePage === pageNum
-                      ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]'
-                      : 'bg-[var(--color-surface)] text-[var(--color-text)]'
-                      }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-            </nav>
-          )}
+          <div className="mt-14 flex flex-col items-center gap-3">
+            <p className="hand text-xl text-[var(--color-text-muted)]" aria-live="polite">
+              {t.gallery.showing(items.length, totalItems)}
+            </p>
+            <span className="block h-1.5 w-48 overflow-hidden rounded-full bg-[var(--color-surface-2)]" aria-hidden="true">
+              <span
+                className="block h-full rounded-full bg-[var(--color-accent)] transition-[width] duration-500"
+                style={{ width: `${(items.length / totalItems) * 100}%` }}
+              />
+            </span>
+            {hasMore && (
+              <Button onClick={onLoadMore} variant="secondary" className="mt-3">
+                {t.gallery.loadMore} ↓
+              </Button>
+            )}
+          </div>
         </>
       )}
     </section>

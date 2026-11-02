@@ -6,7 +6,7 @@ import { SiteHeader, type ActiveSection } from '@/components/home/SiteHeader';
 import { Hero } from '@/components/home/Hero';
 import { IntroSection } from '@/components/home/IntroSection';
 import { UniverseTiles } from '@/components/home/UniverseTiles';
-import { GallerySection } from '@/components/home/GallerySection';
+import { GallerySection, type SortOrder } from '@/components/home/GallerySection';
 import { Lightbox } from '@/components/home/Lightbox';
 import { AboutSection } from '@/components/home/AboutSection';
 import { SiteFooter } from '@/components/home/SiteFooter';
@@ -16,12 +16,14 @@ import { useFavorites } from '@/lib/hooks/useFavorites';
 import { useLang } from '@/lib/hooks/useLang';
 import { useBodyScrollLock } from '@/lib/hooks/useBodyScrollLock';
 
-const ITEMS_PER_PAGE = 12;
+/** Fotos que se muestran al principio y cuántas más se añaden con "Ver más". */
+const PAGE_SIZE = 12;
 
 export default function Home() {
   const [lang, setLang] = useLang();
   const [selectedItem, setSelectedItem] = useState<FeedItem | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
@@ -106,24 +108,27 @@ export default function Home() {
     return list;
   }, [feedItems]);
 
+  // El feed llega de la más reciente a la más antigua; "antiguas" lo invierte.
   const filteredItems = useMemo(() => {
-    return feedItems.filter((item) => {
+    const list = feedItems.filter((item) => {
       if (filterCategory && item.category !== filterCategory) return false;
       if (showOnlyFavorites && !favorites.has(item.id)) return false;
       return true;
     });
-  }, [feedItems, filterCategory, showOnlyFavorites, favorites]);
+    return sortOrder === 'oldest' ? list.reverse() : list;
+  }, [feedItems, filterCategory, showOnlyFavorites, favorites, sortOrder]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
-  const safePage = Math.min(currentPage, totalPages);
-  const paginatedItems = useMemo(() => {
-    const start = (safePage - 1) * ITEMS_PER_PAGE;
-    return filteredItems.slice(start, start + ITEMS_PER_PAGE);
-  }, [filteredItems, safePage]);
+  const visibleItems = useMemo(() => filteredItems.slice(0, visibleCount), [filteredItems, visibleCount]);
 
+  // Al cambiar el filtro o el orden se vuelve a mostrar solo la primera tanda.
   const selectCategory = (category: string | null) => {
     setFilterCategory(category);
-    setCurrentPage(1);
+    setVisibleCount(PAGE_SIZE);
+  };
+
+  const changeSortOrder = (order: SortOrder) => {
+    setSortOrder(order);
+    setVisibleCount(PAGE_SIZE);
   };
 
   // Cada universo con su número de fotos y su foto más reciente como portada.
@@ -149,24 +154,28 @@ export default function Home() {
     galleryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  // Vuelve a la página 1 al cambiar el filtro de favoritos (si no, se podría
-  // quedar en una página que ya no existe para el nuevo filtro).
   const toggleOnlyFavorites = () => {
     setShowOnlyFavorites((v) => !v);
-    setCurrentPage(1);
+    setVisibleCount(PAGE_SIZE);
+  };
+
+  const showAll = () => {
+    setFilterCategory(null);
+    setShowOnlyFavorites(false);
+    setVisibleCount(PAGE_SIZE);
   };
 
   const closeLightbox = useCallback(() => setSelectedItem(null), []);
 
   return (
-    <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0 overflow-x-hidden focus:outline-none">
+    <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0 overflow-x-clip focus:outline-none">
       <SiteHeader t={t} lang={lang} onLangChange={setLang} activeSection={activeSection} onOpenQr={openQr} />
       <Hero t={t} photos={heroPhotos} frameNumbers={frameNumbers} photoCount={feedItems.length} universeCount={categories.length} loading={loading} onOpenItem={setSelectedItem} />
       <UniverseTiles t={t} universes={universes} onSelect={exploreUniverse} />
       <GallerySection
         t={t}
         sectionRef={galleryRef}
-        items={paginatedItems}
+        items={visibleItems}
         totalItems={filteredItems.length}
         frameNumbers={frameNumbers}
         loading={loading}
@@ -177,19 +186,21 @@ export default function Home() {
         filterCategory={filterCategory}
         showOnlyFavorites={showOnlyFavorites}
         favorites={favorites}
-        totalPages={totalPages}
-        safePage={safePage}
+        sortOrder={sortOrder}
+        onSortChange={changeSortOrder}
+        onShowAll={showAll}
+        onLoadMore={() => setVisibleCount((c) => c + PAGE_SIZE)}
         onSelectCategory={selectCategory}
         onToggleOnlyFavorites={toggleOnlyFavorites}
         onRetry={() => setRetryCount((c) => c + 1)}
         onOpenItem={setSelectedItem}
         onToggleFavorite={toggleFavorite}
-        onPageChange={setCurrentPage}
       />
       <Lightbox
         t={t}
         item={selectedItem}
         items={filteredItems}
+        frameNumbers={frameNumbers}
         favorites={favorites}
         onToggleFavorite={toggleFavorite}
         onSelect={setSelectedItem}

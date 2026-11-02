@@ -14,6 +14,8 @@ export const CATEGORY_THEMES: Record<string, CategoryTheme> = {
   dc: { accent: '#5F75A3', shadow: '#3d4d6e', ink: '#ffffff' }, // Sand Blue
   minecraft: { accent: '#6C9A76', shadow: '#46664d', ink: '#ffffff' }, // Sand Green
   chill: { accent: '#8A78A8', shadow: '#5a4d70', ink: '#ffffff' }, // Sand Purple
+  'harry potter': { accent: '#4F7E8C', shadow: '#33535c', ink: '#ffffff' }, // Dark Turquoise
+  dreamzzz: { accent: '#B0708F', shadow: '#744a5e', ink: '#ffffff' }, // Sand Pink
 };
 
 /** Claves en minúscula, en el orden en que se muestran los selectores/filtros. */
