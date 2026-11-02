@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
-import { DoodleArrow, DoodleBrick, DoodleMinifig, DoodleSparkle, DoodleUnderline } from '@/components/ui/Doodles';
+import { DoodleAperture, DoodleArrow, DoodleBrick, DoodleCamera, DoodleMinifigPhotographer, DoodleSparkle, DoodleUnderline } from '@/components/ui/Doodles';
 import { formatCategoryLabel } from '@/lib/categoryThemes';
 import type { HomeContent } from '@/lib/content/homeContent';
 import type { FeedItem } from '@/lib/gallery';
@@ -17,10 +17,11 @@ const SLIDE_SECONDS = 6.5;
 /** Giro de cada miniatura, para que parezcan fotos sueltas pegadas a mano. */
 const THUMB_TILT = ['-rotate-2', 'rotate-1', '-rotate-1', 'rotate-2', '-rotate-1'];
 
-/** Portada como la primera página de un cuaderno de bocetos: un saludo a
- * mano, el titular subrayado con bolígrafo y una minifigura garabateada; al
- * lado, la foto más reciente como una polaroid pegada con cinta, con una
- * nota y una flecha, y debajo las otras cuatro en miniatura. La foto va
+/** Portada como la primera página de un cuaderno de bocetos que mezcla
+ * fotografía y LEGO: un saludo a mano, el titular subrayado con bolígrafo,
+ * "…y foto a foto" y una minifigura fotógrafa garabateada; al lado, la foto
+ * más reciente como una polaroid pegada con cinta y con las marcas del visor
+ * de una cámara, una nota y una flecha, y debajo las otras cuatro en miniatura. La foto va
  * pasando sola; se detiene con el ratón encima, con el botón de pausa y con
  * "reducir movimiento" activado (entonces solo se cambia a mano). Al tocar
  * la foto se abre en grande. */
@@ -76,7 +77,11 @@ export function Hero({
               <DoodleUnderline className="absolute -bottom-2 left-0 h-4 w-full text-[var(--color-accent)]" />
             </span>
           </h1>
-          <p className="mt-6 max-w-md text-base leading-relaxed text-[var(--color-text-muted)]">{t.hero.description}</p>
+          <p className="hand mt-4 flex items-center gap-2 text-3xl text-[var(--color-accent-text)]">
+            {t.hero.tagline}
+            <DoodleCamera className="w-9 h-auto -rotate-6" />
+          </p>
+          <p className="mt-5 max-w-md text-base leading-relaxed text-[var(--color-text-muted)]">{t.hero.description}</p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button href="#gallery">{t.hero.btnExplore} ↓</Button>
             <Button href="/comunidad" variant="secondary">
@@ -87,7 +92,7 @@ export function Hero({
             {loading ? '—' : photoCount} {t.hero.stat1.toLowerCase()} · {loading ? '—' : universeCount} {t.hero.stat2.toLowerCase()}
           </p>
 
-          <DoodleMinifig className="hidden lg:block absolute -right-2 top-4 w-16 rotate-6 text-[var(--color-line)] opacity-80" />
+          <DoodleMinifigPhotographer className="hidden lg:block absolute -right-2 top-2 w-[4.5rem] rotate-6 text-[var(--color-line)] opacity-80" />
           <DoodleBrick className="hidden md:block absolute -left-3 -bottom-16 w-24 -rotate-3 text-[var(--color-text-faint)] opacity-70" />
         </motion.div>
 
@@ -106,7 +111,7 @@ export function Hero({
               {t.hero.latestNote}
               <DoodleArrow className="w-12 h-9 translate-y-5" />
             </p>
-            <div className="relative aspect-[4/5] overflow-hidden bg-[var(--color-surface-2)]">
+            <div className="viewfinder is-on relative aspect-[4/5] overflow-hidden bg-[var(--color-surface-2)]">
               {count === 0 ? (
                 <span className="absolute inset-0 animate-shimmer" aria-hidden="true" />
               ) : (
@@ -129,7 +134,8 @@ export function Hero({
               )}
             </div>
             <figcaption className="flex items-center justify-between gap-3 px-1 pt-2 pb-1">
-              <span className="hand min-w-0 truncate text-2xl text-[var(--color-text)]">
+              <span className="hand flex min-w-0 items-center gap-1.5 truncate text-2xl text-[var(--color-text)]">
+                <DoodleAperture className="w-5 h-5 shrink-0 text-[var(--color-accent)]" />
                 #{frameNumbers.get(active?.id ?? '') ?? current + 1}
                 {active?.category && <span className="text-[var(--color-text-muted)]"> · {formatCategoryLabel(active.category)}</span>}
               </span>

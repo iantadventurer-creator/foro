@@ -33,6 +33,87 @@ export function DoodleMinifig(props: DoodleProps) {
   );
 }
 
+/** Minifigura fotógrafa: sostiene una cámara a la altura del pecho. */
+export function DoodleMinifigPhotographer(props: DoodleProps) {
+  return (
+    <svg viewBox="0 0 60 82" aria-hidden="true" focusable="false" {...props}>
+      <g {...stroke}>
+        <path d="M24.5 3.5h11l.5 4.5h-12z" />
+        <path d="M18 9.5Q30 6 42.5 9.5q3.5 9 -.5 18Q30 31 18 27.5q-4-9 0-18z" />
+        <path d="M25 22.5q5 3 10 0" />
+        <path d="M26 29.5v3.5M34 29.5v3.5" />
+        <path d="M16.5 33.5h27l4 25h-35z" />
+        <path d="M16.5 35.5Q9 40 14 45.5M43.5 35.5Q51 40 46 45.5" />
+        <path d="M13 39.5q0-2 2-2h30q2 0 2 2v12q0 2-2 2H15q-2 0-2-2z" fill="var(--color-ink)" />
+        <path d="M17 37.5v-3h6v3" />
+        <circle cx="30" cy="45.5" r="5.5" />
+        <circle cx="30" cy="45.5" r="2.2" />
+        <path d="M12.5 58.5h35v5h-35z" />
+        <path d="M13 63.5v14h15l.5-11h3l.5 11h15v-14" />
+      </g>
+      <circle cx="25" cy="16" r="1.8" fill="currentColor" />
+      <circle cx="35" cy="16" r="1.8" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** Cámara hecha de ladrillo: cuerpo de pieza LEGO con studs y un objetivo. */
+export function DoodleBrickCamera(props: DoodleProps) {
+  return (
+    <svg viewBox="0 0 64 50" aria-hidden="true" focusable="false" {...props}>
+      <g {...stroke}>
+        <path d="M11 10.5V5h9v5.5M27.5 10.5V5h9v5.5M44 10.5V5h9v5.5" />
+        <path d="M4.5 13q0-2.5 2.5-2.5h50q2.5 0 2.5 2.5v29q0 2.5-2.5 2.5H7q-2.5 0-2.5-2.5z" />
+        <circle cx="34" cy="28" r="11" />
+        <circle cx="34" cy="28" r="5" />
+        <path d="M10 16.5h8v5h-8z" />
+        <path d="M31 25q1.5-1.5 3.5-1.5" />
+      </g>
+    </svg>
+  );
+}
+
+/** Diafragma de un objetivo: aro con las láminas cerrándose. */
+export function DoodleAperture(props: DoodleProps) {
+  const hex = Array.from({ length: 6 }, (_, k) => {
+    const a = (k * Math.PI) / 3;
+    return [24 + 8 * Math.cos(a), 24 + 8 * Math.sin(a)];
+  });
+  const blades = hex.map(([x, y], k) => {
+    const a = (k * Math.PI) / 3 + 1.15;
+    return `M${x.toFixed(1)} ${y.toFixed(1)}L${(24 + 20 * Math.cos(a)).toFixed(1)} ${(24 + 20 * Math.sin(a)).toFixed(1)}`;
+  });
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false" {...props}>
+      <g {...stroke}>
+        <path d="M24 3.5q20.5.5 20.5 20.5T24 44.5 3.5 24 24 3.5z" />
+        <path d={`M${hex.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join('L')}z`} />
+        <path d={blades.join('')} />
+      </g>
+    </svg>
+  );
+}
+
+/** Carrete de película con la tira saliendo hacia la derecha. */
+export function DoodleFilmRoll(props: DoodleProps) {
+  return (
+    <svg viewBox="0 0 72 42" aria-hidden="true" focusable="false" {...props}>
+      <g {...stroke}>
+        <path d="M11.5 7.5V3.5h8v4" />
+        <path d="M4.5 10q0-2.5 2.5-2.5h17q2.5 0 2.5 2.5v25q0 2.5-2.5 2.5H7q-2.5 0-2.5-2.5z" />
+        <path d="M8.5 13v19" />
+        <path d="M26.5 12.5h40l2 4-2 4 2 4-2 4 2 4h-42" />
+        {[31, 39, 47, 55, 63].map((x) => (
+          <g key={x}>
+            <path d={`M${x} 15h3`} />
+            <path d={`M${x} 30.5h3`} />
+          </g>
+        ))}
+      </g>
+    </svg>
+  );
+}
+
 /** Ladrillo 2×4 en perspectiva, dibujado a mano. */
 export function DoodleBrick(props: DoodleProps) {
   return (

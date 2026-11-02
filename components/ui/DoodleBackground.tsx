@@ -3,12 +3,16 @@
 import type { ComponentType, CSSProperties, SVGProps } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import {
+  DoodleAperture,
   DoodleArrow,
   DoodleBrick,
+  DoodleBrickCamera,
   DoodleCamera,
   DoodleCoffeeRing,
+  DoodleFilmRoll,
   DoodleHeart,
   DoodleMinifig,
+  DoodleMinifigPhotographer,
   DoodlePlate,
   DoodleScribble,
   DoodleSparkle,
@@ -38,25 +42,31 @@ type Item = {
   delay: number;
 };
 
+// Mitad fotografía, mitad LEGO: cámaras, carretes y diafragmas junto a
+// minifiguras, ladrillos y studs.
 const DOODLES: Doodle[] = [
-  DoodleMinifig,
+  DoodleMinifigPhotographer,
   DoodleStar,
   DoodleBrick,
-  DoodleHeart,
+  DoodleAperture,
   DoodleStud,
-  DoodleScribble,
-  DoodleCamera,
+  DoodleFilmRoll,
+  DoodleMinifig,
   DoodleSparkle,
+  DoodleBrickCamera,
+  DoodleHeart,
   DoodlePlate,
+  DoodleCamera,
+  DoodleScribble,
   DoodleSpiral,
   DoodleArrow,
 ];
-const WIDTHS = [54, 30, 78, 28, 34, 60, 50, 24, 72, 36, 58];
-const ROTATIONS = [-12, 10, -5, 14, 0, -8, 6, -15, 4, 9, 160];
-const TONES: Tone[] = ['ink', 'blue', 'ink', 'blue', 'green', 'ink', 'ink', 'blue', 'green', 'ink', 'blue'];
+const WIDTHS = [56, 30, 78, 38, 34, 74, 50, 24, 60, 28, 72, 50, 58, 36, 58];
+const ROTATIONS = [-10, 10, -5, 12, 0, -8, 6, -15, 7, 14, 4, -6, -8, 9, 160];
+const TONES: Tone[] = ['ink', 'blue', 'ink', 'blue', 'green', 'ink', 'ink', 'blue', 'blue', 'blue', 'green', 'ink', 'ink', 'ink', 'blue'];
 const INSETS = [1.5, 4, 2.5, 5.5, 3];
 
-const COUNT = 26;
+const COUNT = 30;
 
 // Repartidos a lo largo de toda la página, alternando márgenes, con valores
 // fijos (nada aleatorio) para que el servidor y el navegador pinten lo mismo.
@@ -111,7 +121,7 @@ function Doodles({ items }: { items: Item[] }) {
   ));
 }
 
-// Fondo del cuaderno: garabatos de LEGO a tinta, en azul bolígrafo y en verde
+// Fondo del cuaderno: garabatos de fotografía y de LEGO a tinta, en azul bolígrafo y en verde
 // lápiz repartidos por los márgenes de toda la página, más un par de marcas de
 // taza de café. Van en dos capas que se desplazan a distinta velocidad al
 // hacer scroll (paralaje) y cada garabato flota despacio. Con "reducir

@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import { DoodleArrow } from '@/components/ui/Doodles';
 
-/** Encabezado de sección del cuaderno de bocetos: una línea ondulada arriba,
+/** Encabezado de sección del cuaderno de bocetos: una tira de película con
+ * perforaciones de studs LEGO arriba,
  * una nota manuscrita en azul bolígrafo (con su número de página, si lo hay),
  * el titular a mano y, a la derecha, el subtítulo. */
 export function SectionHeading({
@@ -23,7 +24,7 @@ export function SectionHeading({
 }) {
   return (
     <div className={className}>
-      <div className="squiggle text-[var(--color-border)]" aria-hidden="true" />
+      <div className="film-divider text-[var(--color-text-faint)] opacity-40" aria-hidden="true" />
       <div className="pt-6 grid gap-3 md:grid-cols-[1fr_minmax(0,22rem)] md:gap-8 md:items-end">
         <div>
           <p className="hand flex items-center gap-2 text-2xl text-[var(--color-accent-text)]">

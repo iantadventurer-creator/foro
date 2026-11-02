@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DoodleBrick } from '@/components/ui/Doodles';
+import { DoodleBrickCamera } from '@/components/ui/Doodles';
 import { LangToggle } from '@/components/ui/LangToggle';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import type { HomeContent } from '@/lib/content/homeContent';
@@ -42,7 +42,7 @@ export function SiteHeader({
     <header className="sticky top-0 z-40 bg-[var(--color-ink)]/95 backdrop-blur-sm border-b border-[var(--color-border)]">
       <div className="max-w-[1320px] mx-auto flex justify-between items-center gap-4 px-4 sm:px-6 h-16">
         <a href="#top" className="group flex items-center gap-2.5">
-          <DoodleBrick className="w-10 h-auto text-[var(--color-accent)] transition-transform group-hover:-rotate-6" />
+          <DoodleBrickCamera className="w-10 h-auto text-[var(--color-accent)] transition-transform group-hover:-rotate-6" />
           <span className="font-display text-2xl font-extrabold leading-none text-[var(--color-text)]">IanTBuild</span>
         </a>
 

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { DoodleBrick } from '@/components/ui/Doodles';
+import { DoodleBrickCamera } from '@/components/ui/Doodles';
 import { LangToggle } from '@/components/ui/LangToggle';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import type { Lang } from '@/lib/lang';
@@ -51,7 +51,7 @@ export function AuthShell({
                     className="panel overflow-hidden bg-[var(--color-surface)]"
                 >
                     <div className="px-7 pt-9 pb-2 text-center">
-                        <DoodleBrick className="w-16 h-auto mx-auto mb-2 text-[var(--color-accent)]" />
+                        <DoodleBrickCamera className="w-16 h-auto mx-auto mb-2 text-[var(--color-accent)]" />
                         <p className="font-display text-3xl font-extrabold leading-none">IanTBuild</p>
                         <p className="text-sm text-[var(--color-text-muted)] mt-2 leading-relaxed">{tagline}</p>
                     </div>

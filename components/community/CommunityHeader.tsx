@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { CommunityHeaderNav } from '@/components/community/CommunityHeaderNav';
 import { CommunityLogoutButton } from '@/components/community/CommunityLogoutButton';
-import { DoodleBrick } from '@/components/ui/Doodles';
+import { DoodleBrickCamera } from '@/components/ui/Doodles';
 import { LangToggle } from '@/components/ui/LangToggle';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { communityNav } from '@/lib/content/nav';
@@ -36,7 +36,7 @@ export function CommunityHeader({
             <div className="w-full max-w-7xl mx-auto flex md:grid md:grid-cols-3 items-center justify-between gap-3">
                 <div className="justify-self-start flex items-center gap-3 min-w-0">
                     <Link href="/" aria-label="IanTBuild" className="group shrink-0">
-                        <DoodleBrick className="w-10 h-auto text-[var(--color-accent)] transition-transform group-hover:-rotate-6" />
+                        <DoodleBrickCamera className="w-10 h-auto text-[var(--color-accent)] transition-transform group-hover:-rotate-6" />
                     </Link>
                     <Link
                         href={back === 'home' ? '/' : '/comunidad'}

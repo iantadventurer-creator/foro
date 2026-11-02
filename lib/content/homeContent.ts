@@ -22,10 +22,11 @@ export const homeContent = {
       latest: 'Últimas fotos',
       latestNote: '¡La más reciente!',
       hello: '¡Hola! Esto es IanTBuild',
+      tagline: '…y foto a foto.',
       playShort: 'Seguir',
     },
     universes: {
-      eyebrow: 'Índice',
+      eyebrow: 'Carretes',
       title: 'Universos',
       subtitle: 'Cada universo es una serie. Elige uno para ver solo sus fotos.',
       photos: (n: number) => `${n} foto${n === 1 ? '' : 's'}`,
@@ -41,7 +42,7 @@ export const homeContent = {
       ],
     },
     gallery: {
-      eyebrow: 'Galería',
+      eyebrow: 'Hoja de contactos',
       title: 'Fotos de miniaturas LEGO',
       subtitle: 'Toca una foto para verla en grande. Filtra por universo y guarda tus favoritas con el corazón.',
       filterAll: 'Todo',
@@ -100,10 +101,11 @@ export const homeContent = {
       latest: 'Latest photos',
       latestNote: 'The newest one!',
       hello: 'Hi! This is IanTBuild',
+      tagline: '…and shot by shot.',
       playShort: 'Play',
     },
     universes: {
-      eyebrow: 'Index',
+      eyebrow: 'Film rolls',
       title: 'Universes',
       subtitle: 'Each universe is a series. Pick one to see only its photos.',
       photos: (n: number) => `${n} photo${n === 1 ? '' : 's'}`,
@@ -119,7 +121,7 @@ export const homeContent = {
       ],
     },
     gallery: {
-      eyebrow: 'Gallery',
+      eyebrow: 'Contact sheet',
       title: 'LEGO miniature photos',
       subtitle: 'Tap a photo to see it larger. Filter by universe and save your favorites with the heart.',
       filterAll: 'All',

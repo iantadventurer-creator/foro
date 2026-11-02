@@ -177,7 +177,7 @@ export function GallerySection({
                     onKeyDown={openOnKey(item)}
                     className={`polaroid group cursor-zoom-in transition-transform duration-300 hover:rotate-0 hover:-translate-y-1 ${TILT[i % TILT.length]} ${i % 3 === 0 ? 'tape' : ''}`}
                   >
-                    <div className="relative aspect-[4/5] overflow-hidden bg-[var(--color-surface-2)]">
+                    <div className="viewfinder relative aspect-[4/5] overflow-hidden bg-[var(--color-surface-2)]">
                       <Image
                         src={item.src}
                         alt={item.title}

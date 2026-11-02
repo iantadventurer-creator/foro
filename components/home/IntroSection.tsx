@@ -1,14 +1,14 @@
 import Link from 'next/link';
-import { DoodleBrick, DoodleCamera, DoodleMinifig } from '@/components/ui/Doodles';
+import { DoodleFilmRoll, DoodleMinifig, DoodleMinifigPhotographer } from '@/components/ui/Doodles';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import type { HomeContent } from '@/lib/content/homeContent';
 
 const HREFS = ['#gallery', '/comunidad', '#about'];
-const DOODLES = [DoodleCamera, DoodleMinifig, DoodleBrick];
+const DOODLES = [DoodleFilmRoll, DoodleMinifig, DoodleMinifigPhotographer];
 const TILT = ['-rotate-1', 'rotate-1', '-rotate-[0.5deg]'];
 
 /** Los tres espacios de la web como hojas sueltas del cuaderno, cada una con
- * su garabato (cámara, minifigura, ladrillo). */
+ * su garabato (carrete de fotos, minifigura y minifigura fotógrafa). */
 export function IntroSection({ t }: { t: HomeContent }) {
   return (
     <section id="intro" className="max-w-[1320px] mx-auto px-4 sm:px-6 pb-16 md:pb-24">

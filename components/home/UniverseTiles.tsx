@@ -11,8 +11,8 @@ export type Universe = { name: string; count: number; cover?: string };
 /** Giro de cada polaroid, para que parezcan pegadas a mano. */
 const TILT = ['-rotate-2', 'rotate-1', '-rotate-1', 'rotate-2', 'rotate-1', '-rotate-2'];
 
-/** Universos (Star Wars, Ninjago...) como polaroids pegadas con cinta en el
- * cuaderno: la foto de portada y, escritos a mano debajo, el nombre con el
+/** Universos (Star Wars, Ninjago...) como los carretes del fotógrafo:
+ * polaroids pegadas con cinta en el cuaderno, con el visor al pasar el ratón: la foto de portada y, escritos a mano debajo, el nombre con el
  * punto de color de la franquicia y el número de fotos. Al tocar una, la
  * galería se filtra por ese universo. */
 export function UniverseTiles({
@@ -47,7 +47,7 @@ export function UniverseTiles({
                 aria-label={`${formatCategoryLabel(universe.name)} — ${t.universes.photos(universe.count)}`}
                 className={`polaroid lift group block w-full text-left ${i % 2 === 0 ? 'tape' : ''} ${TILT[i % TILT.length]}`}
               >
-                <span className="relative block aspect-square overflow-hidden bg-[var(--color-surface-2)]">
+                <span className="viewfinder relative block aspect-square overflow-hidden bg-[var(--color-surface-2)]">
                   {universe.cover && <Image src={universe.cover} alt="" fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw" className="object-cover" />}
                 </span>
                 <span className="flex items-baseline justify-between gap-2 px-1 pt-2 pb-1">
