@@ -85,7 +85,7 @@ export default function RootLayout({
         {/* Aplica el tema claro/oscuro antes de pintar (sin destello). Texto estático. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="min-h-full flex flex-col bg-[var(--color-ink)] text-[var(--color-text)]">
+      <body className="relative min-h-full flex flex-col bg-[var(--color-ink)] text-[var(--color-text)]">
         <a
           href="#contenido"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[200] focus:bg-[var(--color-accent)] focus:px-5 focus:py-2.5 focus:text-sm focus:font-bold focus:text-[var(--color-accent-ink)]"

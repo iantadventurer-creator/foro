@@ -189,6 +189,36 @@ body {
   will-change: transform;
 }
 
+/* Posición de los garabatos: asoman a medias por el borde y, cuando la
+   pantalla deja márgenes a los lados del contenido, se ven enteros */
+.doodle-left {
+  left: calc(var(--w) * -0.7);
+}
+
+.doodle-right {
+  right: calc(var(--w) * -0.7);
+}
+
+@media (min-width: 768px) {
+  .doodle-left {
+    left: calc(var(--w) * -0.45);
+  }
+
+  .doodle-right {
+    right: calc(var(--w) * -0.45);
+  }
+}
+
+@media (min-width: 1440px) {
+  .doodle-left {
+    left: var(--inset);
+  }
+
+  .doodle-right {
+    right: var(--inset);
+  }
+}
+
 .mask-fade-b {
   mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }

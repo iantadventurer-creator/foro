@@ -138,6 +138,42 @@ export function DoodleSpiral(props: DoodleProps) {
   );
 }
 
+/** Marca de taza de café: dos aros irregulares, uno incompleto. */
+export function DoodleCoffeeRing(props: DoodleProps) {
+  return (
+    <svg viewBox="0 0 120 120" aria-hidden="true" focusable="false" {...props}>
+      <g fill="none" stroke="currentColor" strokeLinecap="round">
+        <path d="M60 8q50 2 52 52t-52 52T8 60 60 8z" strokeWidth={5} opacity={0.55} />
+        <path d="M60 15q43 1 45 45T60 104" strokeWidth={2} opacity={0.4} />
+        <path d="M104 74q-3 8-9 14" strokeWidth={7} opacity={0.35} />
+      </g>
+    </svg>
+  );
+}
+
+/** Garabato de bolígrafo en zigzag, como al tachar o probar la tinta. */
+export function DoodleScribble(props: DoodleProps) {
+  return (
+    <svg viewBox="0 0 80 40" aria-hidden="true" focusable="false" {...props}>
+      <path d="M4 30L14 8l6 24 9-22 6 22 9-20 5 20 9-18 5 17 9-15" {...stroke} />
+    </svg>
+  );
+}
+
+/** Placa LEGO 1×4 vista de lado: barra fina con cuatro studs. */
+export function DoodlePlate(props: DoodleProps) {
+  return (
+    <svg viewBox="0 0 90 26" aria-hidden="true" focusable="false" {...props}>
+      <g {...stroke}>
+        <path d="M3.5 11.5l83 .5v11l-83-.5z" />
+        {[12, 32, 52, 72].map((x) => (
+          <path key={x} d={`M${x} 11.5v-6.5h10v6.5`} />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
 /** Subrayado ondulado a mano; se estira al ancho de su contenedor. */
 export function DoodleUnderline(props: DoodleProps) {
   return (
