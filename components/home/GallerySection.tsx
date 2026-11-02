@@ -15,13 +15,17 @@ import type { FeedItem } from '@/lib/gallery';
 
 const FAVORITE_THEME = { accent: '#c9506f', shadow: '#8a1638', ink: '#ffffff' };
 
-const pad = (n: number | undefined) => (n === undefined ? '—' : String(n).padStart(3, '0'));
+const num = (n: number | undefined) => (n === undefined ? '—' : `#${n}`);
+
+/** Giro de cada polaroid de la rejilla, para que parezcan pegadas a mano. */
+const TILT = ['-rotate-1', 'rotate-[0.6deg]', 'rotate-1', '-rotate-[0.6deg]', 'rotate-[0.4deg]', '-rotate-1', 'rotate-[0.8deg]'];
 
 type View = 'grid' | 'list';
 
-/** Galería: rejilla estricta de fotos numeradas como los pasos de un manual
- * LEGO o, si se prefiere, lista tipo índice con miniatura, número, título y
- * universo. El cuadradito de color de cada foto es el de su universo. */
+/** Galería del cuaderno: polaroids numeradas y un poco ladeadas, algunas
+ * pegadas con cinta, con el título escrito a mano; o, si se prefiere, una
+ * lista con miniatura, número, título y universo. El punto de color de cada
+ * foto es el de su universo. */
 export function GallerySection({
   t,
   sectionRef,
@@ -98,12 +102,12 @@ export function GallerySection({
   };
 
   return (
-    <section id="gallery" ref={sectionRef} className="max-w-[1440px] mx-auto px-4 sm:px-6 pb-20 md:pb-28 scroll-mt-20">
+    <section id="gallery" ref={sectionRef} className="max-w-[1320px] mx-auto px-4 sm:px-6 pb-20 md:pb-28 scroll-mt-20">
       <SectionHeading step={2} eyebrow={t.gallery.eyebrow} title={t.gallery.title} subtitle={t.gallery.subtitle} />
 
-      <div className="mt-8 mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mt-8 mb-10 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         {categories.length > 0 && (
-          <div className="-mx-4 px-4 sm:mx-0 sm:px-0 flex items-center gap-1.5 overflow-x-auto sm:flex-wrap pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="-mx-4 px-4 sm:mx-0 sm:px-0 flex items-center gap-2 overflow-x-auto sm:flex-wrap py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <FilterPill onClick={() => onSelectCategory(null)} active={filterCategory === null} count={allCount}>
               {t.gallery.filterAll}
             </FilterPill>
@@ -124,17 +128,17 @@ export function GallerySection({
           </div>
         )}
 
-        <div role="group" aria-label={t.gallery.view} className="label-caps flex shrink-0 items-center gap-3 text-[var(--color-text-muted)] sm:pt-2.5">
-          <span className="text-[var(--color-text-faint)]">{t.gallery.view}</span>
+        <div role="group" aria-label={t.gallery.view} className="hand flex shrink-0 items-center gap-3 text-xl text-[var(--color-text-muted)] sm:pt-1.5">
+          <span className="text-[var(--color-text-faint)]">{t.gallery.view.toLowerCase()}:</span>
           {(['grid', 'list'] as const).map((v) => (
             <button
               key={v}
               type="button"
               onClick={() => setView(v)}
               aria-pressed={view === v}
-              className={`link-underline font-mono uppercase ${view === v ? 'text-[var(--color-text)]' : ''}`}
+              className={`link-underline ${view === v ? 'text-[var(--color-accent-text)]' : ''}`}
             >
-              {v === 'grid' ? `▦ ${t.gallery.viewGrid}` : `☰ ${t.gallery.viewList}`}
+              {v === 'grid' ? t.gallery.viewGrid.toLowerCase() : t.gallery.viewList.toLowerCase()}
             </button>
           ))}
         </div>
@@ -155,8 +159,8 @@ export function GallerySection({
       ) : (
         <>
           {view === 'grid' ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-3 sm:gap-x-5 gap-y-6 sm:gap-y-9">
-              {items.map((item) => {
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 sm:gap-x-7 gap-y-8 sm:gap-y-12">
+              {items.map((item, i) => {
                 const isFavorite = favorites.has(item.id);
                 const theme = getCategoryTheme(item.category);
                 return (
@@ -171,32 +175,30 @@ export function GallerySection({
                     tabIndex={0}
                     aria-label={item.title}
                     onKeyDown={openOnKey(item)}
-                    className="group cursor-zoom-in"
+                    className={`polaroid group cursor-zoom-in transition-transform duration-300 hover:rotate-0 hover:-translate-y-1 ${TILT[i % TILT.length]} ${i % 3 === 0 ? 'tape' : ''}`}
                   >
-                    <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-[var(--color-surface-2)]">
+                    <div className="relative aspect-[4/5] overflow-hidden bg-[var(--color-surface-2)]">
                       <Image
                         src={item.src}
                         alt={item.title}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        className="object-cover transition-opacity duration-300 group-hover:opacity-90"
+                        className="object-cover"
                       />
                       {item.mediaType === 'VIDEO' && (
-                        <span className="label-caps absolute top-2 left-2 bg-black/60 px-1.5 py-0.5 text-white">Reel</span>
+                        <span className="hand absolute top-2 left-2 rounded-md bg-black/60 px-2 text-lg text-white">reel</span>
                       )}
                       {heart(
                         item,
-                        `absolute top-1.5 right-1.5 rounded-md bg-white/90 text-[#1c2833] transition-opacity ${isFavorite ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-90'}`
+                        `absolute top-1.5 right-1.5 rounded-full bg-white/90 text-[#2a2723] transition-opacity ${isFavorite ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-90'}`
                       )}
                     </div>
-                    <figcaption className="mt-2.5 flex items-baseline gap-2.5">
-                      <span className="font-display text-lg font-bold leading-none tracking-[-0.04em] text-[var(--color-accent-text)]">
-                        {frameNumbers.get(item.id) ?? '—'}
-                      </span>
-                      <span className="min-w-0 flex-1 truncate text-sm text-[var(--color-text)]">{item.title}</span>
+                    <figcaption className="hand flex items-center gap-2 px-1 pt-2 pb-1 text-xl sm:text-2xl">
+                      <span className="text-[var(--color-accent-text)]">{num(frameNumbers.get(item.id))}</span>
+                      <span className="min-w-0 flex-1 truncate text-[var(--color-text)]">{item.title}</span>
                       {theme && (
                         <span
-                          className="w-2 h-2 shrink-0 rounded-[1px]"
+                          className="w-2.5 h-2.5 shrink-0 rounded-full"
                           style={{ background: theme.accent }}
                           title={item.category ? formatCategoryLabel(item.category) : undefined}
                           aria-hidden="true"
@@ -208,9 +210,9 @@ export function GallerySection({
               })}
             </div>
           ) : (
-            <ul className="border-t border-[var(--color-border)]">
+            <ul className="border-t-[1.5px] border-[var(--color-border)]">
               {items.map((item) => (
-                <li key={item.id} className="border-b border-[var(--color-border)]">
+                <li key={item.id} className="border-b-[1.5px] border-[var(--color-border)]">
                   <div
                     role="button"
                     tabIndex={0}
@@ -219,16 +221,16 @@ export function GallerySection({
                     onKeyDown={openOnKey(item)}
                     className="group grid cursor-zoom-in grid-cols-[3.5rem_1fr_auto] sm:grid-cols-[3rem_4rem_1fr_10rem_5rem_auto] items-center gap-3 sm:gap-5 py-2.5 transition-colors hover:bg-[var(--color-surface-2)] sm:px-2"
                   >
-                    <span className="label-caps hidden sm:block text-[var(--color-text-faint)]">{pad(frameNumbers.get(item.id))}</span>
-                    <span className="relative block aspect-[4/5] overflow-hidden rounded-md bg-[var(--color-surface-2)]">
+                    <span className="hand hidden sm:block text-xl text-[var(--color-accent-text)]">{num(frameNumbers.get(item.id))}</span>
+                    <span className="polaroid relative block p-1 -rotate-2"><span className="relative block aspect-[4/5] overflow-hidden bg-[var(--color-surface-2)]">
                       <Image src={item.src} alt="" fill sizes="64px" className="object-cover" />
-                    </span>
+                    </span></span>
                     <span className="min-w-0">
                       <span className="label-caps block sm:hidden text-[var(--color-text-faint)]">
-                        {pad(frameNumbers.get(item.id))}
+                        {num(frameNumbers.get(item.id))}
                         {distinctCategoryLabel(item.category, item.title) && <> — {distinctCategoryLabel(item.category, item.title)}</>}
                       </span>
-                      <span className="block truncate text-sm sm:text-base text-[var(--color-text)]">{item.title}</span>
+                      <span className="hand block truncate text-xl sm:text-2xl text-[var(--color-text)]">{item.title}</span>
                     </span>
                     <span className="label-caps hidden sm:block truncate text-[var(--color-text-muted)]">
                       {item.category ? formatCategoryLabel(item.category) : '—'}
@@ -255,12 +257,12 @@ export function GallerySection({
                       document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' });
                     }}
                     aria-current={safePage === pageNum ? 'page' : undefined}
-                    className={`brick lift w-10 h-10 rounded-md border font-mono text-xs ${safePage === pageNum
-                      ? '[--brick-color:var(--color-accent)] border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-accent-ink)]'
-                      : '[--brick-color:var(--color-border)] border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)]'
+                    className={`lift sketch hand w-11 h-11 text-xl ${safePage === pageNum
+                      ? 'bg-[var(--color-accent)] text-[var(--color-accent-ink)]'
+                      : 'bg-[var(--color-surface)] text-[var(--color-text)]'
                       }`}
                   >
-                    {String(pageNum).padStart(2, '0')}
+                    {pageNum}
                   </button>
                 );
               })}

@@ -158,7 +158,7 @@ export function PostModal({
                                         <div className="flex gap-2 justify-end">
                                             <button
                                                 onClick={() => handleEdit(post.id)}
-                                                className="panel-sm lift bg-[var(--color-accent-4)] text-white font-mono font-medium tracking-[0.04em] px-3 py-1.5 text-[11px] uppercase"
+                                                className="panel-sm lift bg-[var(--color-accent-4)] text-white font-semibold rounded-lg px-3 py-1.5 text-[11px] uppercase"
                                             >
                                                 {t.save}
                                             </button>
@@ -167,7 +167,7 @@ export function PostModal({
                                                     setEditingPostId(null);
                                                     setEditText('');
                                                 }}
-                                                className="panel-sm lift bg-[var(--color-surface)] text-[var(--color-text)] font-mono font-medium tracking-[0.04em] px-3 py-1.5 text-[11px] uppercase"
+                                                className="panel-sm lift bg-[var(--color-surface)] text-[var(--color-text)] font-semibold rounded-lg px-3 py-1.5 text-[11px] uppercase"
                                             >
                                                 {t.cancel}
                                             </button>
@@ -215,13 +215,13 @@ export function PostModal({
                                                 setEditingPostId(post.id);
                                                 setEditText(post.title);
                                             }}
-                                            className=" text-[11px] bg-[var(--color-surface-2)] text-[var(--color-accent-text)] px-3 py-1 font-mono font-medium tracking-[0.04em] uppercase border border-[var(--color-border)] transition-colors hover:bg-[var(--color-highlight)] hover:text-[var(--color-highlight-ink)]"
+                                            className=" text-[11px] bg-[var(--color-surface-2)] text-[var(--color-accent-text)] px-3 py-1 font-semibold rounded-lg border border-[var(--color-border)] transition-colors hover:bg-[var(--color-highlight)] hover:text-[var(--color-highlight-ink)]"
                                         >
                                             {t.edit}
                                         </button>
                                         <button
                                             onClick={() => onRequestDelete(post.id, post.image_url)}
-                                            className=" text-[11px] bg-[var(--color-surface-2)] text-[var(--color-danger-text)] px-3 py-1 font-mono font-medium tracking-[0.04em] uppercase border border-[var(--color-border)] transition-colors hover:bg-[var(--color-danger)] hover:text-white"
+                                            className=" text-[11px] bg-[var(--color-surface-2)] text-[var(--color-danger-text)] px-3 py-1 font-semibold rounded-lg border border-[var(--color-border)] transition-colors hover:bg-[var(--color-danger)] hover:text-white"
                                         >
                                             {t.delete}
                                         </button>

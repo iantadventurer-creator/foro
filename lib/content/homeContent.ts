@@ -19,7 +19,9 @@ export const homeContent = {
       pause: 'Pausar el pase de fotos',
       play: 'Reanudar el pase de fotos',
       pauseShort: 'Pausa',
-      latest: 'Piezas recientes',
+      latest: 'Últimas fotos',
+      latestNote: '¡la más reciente!',
+      hello: '¡hola! esto es IanTBuild',
       playShort: 'Seguir',
     },
     universes: {
@@ -95,7 +97,9 @@ export const homeContent = {
       pause: 'Pause the slideshow',
       play: 'Resume the slideshow',
       pauseShort: 'Pause',
-      latest: 'Latest pieces',
+      latest: 'Latest photos',
+      latestNote: 'the newest one!',
+      hello: 'hi! this is IanTBuild',
       playShort: 'Play',
     },
     universes: {

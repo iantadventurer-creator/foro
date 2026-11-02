@@ -3,9 +3,9 @@
 import type { ReactNode } from 'react';
 import { type CategoryTheme } from '@/lib/categoryThemes';
 
-/** Filtro con forma de ficha: texto monoespaciado en una caja de esquinas
- * suaves. Activo se rellena del Sand Blue de la web. La categoría se
- * reconoce por un cuadradito de su color y `count` va al lado, en gris. */
+/** Filtro con trazo a mano, como una etiqueta rodeada con bolígrafo. Activo
+ * se rellena del azul bolígrafo de la web. La categoría se reconoce por un
+ * punto de su color y `count` va al lado, más tenue. */
 export function FilterPill({
   children,
   onClick,
@@ -24,11 +24,11 @@ export function FilterPill({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`lift shrink-0 inline-flex items-center gap-2 rounded-md border px-3 py-2 font-mono text-[11px] font-medium uppercase tracking-[0.04em] whitespace-nowrap ${active ? 'border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)]'}`}
+      className={`lift shrink-0 inline-flex items-center gap-2 border-[1.5px] rounded-[255px_15px_225px_15px/15px_225px_15px_255px] px-3.5 py-1.5 text-sm font-semibold whitespace-nowrap ${active ? 'border-[var(--color-line)] bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-line)]'}`}
     >
-      {theme && <span className="w-2 h-2 rounded-[1px] ring-1 ring-white/40" style={{ background: theme.accent }} aria-hidden="true" />}
+      {theme && <span className="w-2.5 h-2.5 rounded-full" style={{ background: theme.accent }} aria-hidden="true" />}
       {children}
-      {count !== undefined && <span className={active ? 'opacity-70' : 'text-[var(--color-text-faint)]'}>{String(count).padStart(2, '0')}</span>}
+      {count !== undefined && <span className={`text-xs ${active ? 'opacity-75' : 'text-[var(--color-text-faint)]'}`}>{count}</span>}
     </button>
   );
 }

@@ -4,7 +4,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
-import { distinctCategoryLabel, formatCategoryLabel } from '@/lib/categoryThemes';
+import { DoodleArrow, DoodleBrick, DoodleMinifig, DoodleSparkle, DoodleUnderline } from '@/components/ui/Doodles';
+import { formatCategoryLabel } from '@/lib/categoryThemes';
 import type { HomeContent } from '@/lib/content/homeContent';
 import type { FeedItem } from '@/lib/gallery';
 
@@ -13,12 +14,13 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 /** Segundos que se ve cada foto antes de pasar a la siguiente. */
 const SLIDE_SECONDS = 6.5;
 
-const pad = (n: number, size = 3) => String(n).padStart(size, '0');
+/** Giro de cada miniatura, para que parezcan fotos sueltas pegadas a mano. */
+const THUMB_TILT = ['-rotate-2', 'rotate-1', '-rotate-1', 'rotate-2', '-rotate-1'];
 
-/** Portada como la página de un manual LEGO: una fila de datos arriba, el
- * titular y, debajo, la foto destacada entera (sin recortar, en una caja de
- * esquinas suaves) con su número de paso, junto a una "caja de piezas" con
- * las cinco más recientes. La foto va
+/** Portada como la primera página de un cuaderno de bocetos: un saludo a
+ * mano, el titular subrayado con bolígrafo y una minifigura garabateada; al
+ * lado, la foto más reciente como una polaroid pegada con cinta, con una
+ * nota y una flecha, y debajo las otras cuatro en miniatura. La foto va
  * pasando sola; se detiene con el ratón encima, con el botón de pausa y con
  * "reducir movimiento" activado (entonces solo se cambia a mano). Al tocar
  * la foto se abre en grande. */
@@ -34,7 +36,7 @@ export function Hero({
   t: HomeContent;
   /** Las fotos más recientes de la galería (se usan las cinco primeras). */
   photos: FeedItem[];
-  /** Número fijo de cada foto en el archivo (la más antigua es la 001). */
+  /** Número fijo de cada foto en el archivo (la más antigua es la 1). */
   frameNumbers: Map<string, number>;
   photoCount: number;
   universeCount: number;
@@ -58,136 +60,132 @@ export function Hero({
   const next = () => setIndex((i) => (i + 1) % Math.max(count, 1));
 
   return (
-    <section id="top" className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-4 pb-16 md:pb-24">
-      <div className="label-caps grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-1 border-b border-[var(--color-border)] pb-3 text-[var(--color-text-muted)]">
-        <span>IanTBuild — {t.hero.meta}</span>
-        <span className="hidden md:block">{t.hero.badge}</span>
-        <span aria-busy={loading} className="text-right md:text-left">
-          {loading ? '—' : pad(photoCount)} {t.hero.stat1} · {loading ? '—' : pad(universeCount, 2)} {t.hero.stat2}
-        </span>
-        <a href="https://instagram.com/iantadventurer" target="_blank" rel="noopener noreferrer" className="link-underline hidden md:block justify-self-end w-fit">
-          @iantadventurer ↗
-        </a>
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: EASE }}
-        className="grid gap-6 md:grid-cols-12 md:items-end py-8 md:py-12"
-      >
-        <h1 className="md:col-span-8 font-display font-semibold leading-[0.9] tracking-[-0.055em] text-[clamp(3.2rem,9vw,8rem)] text-[var(--color-text)]">
-          {t.hero.display[0]} <span className="text-[var(--color-accent-text)]">{t.hero.display[1]}.</span>
-        </h1>
-        <div className="md:col-span-4 md:pb-2">
-          <p className="max-w-md text-sm sm:text-base leading-relaxed text-[var(--color-text-muted)]">{t.hero.description}</p>
-          <div className="mt-5 flex flex-wrap gap-2">
+    <section id="top" className="max-w-[1320px] mx-auto px-4 sm:px-6 pt-8 md:pt-14 pb-16 md:pb-24">
+      <div className="grid gap-12 md:grid-cols-12 md:gap-8 md:items-center">
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: EASE }}
+          className="relative md:col-span-5"
+        >
+          <p className="hand text-2xl text-[var(--color-accent-text)]">{t.hero.hello}</p>
+          <h1 className="mt-2 font-display font-bold leading-[0.82] text-[clamp(4.25rem,10vw,8.5rem)] text-[var(--color-text)]">
+            {t.hero.display[0]}{' '}
+            <span className="relative inline-block">
+              {t.hero.display[1]}.
+              <DoodleUnderline className="absolute -bottom-1 left-0 h-4 w-full text-[var(--color-accent)]" />
+            </span>
+          </h1>
+          <p className="mt-6 max-w-md text-base leading-relaxed text-[var(--color-text-muted)]">{t.hero.description}</p>
+          <div className="mt-7 flex flex-wrap gap-3">
             <Button href="#gallery">{t.hero.btnExplore} ↓</Button>
             <Button href="/comunidad" variant="secondary">
               {t.nav.community} →
             </Button>
           </div>
-        </div>
-      </motion.div>
+          <p className="hand mt-6 text-xl text-[var(--color-text-muted)]" aria-busy={loading}>
+            {loading ? '—' : photoCount} {t.hero.stat1.toLowerCase()} · {loading ? '—' : universeCount} {t.hero.stat2.toLowerCase()}
+          </p>
 
-      <div
-        className="grid gap-3 md:grid-cols-12 md:gap-6"
-        onMouseEnter={() => setHovering(true)}
-        onMouseLeave={() => setHovering(false)}
-      >
-        <figure className="md:col-span-8">
-          <div className="callout relative overflow-hidden aspect-[4/5] sm:aspect-[4/3] md:aspect-auto md:h-[min(74vh,760px)]">
-            {count === 0 ? (
-              <span className="absolute inset-0 animate-shimmer" aria-hidden="true" />
-            ) : (
-              slides.map((item, i) => {
-                const isActive = i === current;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => onOpenItem(item)}
-                    tabIndex={isActive ? 0 : -1}
-                    aria-hidden={!isActive}
-                    aria-label={`${t.hero.viewPhoto}: ${item.title}`}
-                    className={`absolute inset-0 cursor-zoom-in p-3 sm:p-6 md:p-8 transition-opacity duration-700 ease-out ${isActive ? 'z-[1] opacity-100' : 'pointer-events-none opacity-0'}`}
-                  >
-                    <span className="relative block h-full w-full">
-                      <Image src={item.src} alt="" fill priority={i === 0} sizes="(max-width: 768px) 100vw, 66vw" className="object-contain" />
-                    </span>
-                  </button>
-                );
-              })
-            )}
-          </div>
-          <figcaption className="mt-3 flex items-center justify-between gap-4">
-            <span className="flex min-w-0 items-baseline gap-3">
-              <span className="font-display text-3xl font-bold leading-none tracking-[-0.05em] text-[var(--color-accent-text)]">
-                {frameNumbers.get(active?.id ?? '') ?? current + 1}
-              </span>
-              <span className="label-caps min-w-0 truncate text-[var(--color-text-muted)]">
-                / {Math.max(photoCount, count)}
-                {active?.category && <> — {formatCategoryLabel(active.category)}</>}
-              </span>
-            </span>
-            {autoplay && (
-              <button
-                type="button"
-                onClick={() => setPaused((p) => !p)}
-                aria-label={paused ? t.hero.play : t.hero.pause}
-                aria-pressed={paused}
-                className="label-caps link-underline shrink-0 text-[var(--color-text-muted)]"
-              >
-                {paused ? `▶ ${t.hero.playShort}` : `❚❚ ${t.hero.pauseShort}`}
-              </button>
-            )}
-          </figcaption>
-        </figure>
+          <DoodleMinifig className="hidden lg:block absolute -right-2 top-4 w-16 rotate-6 text-[var(--color-line)] opacity-80" />
+          <DoodleBrick className="hidden md:block absolute -left-3 -bottom-16 w-24 -rotate-3 text-[var(--color-text-faint)] opacity-70" />
+        </motion.div>
 
-        <div className="md:col-span-4 md:self-start callout p-3 md:p-4">
-        <p className="label-caps mb-3 text-[var(--color-text-muted)]">{t.hero.latest}</p>
-        <ol className="grid grid-cols-5 gap-2 md:grid-cols-1 md:gap-1.5">
-          {slides.map((item, i) => {
-            const isActive = i === current;
-            return (
-              <li key={item.id}>
+        <div
+          className="md:col-span-7 flex flex-col items-center gap-6 lg:flex-row lg:items-start lg:justify-center"
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+        >
+          <motion.figure
+            initial={{ opacity: 0, y: 20, rotate: 0 }}
+            animate={{ opacity: 1, y: 0, rotate: 1.5 }}
+            transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
+            className="polaroid tape relative w-full max-w-[440px]"
+          >
+            <p className="hand pointer-events-none absolute -top-12 -left-4 sm:-left-28 z-[3] flex items-end gap-1 text-xl text-[var(--color-accent-text)] -rotate-6">
+              {t.hero.latestNote}
+              <DoodleArrow className="w-12 h-9 translate-y-5" />
+            </p>
+            <div className="relative aspect-[4/5] overflow-hidden bg-[var(--color-surface-2)]">
+              {count === 0 ? (
+                <span className="absolute inset-0 animate-shimmer" aria-hidden="true" />
+              ) : (
+                slides.map((item, i) => {
+                  const isActive = i === current;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => onOpenItem(item)}
+                      tabIndex={isActive ? 0 : -1}
+                      aria-hidden={!isActive}
+                      aria-label={`${t.hero.viewPhoto}: ${item.title}`}
+                      className={`absolute inset-0 cursor-zoom-in transition-opacity duration-700 ease-out ${isActive ? 'z-[1] opacity-100' : 'pointer-events-none opacity-0'}`}
+                    >
+                      <Image src={item.src} alt="" fill priority={i === 0} sizes="(max-width: 768px) 100vw, 440px" className="object-cover" />
+                    </button>
+                  );
+                })
+              )}
+            </div>
+            <figcaption className="flex items-center justify-between gap-3 px-1 pt-2 pb-1">
+              <span className="hand min-w-0 truncate text-2xl text-[var(--color-text)]">
+                #{frameNumbers.get(active?.id ?? '') ?? current + 1}
+                {active?.category && <span className="text-[var(--color-text-muted)]"> · {formatCategoryLabel(active.category)}</span>}
+              </span>
+              {autoplay && (
                 <button
                   type="button"
-                  onClick={() => setIndex(i)}
-                  aria-label={`${t.hero.slide} ${i + 1}: ${item.title}`}
-                  aria-current={isActive ? 'true' : undefined}
-                  className={`group relative flex w-full items-center gap-3 rounded-lg text-left md:p-2 transition-colors ${isActive ? 'md:bg-[var(--color-surface)]' : 'md:hover:bg-[var(--color-surface)]/60'}`}
+                  onClick={() => setPaused((p) => !p)}
+                  aria-label={paused ? t.hero.play : t.hero.pause}
+                  aria-pressed={paused}
+                  className="link-underline shrink-0 text-xs font-semibold text-[var(--color-text-muted)]"
                 >
-                  <span className={`relative block aspect-[4/5] w-full md:w-12 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface)] transition-opacity ${isActive ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'}`}>
-                    <Image src={item.src} alt="" fill sizes="(max-width: 768px) 20vw, 56px" className="object-cover" />
-                  </span>
-                  <span className="hidden md:block shrink-0 font-mono text-sm font-semibold text-[var(--color-text)]">1x</span>
-                  <span className="hidden md:block min-w-0 flex-1">
-                    <span className="label-caps block text-[var(--color-text-faint)]">
-                      {pad(frameNumbers.get(item.id) ?? i + 1)}
-                      {distinctCategoryLabel(item.category, item.title) && <> — {distinctCategoryLabel(item.category, item.title)}</>}
-                    </span>
-                    <span className={`mt-1 block truncate text-sm ${isActive ? 'font-semibold text-[var(--color-text)]' : 'text-[var(--color-text-muted)]'}`}>{item.title}</span>
-                  </span>
-                  {isActive && (
-                    <span className="absolute inset-x-0 -bottom-1.5 md:inset-x-2 md:bottom-1 h-0.5 rounded-full bg-[var(--color-border)] overflow-hidden" aria-hidden="true">
-                      {autoplay ? (
-                        <span
-                          key={`${current}-${item.id}`}
-                          onAnimationEnd={next}
-                          className="hero-progress block h-full w-full origin-left bg-[var(--color-accent)]"
-                          style={{ animationDuration: `${SLIDE_SECONDS}s`, animationPlayState: running ? 'running' : 'paused' }}
-                        />
-                      ) : (
-                        <span className="block h-full w-full bg-[var(--color-accent)]" />
-                      )}
-                    </span>
-                  )}
+                  {paused ? `▶ ${t.hero.playShort}` : `❚❚ ${t.hero.pauseShort}`}
                 </button>
-              </li>
-            );
-          })}
-        </ol>
+              )}
+            </figcaption>
+          </motion.figure>
+
+          {count > 1 && (
+            <div className="w-full max-w-[440px] lg:w-auto">
+              <p className="hand mb-3 text-xl text-[var(--color-text-muted)] lg:hidden">{t.hero.latest}</p>
+              <ol className="grid grid-cols-5 gap-3 lg:grid-cols-1 lg:gap-4 lg:pt-2">
+                {slides.map((item, i) => {
+                  const isActive = i === current;
+                  return (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        onClick={() => setIndex(i)}
+                        aria-label={`${t.hero.slide} ${i + 1}: ${item.title}`}
+                        aria-current={isActive ? 'true' : undefined}
+                        className={`polaroid block w-full lg:w-[72px] p-1 pb-1 transition-transform duration-300 hover:rotate-0 ${THUMB_TILT[i]} ${isActive ? 'ring-2 ring-[var(--color-accent)] ring-offset-2 ring-offset-[var(--color-ink)]' : 'opacity-70 hover:opacity-100'}`}
+                      >
+                        <span className="relative block aspect-square overflow-hidden bg-[var(--color-surface-2)]">
+                          <Image src={item.src} alt="" fill sizes="80px" className="object-cover" />
+                        </span>
+                        <span className="mt-1 block h-[3px] overflow-hidden rounded-full bg-[var(--color-surface-2)]" aria-hidden="true">
+                          {isActive &&
+                            (autoplay ? (
+                              <span
+                                key={`${current}-${item.id}`}
+                                onAnimationEnd={next}
+                                className="hero-progress block h-full w-full origin-left bg-[var(--color-accent)]"
+                                style={{ animationDuration: `${SLIDE_SECONDS}s`, animationPlayState: running ? 'running' : 'paused' }}
+                              />
+                            ) : (
+                              <span className="block h-full w-full bg-[var(--color-accent)]" />
+                            ))}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+              <DoodleSparkle className="hidden lg:block mx-auto mt-5 w-6 text-[var(--color-accent)] opacity-70" />
+            </div>
+          )}
         </div>
       </div>
     </section>

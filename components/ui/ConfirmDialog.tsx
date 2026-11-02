@@ -52,13 +52,13 @@ export function ConfirmDialog({
                             <button
                                 ref={closeButtonRef}
                                 onClick={onCancel}
-                                className="px-4 py-2.5 text-xs font-mono font-medium tracking-[0.04em] uppercase text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+                                className="px-4 py-2.5 text-xs font-semibold rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
                             >
                                 {cancelLabel}
                             </button>
                             <button
                                 onClick={onConfirm}
-                                className="panel-sm lift px-4 py-2.5 text-xs font-mono font-medium tracking-[0.04em] uppercase bg-[var(--color-danger)] text-white"
+                                className="panel-sm lift px-4 py-2.5 text-xs font-semibold rounded-lg bg-[var(--color-danger)] text-white"
                             >
                                 {confirmLabel}
                             </button>

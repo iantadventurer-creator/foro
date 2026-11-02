@@ -1,24 +1,29 @@
 import Link from 'next/link';
+import { DoodleBrick, DoodleCamera, DoodleMinifig } from '@/components/ui/Doodles';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import type { HomeContent } from '@/lib/content/homeContent';
 
 const HREFS = ['#gallery', '/comunidad', '#about'];
+const DOODLES = [DoodleCamera, DoodleMinifig, DoodleBrick];
+const TILT = ['-rotate-1', 'rotate-1', '-rotate-[0.5deg]'];
 
-/** Los tres espacios de la web en columnas separadas por filetes. */
+/** Los tres espacios de la web como hojas sueltas del cuaderno, cada una con
+ * su garabato (cámara, minifigura, ladrillo). */
 export function IntroSection({ t }: { t: HomeContent }) {
   return (
-    <section id="intro" className="max-w-[1440px] mx-auto px-4 sm:px-6 pb-16 md:pb-24">
+    <section id="intro" className="max-w-[1320px] mx-auto px-4 sm:px-6 pb-16 md:pb-24">
       <SectionHeading step={3} eyebrow={t.intro.eyebrow} title={t.intro.title} />
-      <div className="mt-8 grid md:grid-cols-3 border-t border-[var(--color-border)] md:border-t-0">
+      <div className="mt-10 grid md:grid-cols-3 gap-6 md:gap-8">
         {t.intro.cards.map((card, i) => {
           const href = HREFS[i];
-          const className = `group flex flex-col gap-3 py-6 md:px-6 md:py-2 border-b md:border-b-0 border-[var(--color-border)] ${i > 0 ? 'md:border-l' : 'md:pl-0'} hover:bg-[var(--color-surface-2)] md:hover:bg-transparent`;
+          const Doodle = DOODLES[i];
+          const className = `panel lift group flex flex-col gap-3 rounded-2xl bg-[var(--color-surface)] p-6 ${TILT[i]}`;
           const inner = (
             <>
-              <span className="label-caps text-[var(--color-text-faint)]">{String(i + 1).padStart(2, '0')}</span>
-              <h3 className="font-display text-2xl font-semibold tracking-[-0.03em] text-[var(--color-text)]">{card.title}</h3>
+              <Doodle className="h-12 w-auto self-start text-[var(--color-line)]" />
+              <h3 className="font-display text-4xl font-bold leading-none text-[var(--color-text)]">{card.title}</h3>
               <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{card.desc}</p>
-              <span className="label-caps mt-auto pt-3 inline-flex items-center gap-1.5 text-[var(--color-text)]">
+              <span className="hand mt-auto pt-2 inline-flex items-center gap-1.5 text-xl text-[var(--color-accent-text)]">
                 <span className="link-underline">{card.cta}</span>
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </span>

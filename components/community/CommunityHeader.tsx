@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { CommunityHeaderNav } from '@/components/community/CommunityHeaderNav';
 import { CommunityLogoutButton } from '@/components/community/CommunityLogoutButton';
-import { BrandMark } from '@/components/ui/BrandMark';
+import { DoodleBrick } from '@/components/ui/Doodles';
 import { LangToggle } from '@/components/ui/LangToggle';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { communityNav } from '@/lib/content/nav';
@@ -32,15 +32,15 @@ export function CommunityHeader({
     const nav = communityNav[lang];
 
     return (
-        <header className="sticky top-0 z-40 bg-[var(--color-ink)]/95 backdrop-blur-sm border-b border-[var(--color-border)] px-4 sm:px-6 h-14 flex items-center">
+        <header className="sticky top-0 z-40 bg-[var(--color-ink)]/95 backdrop-blur-sm border-b border-[var(--color-border)] px-4 sm:px-6 h-16 flex items-center">
             <div className="w-full max-w-7xl mx-auto flex md:grid md:grid-cols-3 items-center justify-between gap-3">
                 <div className="justify-self-start flex items-center gap-3 min-w-0">
                     <Link href="/" aria-label="IanTBuild" className="group shrink-0">
-                        <BrandMark className="w-7 h-7" />
+                        <DoodleBrick className="w-10 h-auto text-[var(--color-accent)] transition-transform group-hover:-rotate-6" />
                     </Link>
                     <Link
                         href={back === 'home' ? '/' : '/comunidad'}
-                        className="link-underline py-1 font-mono text-[11px] sm:text-xs font-medium uppercase tracking-[0.04em] text-[var(--color-text)] truncate"
+                        className="link-underline py-1 text-xs sm:text-sm font-semibold text-[var(--color-text)] truncate"
                     >
                         {back === 'home' ? nav.backToHome : nav.backToCommunity}
                     </Link>

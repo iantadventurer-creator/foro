@@ -2,36 +2,40 @@
 
 import type { Ref } from 'react';
 import { motion } from 'framer-motion';
+import { DoodleMinifig, DoodleSparkle } from '@/components/ui/Doodles';
 import { fadeUp } from '@/lib/motion';
 import type { HomeContent } from '@/lib/content/homeContent';
 
-/** "Detrás del lente": último paso del "manual", con la frase del autor en
- * grande y su etiqueta a la izquierda. */
+/** "Detrás del lente": la frase del autor escrita a mano en grande, con una
+ * minifigura garabateada al lado, como la última página del cuaderno. */
 export function AboutSection({ t, sectionRef }: { t: HomeContent; sectionRef: Ref<HTMLElement> }) {
   return (
-    <section id="about" ref={sectionRef} className="max-w-[1440px] mx-auto px-4 sm:px-6 pb-16 md:pb-24 scroll-mt-20">
+    <section id="about" ref={sectionRef} className="max-w-[1320px] mx-auto px-4 sm:px-6 pb-16 md:pb-24 scroll-mt-20">
+      <div className="squiggle text-[var(--color-border)]" aria-hidden="true" />
       <motion.div
         variants={fadeUp}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: '-80px' }}
-        className="grid gap-6 md:grid-cols-[minmax(0,14rem)_1fr] md:gap-x-8 md:gap-y-5"
+        className="pt-8 grid gap-8 md:grid-cols-[minmax(0,16rem)_1fr] md:gap-12 md:items-center"
       >
-        <div className="plate md:col-span-2" aria-hidden="true" />
-        <div>
-          <span aria-hidden="true" className="block mb-4 font-display text-[clamp(3rem,6vw,4.5rem)] font-bold leading-[0.8] tracking-[-0.06em] text-[var(--color-accent-text)]">4</span>
-          <p className="label-caps text-[var(--color-text-muted)]">{t.aboutSection.eyebrow}</p>
-          <h2 className="mt-2 text-sm font-semibold text-[var(--color-text)]">{t.aboutSection.title}</h2>
+        <div className="flex items-end gap-4 md:flex-col md:items-start">
+          <DoodleMinifig className="w-20 md:w-28 -rotate-6 text-[var(--color-line)]" />
+          <div>
+            <p className="hand text-2xl text-[var(--color-accent-text)]">4. {t.aboutSection.eyebrow}</p>
+            <h2 className="mt-1 text-sm font-semibold text-[var(--color-text)]">{t.aboutSection.title}</h2>
+          </div>
         </div>
-        <div>
-          <p className="font-display text-[clamp(1.6rem,3.4vw,2.75rem)] font-medium leading-[1.12] tracking-[-0.035em] text-[var(--color-text)] max-w-4xl">
+        <div className="relative">
+          <DoodleSparkle className="absolute -top-6 right-4 w-7 text-[var(--color-accent)] opacity-70" />
+          <p className="font-display text-[clamp(2.25rem,4.6vw,3.75rem)] font-bold leading-[1] text-[var(--color-text)] max-w-4xl">
             {t.aboutSection.desc}
           </p>
           <a
             href="https://instagram.com/iantadventurer"
             target="_blank"
             rel="noopener noreferrer"
-            className="label-caps mt-8 inline-flex items-center gap-1.5 text-[var(--color-text)] link-underline"
+            className="hand mt-8 inline-flex items-center gap-1.5 text-2xl text-[var(--color-accent-text)] link-underline"
           >
             {t.aboutSection.cta} ↗
           </a>

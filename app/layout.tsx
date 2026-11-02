@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Caveat, Geist } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { MotionProvider } from "@/components/ui/MotionProvider";
@@ -11,10 +11,9 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-// Monoespaciada para los datos de la hoja de contactos: números de foto,
-// etiquetas, botones y navegación.
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Letra manuscrita del cuaderno de bocetos: titulares, notas y números.
+const caveat = Caveat({
+  variable: "--font-caveat",
   subsets: ["latin"],
 });
 
@@ -55,8 +54,8 @@ const structuredData = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f3f2ee" },
-    { media: "(prefers-color-scheme: dark)", color: "#101010" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f1e6" },
+    { media: "(prefers-color-scheme: dark)", color: "#1b1a17" },
   ],
 };
 
@@ -69,7 +68,7 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${caveat.variable} h-full antialiased`}
       // El script de <head> pone data-theme antes de que React hidrate.
       suppressHydrationWarning
     >
