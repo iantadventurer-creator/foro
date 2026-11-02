@@ -98,6 +98,46 @@ export function DoodleSparkle(props: DoodleProps) {
   );
 }
 
+/** Pieza redonda 1×1 vista desde arriba (un stud con su sombra). */
+export function DoodleStud(props: DoodleProps) {
+  return (
+    <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false" {...props}>
+      <g {...stroke}>
+        <path d="M20 3.5q16 .5 16.5 16.5T20 36.5 3.5 20 20 3.5z" />
+        <path d="M20 11q9 0 9 9t-9 9-9-9 9-9z" />
+        <path d="M15.5 16q2-2.5 5-2.5" />
+      </g>
+    </svg>
+  );
+}
+
+/** Corazón garabateado. */
+export function DoodleHeart(props: DoodleProps) {
+  return (
+    <svg viewBox="0 0 32 30" aria-hidden="true" focusable="false" {...props}>
+      <path d="M16 27.5Q3 19 3.5 10.5 4 3.5 10 3.5q4.5 0 6 4.5 1.5-4.5 6-4.5 6 0 6.5 7 .5 8.5-12.5 17z" {...stroke} />
+    </svg>
+  );
+}
+
+/** Estrella de cinco puntas trazada de un solo golpe. */
+export function DoodleStar(props: DoodleProps) {
+  return (
+    <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false" {...props}>
+      <path d="M20 3.5l5 11.5 12.5 1-9.5 8.5 3 12.5L20 30.5 9 37l3-12.5L2.5 16l12.5-1z" {...stroke} />
+    </svg>
+  );
+}
+
+/** Espiral de bolígrafo, como cuando se prueba si pinta. */
+export function DoodleSpiral(props: DoodleProps) {
+  return (
+    <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false" {...props}>
+      <path d="M21 20q0-2.5-2.5-2.5T16 20.5t4.5 4.5 7-5.5-7.5-9-11 8 8.5 13 15-6.5-4-16.5-17-1" {...stroke} />
+    </svg>
+  );
+}
+
 /** Subrayado ondulado a mano; se estira al ancho de su contenedor. */
 export function DoodleUnderline(props: DoodleProps) {
   return (

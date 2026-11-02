@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Caveat, Geist, Shantell_Sans } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import { DoodleBackground } from "@/components/ui/DoodleBackground";
 import { MotionProvider } from "@/components/ui/MotionProvider";
 import { LangProvider } from "@/lib/hooks/useLang";
 import { themeInitScript } from "@/lib/theme";
@@ -96,6 +97,7 @@ export default function RootLayout({
           // Datos estructurados (schema.org) para buscadores; contenido propio y estático.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
+        <DoodleBackground />
         <LangProvider>
           <MotionProvider>{children}</MotionProvider>
         </LangProvider>

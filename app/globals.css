@@ -43,6 +43,7 @@
   --color-text-faint: #665f53;
   --color-tape: rgba(214, 196, 150, 0.6);
   --color-polaroid: #fffdf8;
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.28 0 0 0 0 0.18 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
   /* Rellenos: el texto que llevan encima viene en su pareja -ink */
   --color-accent: #2e4d8a;       /* Bolígrafo azul — acción principal */
@@ -91,6 +92,7 @@
   --color-text-faint: #a0988a;
   --color-tape: rgba(210, 195, 150, 0.22);
   --color-polaroid: #2d2b26;
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.9 0 0 0 0 0.8 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
   --color-accent: #a8bde8;
   --color-accent-ink: #1b1a17;
@@ -123,7 +125,9 @@ html {
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  /* Grano de papel casi imperceptible (ver --paper-grain) */
+  background-image: var(--paper-grain);
   color: var(--foreground);
 }
 
@@ -167,6 +171,22 @@ body {
 
 .hero-progress {
   animation: hero-progress 6.5s linear forwards;
+}
+
+/* Garabatos del fondo: vaivén lento arriba y abajo (solo transform) */
+@keyframes doodle-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: translate3d(0, var(--dy, 6px), 0) rotate(calc(var(--r, 0deg) + 4deg));
+  }
+}
+
+.doodle-float {
+  animation: doodle-float 9s ease-in-out infinite;
+  will-change: transform;
 }
 
 .mask-fade-b {
