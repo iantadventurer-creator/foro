@@ -31,7 +31,7 @@ export function SectionHeading({
             {eyebrow}
             <DoodleArrow className="w-9 h-7 translate-y-1.5" />
           </p>
-          <h2 className="mt-1 font-display text-[clamp(2.75rem,5.5vw,4rem)] font-bold leading-[0.9] text-[var(--color-text)]">
+          <h2 className="mt-1 font-display text-[clamp(2rem,4vw,3rem)] font-extrabold leading-[1.02] text-[var(--color-text)]">
             {title}
           </h2>
         </div>

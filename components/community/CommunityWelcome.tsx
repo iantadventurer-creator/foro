@@ -55,7 +55,7 @@ export function CommunityWelcome({
     return (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className={`${cardClass} grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center`}>
             <div>
-                <h2 className="font-display text-3xl font-bold leading-[0.95] text-[var(--color-text)] mb-2">{t.auth.joinTitle}</h2>
+                <h2 className="font-display text-2xl sm:text-3xl font-extrabold leading-[1.05] text-[var(--color-text)] mb-2">{t.auth.joinTitle}</h2>
                 <p className="text-sm text-[var(--color-text-muted)] mb-5">{t.auth.joinDesc}</p>
                 <ol className="grid gap-3 sm:grid-cols-3">
                     {t.steps.map((step, i) => (

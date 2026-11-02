@@ -7,9 +7,10 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  /* Cuaderno de bocetos: letra manuscrita para titulares, notas y números;
-     una sans limpia para el texto y los controles */
-  --font-display: var(--font-caveat);
+  /* Cuaderno de bocetos: rotulador (Shantell Sans) para titulares, letra
+     manuscrita (Caveat) para notas y números, y una sans limpia para el
+     texto y los controles */
+  --font-display: var(--font-shantell);
   --font-hand: var(--font-caveat);
   --font-mono: var(--font-geist-sans);
   --font-button: var(--font-geist-sans);
@@ -129,6 +130,12 @@ body {
 ::selection {
   background: var(--color-highlight);
   color: var(--color-highlight-ink);
+}
+
+/* Titulares a rotulador: algo de informalidad y un leve rebote de las letras */
+.font-display {
+  font-variation-settings: "INFM" 55, "BNCE" 25;
+  letter-spacing: -0.02em;
 }
 
 .font-button {

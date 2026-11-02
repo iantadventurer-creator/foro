@@ -52,7 +52,7 @@ export function AuthShell({
                 >
                     <div className="px-7 pt-9 pb-2 text-center">
                         <DoodleBrick className="w-16 h-auto mx-auto mb-2 text-[var(--color-accent)]" />
-                        <p className="font-display text-5xl font-bold leading-none">IanTBuild</p>
+                        <p className="font-display text-3xl font-extrabold leading-none">IanTBuild</p>
                         <p className="text-sm text-[var(--color-text-muted)] mt-2 leading-relaxed">{tagline}</p>
                     </div>
                     <div className="px-7 pt-6 pb-8">{children}</div>

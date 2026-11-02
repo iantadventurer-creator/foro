@@ -33,7 +33,7 @@ export function SiteFooter({ t, onOpenQr }: { t: HomeContent; onOpenQr: () => vo
         </div>
       </div>
       <div aria-hidden="true" className="mt-10 flex items-end gap-4 select-none">
-        <p className="font-display font-bold leading-[0.8] text-[clamp(4.5rem,17vw,14rem)] text-[var(--color-text)]">IanTBuild</p>
+        <p className="font-display font-extrabold leading-[0.9] text-[clamp(3rem,11vw,9rem)] text-[var(--color-text)]">IanTBuild</p>
         <DoodleMinifig className="hidden sm:block w-[clamp(3rem,6vw,5rem)] mb-3 rotate-6 text-[var(--color-line)]" />
         <DoodleBrick className="hidden md:block w-[clamp(4rem,8vw,7rem)] mb-4 -rotate-3 text-[var(--color-text-faint)]" />
       </div>

@@ -27,7 +27,7 @@ export function PageTitle({
           <span>{meta}</span>
           {aside && <span>{aside}</span>}
         </p>
-        <h1 className="mt-2 font-display font-bold leading-[0.9] text-[clamp(3.25rem,9vw,6rem)] text-[var(--color-text)] break-words">
+        <h1 className="mt-2 font-display font-extrabold leading-[0.98] text-[clamp(2.5rem,6.5vw,4.25rem)] text-[var(--color-text)] break-words">
           {title}
         </h1>
         {subtitle && <p className="mt-3 max-w-xl text-base leading-relaxed text-[var(--color-text-muted)]">{subtitle}</p>}

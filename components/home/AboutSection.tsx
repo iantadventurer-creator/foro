@@ -28,7 +28,7 @@ export function AboutSection({ t, sectionRef }: { t: HomeContent; sectionRef: Re
         </div>
         <div className="relative">
           <DoodleSparkle className="absolute -top-6 right-4 w-7 text-[var(--color-accent)] opacity-70" />
-          <p className="font-display text-[clamp(2.25rem,4.6vw,3.75rem)] font-bold leading-[1] text-[var(--color-text)] max-w-4xl">
+          <p className="hand text-[clamp(2.25rem,4.6vw,3.75rem)] leading-[1] text-[var(--color-text)] max-w-4xl">
             {t.aboutSection.desc}
           </p>
           <a

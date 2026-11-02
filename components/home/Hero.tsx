@@ -69,11 +69,11 @@ export function Hero({
           className="relative md:col-span-5"
         >
           <p className="hand text-2xl text-[var(--color-accent-text)]">{t.hero.hello}</p>
-          <h1 className="mt-2 font-display font-bold leading-[0.82] text-[clamp(4.25rem,10vw,8.5rem)] text-[var(--color-text)]">
+          <h1 className="mt-2 font-display font-extrabold leading-[0.95] text-[clamp(3rem,6.4vw,5.75rem)] text-[var(--color-text)]">
             {t.hero.display[0]}{' '}
             <span className="relative inline-block">
               {t.hero.display[1]}.
-              <DoodleUnderline className="absolute -bottom-1 left-0 h-4 w-full text-[var(--color-accent)]" />
+              <DoodleUnderline className="absolute -bottom-2 left-0 h-4 w-full text-[var(--color-accent)]" />
             </span>
           </h1>
           <p className="mt-6 max-w-md text-base leading-relaxed text-[var(--color-text-muted)]">{t.hero.description}</p>

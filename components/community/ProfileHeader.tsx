@@ -34,7 +34,7 @@ export function ProfileHeader({
     onPickAvatar: (file: File) => void;
 }) {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-    const nameClass = 'font-display font-bold leading-[0.95] tracking-[-0.04em] text-[clamp(2.2rem,7vw,5.5rem)] break-all';
+    const nameClass = 'font-display font-extrabold leading-[1] text-[clamp(2rem,5.5vw,4rem)] break-all';
 
     return (
         <motion.div

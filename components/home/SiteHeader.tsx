@@ -43,7 +43,7 @@ export function SiteHeader({
       <div className="max-w-[1320px] mx-auto flex justify-between items-center gap-4 px-4 sm:px-6 h-16">
         <a href="#top" className="group flex items-center gap-2.5">
           <DoodleBrick className="w-10 h-auto text-[var(--color-accent)] transition-transform group-hover:-rotate-6" />
-          <span className="font-display text-3xl font-bold leading-none text-[var(--color-text)]">IanTBuild</span>
+          <span className="font-display text-2xl font-extrabold leading-none text-[var(--color-text)]">IanTBuild</span>
         </a>
 
         <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-[var(--color-text)]">
@@ -97,13 +97,13 @@ export function SiteHeader({
             className="md:hidden overflow-hidden border-t border-[var(--color-border)]"
           >
             <div className="px-4 sm:px-6 py-3 flex flex-col">
-              <a href="#gallery" onClick={(e) => { e.preventDefault(); scrollToSection('gallery'); }} className="block py-3 border-b-[1.5px] border-[var(--color-border)] font-display text-4xl font-bold text-[var(--color-text)] hover:opacity-60">{t.nav.gallery}</a>
-              <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="block py-3 border-b-[1.5px] border-[var(--color-border)] font-display text-4xl font-bold text-[var(--color-text)] hover:opacity-60">{t.nav.community}</Link>
-              <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="block py-3 border-b-[1.5px] border-[var(--color-border)] font-display text-4xl font-bold text-[var(--color-text)] hover:opacity-60">{t.nav.about}</a>
+              <a href="#gallery" onClick={(e) => { e.preventDefault(); scrollToSection('gallery'); }} className="block py-3 border-b-[1.5px] border-[var(--color-border)] font-display text-2xl font-extrabold text-[var(--color-text)] hover:opacity-60">{t.nav.gallery}</a>
+              <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="block py-3 border-b-[1.5px] border-[var(--color-border)] font-display text-2xl font-extrabold text-[var(--color-text)] hover:opacity-60">{t.nav.community}</Link>
+              <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="block py-3 border-b-[1.5px] border-[var(--color-border)] font-display text-2xl font-extrabold text-[var(--color-text)] hover:opacity-60">{t.nav.about}</a>
               <button
                 onClick={() => { setMobileMenuOpen(false); onOpenQr(); }}
                 aria-label={t.footer.qrLabel}
-                className="block w-full text-left py-3 border-b-[1.5px] border-[var(--color-border)] font-display text-4xl font-bold text-[var(--color-text)] hover:opacity-60"
+                className="block w-full text-left py-3 border-b-[1.5px] border-[var(--color-border)] font-display text-2xl font-extrabold text-[var(--color-text)] hover:opacity-60"
               >
                 {t.footer.qrLabel}
               </button>

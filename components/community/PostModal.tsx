@@ -179,7 +179,7 @@ export function PostModal({
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="font-display text-2xl md:text-3xl font-bold tracking-[-0.04em] text-[var(--color-text)] leading-[1.05] whitespace-pre-line"
+                                        className="font-display text-2xl md:text-3xl font-extrabold text-[var(--color-text)] leading-[1.05] whitespace-pre-line"
                                     >
                                         {post.title}
                                     </motion.p>

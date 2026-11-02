@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Caveat, Geist } from "next/font/google";
+import { Caveat, Geist, Shantell_Sans } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { MotionProvider } from "@/components/ui/MotionProvider";
@@ -11,10 +11,18 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-// Letra manuscrita del cuaderno de bocetos: titulares, notas y números.
+// Letra manuscrita del cuaderno de bocetos para notas y números.
 const caveat = Caveat({
   variable: "--font-caveat",
   subsets: ["latin"],
+});
+
+// Titulares: rotulador redondeado y muy legible, con los ejes de
+// informalidad y rebote para que parezca escrito a mano (ver globals.css).
+const shantell = Shantell_Sans({
+  variable: "--font-shantell",
+  subsets: ["latin"],
+  axes: ["INFM", "BNCE"],
 });
 
 export const metadata: Metadata = {
@@ -68,7 +76,7 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${caveat.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${caveat.variable} ${shantell.variable} h-full antialiased`}
       // El script de <head> pone data-theme antes de que React hidrate.
       suppressHydrationWarning
     >
