@@ -39,14 +39,14 @@ export function SiteHeader({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[var(--color-ink)]/90 backdrop-blur-md border-b border-[var(--color-border)]">
-      <div className="max-w-7xl mx-auto flex justify-between items-center gap-4 px-4 sm:px-6 py-3">
+    <header className="sticky top-0 z-40 bg-[var(--color-ink)]/95 backdrop-blur-sm border-b border-[var(--color-border)]">
+      <div className="max-w-[1440px] mx-auto flex justify-between items-center gap-4 px-4 sm:px-6 h-14">
         <a href="#top" className="group flex items-center gap-2.5">
-          <BrandMark className="w-9 h-9 rounded-xl border border-[var(--color-border)] group-hover:rotate-[-8deg] transition-transform" />
-          <span className="font-display font-bold text-xl tracking-[-0.02em] text-[var(--color-text)]">IanTBuild</span>
+          <BrandMark className="w-7 h-7" />
+          <span className="font-mono text-sm font-semibold uppercase tracking-[0.06em] text-[var(--color-text)]">IanTBuild</span>
         </a>
 
-        <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-[var(--color-text)]">
+        <nav className="hidden md:flex items-center gap-7 font-mono text-xs font-medium uppercase tracking-[0.04em] text-[var(--color-text)]">
           <a href="#gallery" aria-current={activeSection === 'gallery' ? 'true' : undefined} className="link-underline py-1">
             {t.nav.gallery}
           </a>
@@ -56,7 +56,7 @@ export function SiteHeader({
           <a href="#about" aria-current={activeSection === 'about' ? 'true' : undefined} className="link-underline py-1">
             {t.nav.about}
           </a>
-          <button onClick={onOpenQr} aria-label={t.footer.qrLabel} className="link-underline py-1 font-bold">
+          <button onClick={onOpenQr} aria-label={t.footer.qrLabel} className="link-underline py-1 font-mono uppercase">
             {t.footer.qrLabel}
           </button>
         </nav>
@@ -70,7 +70,7 @@ export function SiteHeader({
             href="https://instagram.com/iantadventurer"
             target="_blank"
             rel="noopener noreferrer"
-            className="panel-sm lift border-transparent font-button hidden sm:inline-flex items-center gap-1 rounded-full bg-[var(--color-accent)] text-[var(--color-accent-ink)] px-4 py-2 text-xs font-bold uppercase"
+            className="link-underline hidden sm:inline-flex items-center gap-1 py-1 font-mono text-xs font-medium uppercase tracking-[0.04em] text-[var(--color-text)]"
           >
             {t.nav.cta} ↗
           </a>
@@ -78,11 +78,11 @@ export function SiteHeader({
             onClick={() => setMobileMenuOpen((v) => !v)}
             aria-expanded={mobileMenuOpen}
             aria-label={t.nav.menu}
-            className="md:hidden w-10 h-10 flex items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-highlight)] text-[var(--color-highlight-ink)]"
+            className="md:hidden w-10 h-10 flex items-center justify-center border border-[var(--color-border)] text-[var(--color-text)]"
           >
             <div className="flex flex-col gap-1.5 items-center">
-              <span className={`h-0.5 w-5 rounded-full bg-current transition-all ${mobileMenuOpen ? 'rotate-45 translate-y-1' : ''}`} />
-              <span className={`h-0.5 w-5 rounded-full bg-current transition-all ${mobileMenuOpen ? '-rotate-45 -translate-y-1' : ''}`} />
+              <span className={`h-px w-5 bg-current transition-all ${mobileMenuOpen ? 'rotate-45 translate-y-[3.5px]' : ''}`} />
+              <span className={`h-px w-5 bg-current transition-all ${mobileMenuOpen ? '-rotate-45 -translate-y-[3.5px]' : ''}`} />
             </div>
           </button>
         </div>
@@ -97,13 +97,13 @@ export function SiteHeader({
             className="md:hidden overflow-hidden border-t border-[var(--color-border)]"
           >
             <div className="px-4 sm:px-6 py-3 flex flex-col">
-              <a href="#gallery" onClick={(e) => { e.preventDefault(); scrollToSection('gallery'); }} className="block py-3 font-display text-3xl font-bold text-[var(--color-text)] hover:text-[var(--color-accent-text)]">{t.nav.gallery}</a>
-              <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="block py-3 font-display text-3xl font-bold text-[var(--color-text)] hover:text-[var(--color-accent-text)]">{t.nav.community}</Link>
-              <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="block py-3 font-display text-3xl font-bold text-[var(--color-text)] hover:text-[var(--color-accent-text)]">{t.nav.about}</a>
+              <a href="#gallery" onClick={(e) => { e.preventDefault(); scrollToSection('gallery'); }} className="block py-3 border-b border-[var(--color-border)] font-display text-2xl font-semibold tracking-[-0.03em] text-[var(--color-text)] hover:opacity-60">{t.nav.gallery}</a>
+              <Link href="/comunidad" onClick={() => setMobileMenuOpen(false)} className="block py-3 border-b border-[var(--color-border)] font-display text-2xl font-semibold tracking-[-0.03em] text-[var(--color-text)] hover:opacity-60">{t.nav.community}</Link>
+              <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="block py-3 border-b border-[var(--color-border)] font-display text-2xl font-semibold tracking-[-0.03em] text-[var(--color-text)] hover:opacity-60">{t.nav.about}</a>
               <button
                 onClick={() => { setMobileMenuOpen(false); onOpenQr(); }}
                 aria-label={t.footer.qrLabel}
-                className="block w-full text-left py-3 font-display text-3xl font-bold text-[var(--color-text)] hover:text-[var(--color-accent-text)]"
+                className="block w-full text-left py-3 border-b border-[var(--color-border)] font-display text-2xl font-semibold tracking-[-0.03em] text-[var(--color-text)] hover:opacity-60"
               >
                 {t.footer.qrLabel}
               </button>

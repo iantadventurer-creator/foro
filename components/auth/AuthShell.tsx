@@ -34,7 +34,7 @@ export function AuthShell({
         <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0">
             <header className="px-4 sm:px-6 py-3">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <Link href="/comunidad" className="link-underline py-2 text-sm font-bold text-[var(--color-text)]">
+                    <Link href="/comunidad" className="link-underline py-1 font-mono text-xs font-medium uppercase tracking-[0.04em] text-[var(--color-text)]">
                         {backLabel}
                     </Link>
                     <div className="flex items-center gap-2">
@@ -48,11 +48,11 @@ export function AuthShell({
                 <motion.div
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="panel overflow-hidden rounded-[2rem] bg-[var(--color-surface)]"
+                    className="panel overflow-hidden bg-[var(--color-surface)]"
                 >
                     <div className="px-7 pt-9 pb-2 text-center">
                         <BrandMark className="w-11 h-11 rounded-xl mx-auto mb-4" />
-                        <p className="font-display text-3xl font-bold tracking-[-0.04em]">IanTBuild</p>
+                        <p className="font-mono text-sm font-semibold uppercase tracking-[0.06em]">IanTBuild</p>
                         <p className="text-sm text-[var(--color-text-muted)] mt-2 leading-relaxed">{tagline}</p>
                     </div>
                     <div className="px-7 pt-6 pb-8">{children}</div>

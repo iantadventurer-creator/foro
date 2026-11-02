@@ -63,7 +63,7 @@ export function CommunityWelcome({
                             key={step}
                             className="flex items-center gap-3 rounded-2xl bg-[var(--color-surface-2)] px-3 py-3 text-sm font-semibold text-[var(--color-text)]"
                         >
-                            <span className="w-7 h-7 shrink-0 rounded-full bg-[var(--color-accent)] text-[var(--color-accent-ink)] flex items-center justify-center text-xs font-bold">
+                            <span className="w-7 h-7 shrink-0 bg-[var(--color-accent)] text-[var(--color-accent-ink)] flex items-center justify-center text-xs font-bold">
                                 {i + 1}
                             </span>
                             {step}

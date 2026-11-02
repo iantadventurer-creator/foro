@@ -92,7 +92,7 @@ export function Lightbox({
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.95, y: 16, opacity: 0 }}
             onClick={(e) => e.stopPropagation()}
-            className="panel rounded-[2rem] bg-[var(--color-surface)] max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row"
+            className="panel bg-[var(--color-surface)] max-w-4xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row"
           >
             <div className={`w-full md:w-3/5 bg-black relative min-h-[320px] md:min-h-[480px] flex items-center justify-center ${zoomed ? 'overflow-auto' : 'overflow-hidden'}`}>
               {items.length > 1 && !zoomed && (
@@ -168,7 +168,7 @@ export function Lightbox({
                       initial={{ scale: 0.6 }}
                       animate={{ scale: 1 }}
                       transition={{ duration: 0.2 }}
-                      style={{ color: favorites.has(item.id) ? '#e0245e' : 'var(--color-text-muted)' }}
+                      style={{ color: favorites.has(item.id) ? '#c9506f' : 'var(--color-text-muted)' }}
                     >
                       {favorites.has(item.id) ? '♥' : '♡'}
                     </motion.span>

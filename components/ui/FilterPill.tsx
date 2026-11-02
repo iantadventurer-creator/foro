@@ -3,9 +3,9 @@
 import type { ReactNode } from 'react';
 import { type CategoryTheme } from '@/lib/categoryThemes';
 
-/** Filtro con forma de ficha de juguete. Activo se rellena de marino (la
- * tinta de la paleta), así todos los filtros comparten color; la categoría
- * se reconoce por su punto de color. `count` se muestra en una burbuja. */
+/** Filtro con forma de ficha: texto monoespaciado en una caja de esquinas
+ * suaves. Activo se rellena del Sand Blue de la web. La categoría se
+ * reconoce por un cuadradito de su color y `count` va al lado, en gris. */
 export function FilterPill({
   children,
   onClick,
@@ -24,13 +24,11 @@ export function FilterPill({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`panel-sm lift shrink-0 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-bold uppercase tracking-[0.03em] whitespace-nowrap ${active ? 'bg-[var(--color-text)] text-[var(--color-ink)]' : 'bg-[var(--color-surface)] text-[var(--color-text)]'}`}
+      className={`lift shrink-0 inline-flex items-center gap-2 rounded-md border px-3 py-2 font-mono text-[11px] font-medium uppercase tracking-[0.04em] whitespace-nowrap ${active ? 'border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-accent-ink)]' : 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)]'}`}
     >
-      {theme && <span className="w-2.5 h-2.5 rounded-full ring-2 ring-[var(--color-surface)]" style={{ background: theme.accent }} aria-hidden="true" />}
+      {theme && <span className="w-2 h-2 rounded-[1px] ring-1 ring-white/40" style={{ background: theme.accent }} aria-hidden="true" />}
       {children}
-      {count !== undefined && (
-        <span className={`min-w-5 h-5 px-1 rounded-full text-[10px] leading-5 text-center ${active ? 'bg-[var(--color-highlight)] text-[var(--color-highlight-ink)]' : 'bg-[var(--color-surface-2)]'}`}>{count}</span>
-      )}
+      {count !== undefined && <span className={active ? 'opacity-70' : 'text-[var(--color-text-faint)]'}>{String(count).padStart(2, '0')}</span>}
     </button>
   );
 }

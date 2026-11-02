@@ -120,7 +120,7 @@ export function QrCodeModal({
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 300, damping: 28 }}
             onClick={(e) => e.stopPropagation()}
-            className="panel relative w-full max-w-xs rounded-[2rem] bg-[var(--color-surface)] p-7"
+            className="panel relative w-full max-w-xs bg-[var(--color-surface)] p-7"
           >
             <span className="absolute top-3.5 left-3.5 w-3.5 h-3.5 rounded-full border border-[var(--color-border)] bg-[var(--color-accent)]" aria-hidden="true" />
             <span className="absolute bottom-3.5 left-3.5 w-3.5 h-3.5 rounded-full border border-[var(--color-border)] bg-[var(--color-accent-3)]" aria-hidden="true" />
@@ -131,7 +131,7 @@ export function QrCodeModal({
                 ref={closeButtonRef}
                 onClick={onClose}
                 aria-label="Cerrar"
-                className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
+                className="w-8 h-8 flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)]"
               >
                 ✕
               </button>

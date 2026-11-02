@@ -7,64 +7,70 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  /* Grotesca con tamaños ópticos para titulares y botones */
-  --font-display: var(--font-bricolage);
-  --font-button: var(--font-bricolage);
+  /* Hoja de contactos: grotesca neutra para titulares y monoespaciada para
+     datos, números de foto, etiquetas y botones */
+  --font-display: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-button: var(--font-geist-mono);
 
-  /* Esquinas suaves, sin exagerar */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
-  --radius-xl: 14px;
-  --radius-2xl: 18px;
-  --radius-3xl: 24px;
+  /* Esquinas suaves, como las cajas de piezas de un manual LEGO */
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 10px;
+  --radius-3xl: 12px;
 }
 
-/* Paleta neutra "de galería": papel cálido, grafito y grises piedra para que
-   las fotos sean lo único llamativo de la página. Un solo acento apagado
-   (azul pizarra) para enlaces, estados activos y la acción principal, y un
-   verde salvia para lo relacionado con la comunidad. El rojo queda solo para
-   errores y borrar.
+/* Paleta "manual de instrucciones LEGO": todos los colores salen de la gama
+   real de ladrillos, en sus tonos apagados, para que la web tenga sentido
+   LEGO sin competir con las fotos:
+   · Fondo: el azul grisáceo pálido de las páginas de un manual.
+   · Filetes y huecos: Light Bluish Gray.
+   · Texto: azul pizarra muy oscuro (Dark Bluish Gray tirando a azul).
+   · Acción principal: Sand Blue. Comunidad: Sand Green.
+   · Rojo solo para errores y borrar.
    Los valores viven en :root (claro) y [data-theme='dark'] (oscuro). */
 :root {
   color-scheme: light;
 
-  --color-ink: #f6f5f2;          /* fondo de página (papel) */
-  --color-surface: #ffffff;      /* tarjetas, modales */
-  --color-surface-2: #eeece7;    /* campos, zonas hundidas */
-  --color-border: #e1ded6;       /* filetes suaves */
-  --color-text: #1d1d1f;         /* grafito */
-  --color-text-muted: #5a5955;
-  --color-text-faint: #6c6a65;
+  --color-ink: #eaeff4;          /* fondo de página (manual) */
+  --color-surface: #fbfcfd;      /* tarjetas, modales */
+  --color-surface-2: #dde5ed;    /* cajas de piezas, huecos de foto */
+  --color-border: #c3cdd7;       /* Light Bluish Gray */
+  --color-text: #1c2833;         /* tinta azul pizarra */
+  --color-text-muted: #4a5866;
+  --color-text-faint: #56636f;
+  --color-stud: #dfe6ed;         /* studs de la placa de fondo */
 
   /* Rellenos: el texto que llevan encima viene en su pareja -ink */
-  --color-accent: #3b5b92;       /* Azul pizarra — acción principal */
+  --color-accent: #3f5b7c;       /* Sand Blue oscurecido — acción principal */
   --color-accent-ink: #ffffff;
-  --color-accent-3: #4c7a73;     /* Verde salvia — comunidad */
+  --color-accent-3: #42705a;     /* Sand Green oscurecido — comunidad */
   --color-accent-3-ink: #ffffff;
-  --color-highlight: #e7ebf3;    /* Fondo suave de lo activo / seleccionado */
-  --color-highlight-ink: #1d1d1f;
-  --color-accent-4: #00852b;     /* Verde — éxito */
-  --color-accent-2: #9a5600;     /* Ámbar — avisos */
-  --color-danger: #c4314b;       /* Rojo — solo errores y borrar */
+  --color-highlight: #d2deea;    /* Fondo de lo activo / seleccionado */
+  --color-highlight-ink: #1c2833;
+  --color-accent-4: #2f7a4a;     /* Verde — éxito */
+  --color-accent-2: #8a5a12;     /* Ámbar — avisos */
+  --color-danger: #b23b3b;       /* Rojo — solo errores y borrar */
 
   /* Variantes para usar COMO TEXTO sobre el fondo del tema (contraste AA) */
-  --color-accent-text: #33507f;
-  --color-accent-3-text: #3f6b64;
-  --color-accent-4-text: #00752a;
-  --color-danger-text: #b02a42;
+  --color-accent-text: #34506f;
+  --color-accent-3-text: #36614c;
+  --color-accent-4-text: #2a6b41;
+  --color-danger-text: #a33434;
 
-  /* Banda del pie */
-  --color-dark: #1d1d1f;
-  --color-on-dark: #f6f5f2;
-  --color-on-dark-muted: #b5b3ae;
+  /* Zonas oscuras (visor) */
+  --color-dark: #1c2833;
+  --color-on-dark: #eaeff4;
+  --color-on-dark-muted: #aab6c2;
 
-  --shadow-card: 0 1px 2px rgba(29, 29, 31, 0.05), 0 8px 24px -12px rgba(29, 29, 31, 0.18);
-  --shadow-card-hover: 0 2px 4px rgba(29, 29, 31, 0.06), 0 16px 32px -14px rgba(29, 29, 31, 0.26);
+  --shadow-card: 0 1px 0 var(--color-border);
+  --shadow-card-hover: 0 2px 0 var(--color-border);
 
   /* Texto de categorías: su color de marca oscurecido (claro) o aclarado (oscuro) */
   --category-mix: black;
-  --category-mix-amount: 55%;
+  --category-mix-amount: 70%;
 
   --background: var(--color-ink);
   --foreground: var(--color-text);
@@ -73,30 +79,32 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --color-ink: #121213;
-  --color-surface: #1b1b1d;
-  --color-surface-2: #242426;
-  --color-border: #303033;
-  --color-text: #ececea;
-  --color-text-muted: #a9a8a4;
-  --color-text-faint: #8f8e8a;
+  --color-ink: #121922;
+  --color-surface: #18212b;
+  --color-surface-2: #1f2a36;
+  --color-border: #2e3b49;
+  --color-text: #e6ecf2;
+  --color-text-muted: #a4b0bd;
+  --color-text-faint: #8c98a5;
+  --color-stud: #161f29;
 
-  --color-highlight: #2a2f3a;
-  --color-highlight-ink: #ececea;
-  --color-accent-2: #f0a640;
+  --color-accent: #a9bdd6;
+  --color-accent-ink: #121922;
+  --color-accent-3: #a6c6b3;
+  --color-accent-3-ink: #121922;
+  --color-highlight: #243244;
+  --color-highlight-ink: #e6ecf2;
+  --color-accent-2: #e0a24a;
 
-  --color-accent-text: #a9bde6;
-  --color-accent-3-text: #8cc2b9;
-  --color-accent-4-text: #5fd08a;
-  --color-danger-text: #ff8a9c;
+  --color-accent-text: #a9bdd6;
+  --color-accent-3-text: #a6c6b3;
+  --color-accent-4-text: #6fcf8f;
+  --color-danger-text: #ff8f8f;
 
-  --color-dark: #0b0b0c;
-
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px -14px rgba(0, 0, 0, 0.6);
-  --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.3), 0 18px 36px -16px rgba(0, 0, 0, 0.7);
+  --color-dark: #0b1016;
 
   --category-mix: white;
-  --category-mix-amount: 65%;
+  --category-mix-amount: 60%;
 }
 
 * {
@@ -108,7 +116,10 @@ html {
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  /* Placa base LEGO: una rejilla de studs casi imperceptible */
+  background-image: radial-gradient(circle at center, var(--color-stud) 0 3.5px, transparent 4px);
+  background-size: 24px 24px;
   color: var(--foreground);
 }
 
@@ -117,11 +128,7 @@ body {
   color: var(--color-accent-ink);
 }
 
-/* Tipografía "de bloque" reservada para los botones (ver nota en layout.tsx). */
-button {
-  font-family: var(--font-button);
-}
-
+/* Monoespaciada de los botones: se aplica con la clase font-button (Button.tsx) */
 .font-button {
   font-family: var(--font-button);
 }
@@ -175,53 +182,85 @@ button {
 /* Utilidades propias en la capa "components": las utilidades de Tailwind
    siguen teniendo prioridad sobre ellas. */
 @layer components {
-  /* Panel: tarjeta con filete fino y sombra suave */
+  /* Panel: tarjeta con filete fino, sin sombra */
   .panel {
     border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-card);
   }
 
   .panel-sm {
     border: 1px solid var(--color-border);
   }
 
-  /* Al pasar el ratón la pieza se eleva un poco */
+  /* Al pasar el ratón cambia el fondo o el filete, sin saltos */
   .lift {
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
   }
 
   .lift:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-card-hover);
+    border-color: var(--color-text);
   }
 
-  .lift:active {
-    transform: translateY(0);
-  }
-
-  /* Etiqueta pequeña en mayúsculas: contadores, categorías, datos */
+  /* Etiqueta monoespaciada en mayúsculas: números, categorías, datos */
   .label-caps {
-    font-family: var(--font-display);
+    font-family: var(--font-mono);
     font-size: 11px;
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: 0.08em;
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
-  /* Chip: etiqueta discreta con filete (secciones, contadores) */
+  /* Etiqueta entre filetes, como las de un archivo */
   .sticker {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
     border: 1px solid var(--color-border);
-    border-radius: 999px;
-    padding: 0.3rem 0.8rem;
-    font-family: var(--font-display);
+    padding: 0.25rem 0.6rem;
+    font-family: var(--font-mono);
     font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    font-weight: 500;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
+  }
+
+  /* Placa LEGO de 1×N vista de lado: una barra fina con studs encima. Hace
+     de separador de secciones. El color sale de --plate-color. */
+  .plate {
+    --plate-color: var(--color-accent);
+    height: 9px;
+    background:
+      linear-gradient(var(--plate-color), var(--plate-color)) 0 100% / 100% 5px no-repeat,
+      repeating-linear-gradient(90deg, transparent 0 6px, var(--plate-color) 6px 18px, transparent 18px 24px) 0 0 / 100% 4px no-repeat;
+  }
+
+  /* Caja de piezas de un manual LEGO: fondo hundido y esquinas suaves */
+  .callout {
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+  }
+
+  /* Botón-ladrillo: dos studs asoman por encima. El color sale de --brick-color. */
+  .brick {
+    position: relative;
+  }
+
+  .brick.lift:hover {
+    border-color: var(--brick-color);
+  }
+
+  .brick::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -5px;
+    height: 4px;
+    background:
+      linear-gradient(var(--brick-color, currentColor), var(--brick-color, currentColor)) 22% 0 / 14px 100% no-repeat,
+      linear-gradient(var(--brick-color, currentColor), var(--brick-color, currentColor)) 78% 0 / 14px 100% no-repeat;
+    pointer-events: none;
   }
 
   /* Enlace con subrayado fino que crece al pasar el ratón */
@@ -239,20 +278,4 @@ button {
   .link-underline[aria-pressed='true'] {
     background-size: 100% 1px;
   }
-}
-
-/* Piezas del fondo: vaivén lento (solo transform, para que sea fluido) */
-@keyframes brick-drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(var(--r0, 0deg));
-  }
-  50% {
-    transform: translate3d(var(--dx, 0), var(--dy, 0), 0) rotate(var(--r1, 0deg));
-  }
-}
-
-.brick-drift {
-  animation: brick-drift 22s ease-in-out infinite;
-  will-change: transform;
 }

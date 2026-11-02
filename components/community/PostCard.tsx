@@ -29,15 +29,15 @@ export function PostCard({ post, onClick }: { post: Post; onClick: () => void })
 
       {cardTheme && post.category && (
         <span
-          className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 flex items-center gap-1.5 rounded-full bg-black/55 text-white backdrop-blur-sm p-1 sm:pl-1.5 sm:pr-2 sm:py-0.5 label-caps text-[10px]"
+          className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 flex items-center gap-1.5 bg-black/55 text-white backdrop-blur-sm p-1 sm:pl-1.5 sm:pr-2 sm:py-0.5 label-caps text-[10px]"
         >
-          <span className="w-2 h-2 rounded-full" style={{ background: cardTheme.accent }} aria-hidden="true" />
+          <span className="w-2 h-2" style={{ background: cardTheme.accent }} aria-hidden="true" />
           <span className="hidden sm:inline">{formatCategoryLabel(post.category)}</span>
         </span>
       )}
 
       {likesCount > 0 && (
-        <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 flex items-center gap-1 rounded-full bg-black/55 backdrop-blur-sm px-2 py-0.5 text-[10px] font-bold text-white">
+        <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 flex items-center gap-1 bg-black/55 backdrop-blur-sm px-2 py-0.5 text-[10px] font-bold text-white">
           <HeartIcon filled className="w-3 h-3 text-[#ff6b8b]" />
           {likesCount}
         </span>

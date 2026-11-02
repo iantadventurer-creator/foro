@@ -136,6 +136,9 @@ export default function Home() {
     [categories, feedItems]
   );
 
+  // Número fijo de cada foto en el archivo: la más antigua es la 001.
+  const frameNumbers = useMemo(() => new Map(feedItems.map((item, i) => [item.id, feedItems.length - i])), [feedItems]);
+
   const categoryCounts = useMemo(() => Object.fromEntries(universes.map((u) => [u.name, u.count])), [universes]);
 
   // Las cinco fotos más recientes (sin reels) para el mosaico de la portada.
@@ -158,13 +161,14 @@ export default function Home() {
   return (
     <main id="contenido" tabIndex={-1} className="min-h-screen text-[var(--color-text)] font-sans relative z-0 overflow-x-hidden focus:outline-none">
       <SiteHeader t={t} lang={lang} onLangChange={setLang} activeSection={activeSection} onOpenQr={openQr} />
-      <Hero t={t} photos={heroPhotos} photoCount={feedItems.length} universeCount={categories.length} loading={loading} onOpenItem={setSelectedItem} />
+      <Hero t={t} photos={heroPhotos} frameNumbers={frameNumbers} photoCount={feedItems.length} universeCount={categories.length} loading={loading} onOpenItem={setSelectedItem} />
       <UniverseTiles t={t} universes={universes} onSelect={exploreUniverse} />
       <GallerySection
         t={t}
         sectionRef={galleryRef}
         items={paginatedItems}
         totalItems={filteredItems.length}
+        frameNumbers={frameNumbers}
         loading={loading}
         feedError={feedError}
         categories={categories}

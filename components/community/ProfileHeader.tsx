@@ -62,7 +62,7 @@ export function ProfileHeader({
                                 disabled={uploading}
                                 aria-label={editAvatarLabel}
                                 title={editAvatarLabel}
-                                className="panel-sm lift absolute -bottom-1 -right-1 w-10 h-10 rounded-full bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-transparent flex items-center justify-center text-base font-bold disabled:opacity-60"
+                                className="panel-sm lift absolute -bottom-1 -right-1 w-10 h-10 bg-[var(--color-accent)] text-[var(--color-accent-ink)] border-transparent flex items-center justify-center text-base font-bold disabled:opacity-60"
                             >
                                 {uploading ? '…' : '✎'}
                             </button>

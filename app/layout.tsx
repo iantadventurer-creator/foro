@@ -1,9 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
-import { Bricolage_Grotesque } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { AmbientBackground } from "@/components/ui/AmbientBackground";
 import { MotionProvider } from "@/components/ui/MotionProvider";
 import { LangProvider } from "@/lib/hooks/useLang";
 import { themeInitScript } from "@/lib/theme";
@@ -13,12 +11,11 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-// Grotesca con tamaños ópticos (más compacta y con más carácter cuanto más
-// grande): titulares, botones y etiquetas.
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
+// Monoespaciada para los datos de la hoja de contactos: números de foto,
+// etiquetas, botones y navegación.
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-  axes: ["opsz"],
 });
 
 export const metadata: Metadata = {
@@ -58,8 +55,8 @@ const structuredData = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f6f5f2" },
-    { media: "(prefers-color-scheme: dark)", color: "#121213" },
+    { media: "(prefers-color-scheme: light)", color: "#f3f2ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#101010" },
   ],
 };
 
@@ -72,7 +69,7 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${bricolage.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       // El script de <head> pone data-theme antes de que React hidrate.
       suppressHydrationWarning
     >
@@ -83,7 +80,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[var(--color-ink)] text-[var(--color-text)]">
         <a
           href="#contenido"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[200] focus:rounded-full focus:bg-[var(--color-accent)] focus:px-5 focus:py-2.5 focus:text-sm focus:font-bold focus:text-white"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[200] focus:bg-[var(--color-accent)] focus:px-5 focus:py-2.5 focus:text-sm focus:font-bold focus:text-[var(--color-accent-ink)]"
         >
           Saltar al contenido
         </a>
@@ -92,7 +89,6 @@ export default function RootLayout({
           // Datos estructurados (schema.org) para buscadores; contenido propio y estático.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        <AmbientBackground />
         <LangProvider>
           <MotionProvider>{children}</MotionProvider>
         </LangProvider>
