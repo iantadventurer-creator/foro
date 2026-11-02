@@ -7,7 +7,7 @@ export const homeContent = {
     hero: {
       badge: 'Fotografía de miniaturas',
       title: 'Pieza a pieza, historias a escala de bolsillo.',
-      description: 'Dioramas construidos a mano, iluminación cinematográfica y un ojo obsesionado con el detalle. Bienvenido al set de @iantadventurer.',
+      description: 'Monto pequeñas escenas con piezas y minifiguras LEGO, las ilumino como en una película y las fotografío cuidando cada detalle. ¡Bienvenido a mi set!',
       btnExplore: 'Ver la galería',
       stat1: 'Fotos publicadas',
       stat2: 'Universos',
@@ -21,7 +21,7 @@ export const homeContent = {
       pauseShort: 'Pausa',
       latest: 'Últimas fotos',
       latestNote: '¡La más reciente!',
-      hello: '¡Hola! Esto es IanTBuild',
+      hello: '¡Hola! Soy IanTBuild',
       tagline: 'foto a foto.',
       playShort: 'Seguir',
     },
@@ -36,7 +36,7 @@ export const homeContent = {
       eyebrow: 'Qué encontrarás aquí',
       title: 'Tres espacios, una sola pasión',
       cards: [
-        { title: 'Galería', desc: 'Mis fotos de dioramas y minifiguras LEGO, ordenadas por universo: Star Wars, Ninjago, Marvel y más.', cta: 'Ver las fotos' },
+        { title: 'Galería', desc: 'Mis fotos de escenas y minifiguras LEGO, ordenadas por universo: Star Wars, Ninjago, Marvel y más.', cta: 'Ver las fotos' },
         { title: 'Comunidad', desc: 'Crea una cuenta gratis, publica tus propias fotos LEGO y dale me gusta a las de otros fans.', cta: 'Entrar a la comunidad' },
         { title: 'Sobre mí', desc: 'Quién soy, cómo trabajo y dónde seguir mis novedades.', cta: 'Conocerme' },
       ],
@@ -95,7 +95,7 @@ export const homeContent = {
     hero: {
       badge: 'Miniature photography',
       title: 'Brick by brick, pocket-scale stories.',
-      description: 'Hand-built dioramas, cinematic lighting, and an eye obsessed with detail. Welcome to the set of @iantadventurer.',
+      description: 'I build small scenes with LEGO bricks and minifigures, light them like a movie and photograph every detail. Welcome to my set!',
       btnExplore: 'View gallery',
       stat1: 'Photos published',
       stat2: 'Universes',
@@ -109,7 +109,7 @@ export const homeContent = {
       pauseShort: 'Pause',
       latest: 'Latest photos',
       latestNote: 'The newest one!',
-      hello: 'Hi! This is IanTBuild',
+      hello: "Hi! I'm IanTBuild",
       tagline: 'shot by shot.',
       playShort: 'Play',
     },
@@ -124,7 +124,7 @@ export const homeContent = {
       eyebrow: "What you'll find here",
       title: 'Three spaces, one passion',
       cards: [
-        { title: 'Gallery', desc: 'My LEGO diorama and minifigure photos, sorted by universe: Star Wars, Ninjago, Marvel and more.', cta: 'See the photos' },
+        { title: 'Gallery', desc: 'My photos of LEGO scenes and minifigures, sorted by universe: Star Wars, Ninjago, Marvel and more.', cta: 'See the photos' },
         { title: 'Community', desc: "Create a free account, post your own LEGO photos and like other fans' work.", cta: 'Join the community' },
         { title: 'About me', desc: 'Who I am, how I work and where to follow my updates.', cta: 'Meet me' },
       ],

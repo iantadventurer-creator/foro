@@ -35,11 +35,11 @@ export const metadata: Metadata = {
     template: "%s · IanTBuild",
   },
   description:
-    "Portafolio de fotografía de miniaturas LEGO de @iantadventurer: dioramas, iluminación cinematográfica y una comunidad para compartir tus propias creaciones.",
+    "Portafolio de fotografía de miniaturas LEGO de @iantadventurer: escenas montadas a mano, iluminación de cine y una comunidad para compartir tus propias creaciones.",
   openGraph: {
     title: "IanTBuild — Fotografía de miniaturas LEGO",
     description:
-      "Dioramas, iluminación cinematográfica y una comunidad para compartir tus creaciones LEGO.",
+      "Escenas LEGO montadas a mano, iluminación de cine y una comunidad para compartir tus creaciones.",
     siteName: "IanTBuild",
     locale: "es_ES",
     type: "website",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "IanTBuild — Fotografía de miniaturas LEGO",
     description:
-      "Dioramas, iluminación cinematográfica y una comunidad para compartir tus creaciones LEGO.",
+      "Escenas LEGO montadas a mano, iluminación de cine y una comunidad para compartir tus creaciones.",
   },
 };
 
