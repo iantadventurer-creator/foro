@@ -22,7 +22,7 @@ export const homeContent = {
       latest: 'Últimas fotos',
       latestNote: '¡La más reciente!',
       hello: '¡Hola! Esto es IanTBuild',
-      tagline: '…y foto a foto.',
+      tagline: 'foto a foto.',
       playShort: 'Seguir',
     },
     universes: {
@@ -101,7 +101,7 @@ export const homeContent = {
       latest: 'Latest photos',
       latestNote: 'The newest one!',
       hello: 'Hi! This is IanTBuild',
-      tagline: '…and shot by shot.',
+      tagline: 'shot by shot.',
       playShort: 'Play',
     },
     universes: {

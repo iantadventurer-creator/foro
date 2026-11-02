@@ -67,21 +67,29 @@ export function Hero({
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: EASE }}
-          className="relative md:col-span-5"
+          className="relative md:col-span-6"
         >
-          <p className="hand text-2xl text-[var(--color-accent-text)]">{t.hero.hello}</p>
-          <h1 className="mt-2 font-display font-extrabold leading-[0.95] text-[clamp(3rem,6.4vw,5.75rem)] text-[var(--color-text)]">
-            {t.hero.display[0]}{' '}
-            <span className="relative inline-block">
-              {t.hero.display[1]}.
-              <DoodleUnderline className="absolute -bottom-2 left-0 h-4 w-full text-[var(--color-accent)]" />
+          <p className="hand flex items-center gap-2 text-[1.7rem] text-[var(--color-accent-text)]">
+            {t.hero.hello}
+            <DoodleSparkle className="w-5 h-5" />
+          </p>
+          {/* Titular en dos líneas que nunca se parten: la mitad LEGO, con su
+              ladrillo, y la mitad fotográfica, en azul bolígrafo, subrayada y
+              con su cámara. */}
+          <h1 className="mt-3 font-display font-extrabold leading-[1.05] text-[clamp(2.2rem,3.9vw+0.6rem,4.4rem)] text-[var(--color-text)]">
+            <span className="flex items-center gap-[0.2em] whitespace-nowrap">
+              {t.hero.display[0]} {t.hero.display[1]},
+              <DoodleBrick className="w-[1.15em] h-auto shrink-0 -rotate-6 text-[var(--color-text-faint)]" />
+            </span>
+            <span className="mt-[0.08em] flex items-center gap-[0.2em] whitespace-nowrap text-[var(--color-accent-text)]">
+              <span className="relative">
+                {t.hero.tagline}
+                <DoodleUnderline className="absolute -bottom-[0.14em] left-0 h-[0.2em] w-full text-[var(--color-accent)] opacity-60" />
+              </span>
+              <DoodleCamera className="w-[0.9em] h-auto shrink-0 rotate-6" />
             </span>
           </h1>
-          <p className="hand mt-4 flex items-center gap-2 text-3xl text-[var(--color-accent-text)]">
-            {t.hero.tagline}
-            <DoodleCamera className="w-9 h-auto -rotate-6" />
-          </p>
-          <p className="mt-5 max-w-[34rem] text-[17px] leading-relaxed text-[var(--color-text-muted)]">{t.hero.description}</p>
+          <p className="mt-7 max-w-[34rem] text-[17px] leading-relaxed text-[var(--color-text-muted)]">{t.hero.description}</p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button href="#gallery">{t.hero.btnExplore} ↓</Button>
             <Button href="/comunidad" variant="secondary">
@@ -92,12 +100,12 @@ export function Hero({
             {loading ? '—' : photoCount} {t.hero.stat1.toLowerCase()} · {loading ? '—' : universeCount} {t.hero.stat2.toLowerCase()}
           </p>
 
-          <DoodleMinifigPhotographer className="hidden lg:block absolute -right-2 top-2 w-[4.5rem] rotate-6 text-[var(--color-line)] opacity-80" />
+          <DoodleMinifigPhotographer className="hidden lg:block absolute right-6 bottom-0 w-[4.5rem] rotate-6 text-[var(--color-line)] opacity-80" />
           <DoodleBrick className="hidden md:block absolute -left-3 -bottom-16 w-24 -rotate-3 text-[var(--color-text-faint)] opacity-70" />
         </motion.div>
 
         <div
-          className="md:col-span-7 flex flex-col items-center gap-6 lg:flex-row lg:items-start lg:justify-center"
+          className="md:col-span-6 flex flex-col items-center gap-6 lg:flex-row lg:items-start lg:justify-center"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >

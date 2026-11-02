@@ -72,7 +72,7 @@ const COUNT = 30;
 // fijos (nada aleatorio) para que el servidor y el navegador pinten lo mismo.
 const ITEMS: Item[] = Array.from({ length: COUNT }, (_, i) => ({
   Doodle: DOODLES[i % DOODLES.length],
-  top: 1.5 + (i * 97) / COUNT,
+  top: 15 + (i * 83) / COUNT,
   side: i % 2 === 0 ? 'left' : 'right',
   inset: INSETS[i % INSETS.length],
   width: WIDTHS[i % WIDTHS.length],
