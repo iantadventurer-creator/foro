@@ -20,8 +20,8 @@ export const homeContent = {
       play: 'Reanudar el pase de fotos',
       pauseShort: 'Pausa',
       latest: 'Últimas fotos',
-      latestNote: '¡la más reciente!',
-      hello: '¡hola! esto es IanTBuild',
+      latestNote: '¡La más reciente!',
+      hello: '¡Hola! Esto es IanTBuild',
       playShort: 'Seguir',
     },
     universes: {
@@ -46,7 +46,7 @@ export const homeContent = {
       subtitle: 'Toca una foto para verla en grande. Filtra por universo y guarda tus favoritas con el corazón.',
       filterAll: 'Todo',
       favorites: 'Favoritos',
-      noResults: 'Todavía no marcaste ninguna foto como favorita.',
+      noResults: 'Todavía no has marcado ninguna foto como favorita.',
       empty: 'Aún no hay fotos en la galería.',
       errorTitle: 'No se pudo cargar el feed',
       errorDesc: 'Hubo un problema de conexión con Instagram. Puedes intentarlo de nuevo.',
@@ -59,7 +59,7 @@ export const homeContent = {
     aboutSection: {
       eyebrow: 'Detrás del lente',
       title: 'De fan de LEGO a fotógrafo de sets',
-      desc: '"Fan de los Legos desde niño. Ahora uso la fotografía para que cobren vida en mis propios escenarios."',
+      desc: '"Fan de LEGO desde niño. Ahora uso la fotografía para que las piezas cobren vida en mis propios escenarios."',
       cta: 'Seguir en Instagram',
     },
     modal: {
@@ -98,8 +98,8 @@ export const homeContent = {
       play: 'Resume the slideshow',
       pauseShort: 'Pause',
       latest: 'Latest photos',
-      latestNote: 'the newest one!',
-      hello: 'hi! this is IanTBuild',
+      latestNote: 'The newest one!',
+      hello: 'Hi! This is IanTBuild',
       playShort: 'Play',
     },
     universes: {
@@ -110,7 +110,7 @@ export const homeContent = {
       view: 'View series',
     },
     intro: {
-      eyebrow: 'What you will find here',
+      eyebrow: "What you'll find here",
       title: 'Three spaces, one passion',
       cards: [
         { title: 'Gallery', desc: 'My LEGO diorama and minifigure photos, sorted by universe: Star Wars, Ninjago, Marvel and more.', cta: 'See the photos' },
@@ -137,7 +137,7 @@ export const homeContent = {
     aboutSection: {
       eyebrow: 'Behind the lens',
       title: 'From LEGO fan to set photographer',
-      desc: 'Every shot combines advanced lighting techniques, meticulous set building, and a passion for snapping the perfect personality into each figure.',
+      desc: '"A LEGO fan since childhood. Now I use photography to bring the bricks to life in my own sets."',
       cta: 'Follow on Instagram',
     },
     modal: {

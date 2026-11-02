@@ -8,16 +8,16 @@ export const metadata: Metadata = {
   title: 'Comunidad',
   alternates: { canonical: '/comunidad' },
   description:
-    'Comparte tus propias creaciones LEGO, dale like a las de otros fans y forma parte de la comunidad de IanTBuild.',
+    'Comparte tus propias creaciones LEGO, dale me gusta a las de otros fans y forma parte de la comunidad de IanTBuild.',
   openGraph: {
     title: 'Comunidad · IanTBuild',
     description:
-      'Comparte tus propias creaciones LEGO, dale like a las de otros fans y forma parte de la comunidad.',
+      'Comparte tus propias creaciones LEGO, dale me gusta a las de otros fans y forma parte de la comunidad.',
   },
   twitter: {
     title: 'Comunidad · IanTBuild',
     description:
-      'Comparte tus propias creaciones LEGO, dale like a las de otros fans y forma parte de la comunidad.',
+      'Comparte tus propias creaciones LEGO, dale me gusta a las de otros fans y forma parte de la comunidad.',
   },
 };
 

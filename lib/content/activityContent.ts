@@ -4,7 +4,7 @@ export const activityContent = {
   es: {
     title: 'Actividad',
     mustLogin: 'Inicia sesión para ver quién le dio "me gusta" a tus publicaciones.',
-    empty: 'Todavía no hay actividad — cuando alguien le dé "me gusta" a una de tus publicaciones, aparecerá acá.',
+    empty: 'Todavía no hay actividad — cuando alguien le dé "me gusta" a una de tus publicaciones, aparecerá aquí.',
     likedYourPost: 'le dio ❤️ a tu publicación',
     anonymous: 'Alguien',
     timeAgo: (mins: number, hours: number, days: number) => {

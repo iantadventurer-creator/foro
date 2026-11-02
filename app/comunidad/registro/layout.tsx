@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Registrarte',
+  title: 'Crear cuenta',
   description: 'Crea tu cuenta gratuita para publicar tus fotos LEGO y unirte a la comunidad de IanTBuild.',
   alternates: { canonical: '/comunidad/registro' },
   robots: { index: false, follow: true },

@@ -20,7 +20,7 @@ export const authContent = {
       usernameAvailable: 'Nombre de usuario disponible.',
       usernameTaken: 'Ese nombre de usuario ya está en uso.',
       passwordHint: 'Mínimo 6 caracteres.',
-      submit: 'Registrarte',
+      submit: 'Crear cuenta',
       terms: 'Al registrarte aceptas compartir tus fotos en la comunidad de IanTBuild.',
       hasAccount: '¿Tienes una cuenta?',
       signIn: 'Inicia sesión',
