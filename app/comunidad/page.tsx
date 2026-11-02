@@ -48,7 +48,13 @@ export default function ComunidadPage() {
         const postId = params.get('post');
         // eslint-disable-next-line react-hooks/set-state-in-effect
         if (postId) setSelectedPostId(postId);
-        if (params.get('publish') === '1') setShowUploadModal(true);
+        if (params.get('publish') === '1') {
+            setShowUploadModal(true);
+            // El parámetro solo sirve para abrir el formulario: se quita de la dirección.
+            params.delete('publish');
+            const rest = params.toString();
+            window.history.replaceState(window.history.state, '', rest ? `/comunidad?${rest}` : '/comunidad');
+        }
     }, []);
 
     const openPost = (postId: string) => {

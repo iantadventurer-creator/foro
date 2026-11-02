@@ -4,6 +4,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { DoodleBackground } from "@/components/ui/DoodleBackground";
 import { MotionProvider } from "@/components/ui/MotionProvider";
+import { SmoothAnchors } from "@/components/ui/SmoothAnchors";
 import { LangProvider } from "@/lib/hooks/useLang";
 import { themeInitScript } from "@/lib/theme";
 
@@ -99,6 +100,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         <DoodleBackground />
+        <SmoothAnchors />
         <LangProvider>
           <MotionProvider>{children}</MotionProvider>
         </LangProvider>
